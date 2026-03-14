@@ -1,0 +1,16 @@
+metric,value
+rows,437168.0
+months_covered,12.0
+female_share,0.5141661786773049
+employed_share,0.4691171357464407
+unemployed_share,0.017330595702419162
+not_in_labor_force_share,0.4336717894629764
+missing_labor_force_share,0.14550241554734106
+hourly_worker_rows,182937.0
+hourly_raw_gap_pct,15.089098651465715
+hourly_raw_gap_dollars,6.531532353984183
+hourly_median_gap_pct,14.179104477611942
+weekly_worker_rows,182571.0
+weekly_raw_gap_pct,23.80568456518054
+weekly_raw_gap_dollars,388.96036767147166
+weekly_median_gap_pct,22.041666666666675

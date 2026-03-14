@@ -1,0 +1,9 @@
+year,path,rows,repweight_columns,has_full_repweights
+2015,data/raw/acs/acs_pums_2015_api_repweights.parquet,3147005,80,True
+2016,data/raw/acs/acs_pums_2016_api_repweights.parquet,3156487,80,True
+2017,data/raw/acs/acs_pums_2017_api_repweights.parquet,3190040,80,True
+2018,data/raw/acs/acs_pums_2018_api_repweights.parquet,3214539,80,True
+2019,data/raw/acs/acs_pums_2019_api_repweights.parquet,3239553,80,True
+2021,data/raw/acs/acs_pums_2021_api_repweights.parquet,3252599,80,True
+2022,data/raw/acs/acs_pums_2022_api_repweights.parquet,3373378,80,True
+2023,data/raw/acs/acs_pums_2023_api_repweights.parquet,3405809,80,True

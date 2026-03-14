@@ -1,0 +1,61 @@
+project:
+  name: us_male_female_earnings_gap_public_data
+  output_dir: reports/
+  base_currency_year: 2024
+
+paths:
+  raw: data/raw
+  interim: data/interim
+  processed: data/processed
+  external: data/external
+  crosswalks: crosswalks
+
+sources:
+  use_ipums_for_acs: true
+  use_ipums_for_cps: true
+  use_ipums_for_atus: true
+  use_official_sipp: true
+  use_qwi: true
+  use_laus: true
+  use_qcew: true
+  use_oews: true
+  use_onet: true
+  use_bea_rpp: true
+  use_sce_labor_market: false  # Supplemental expectations evidence; not a main regression file
+  # NLSY data — adds cognitive ability (g-factor) control
+  use_nlsy: true
+  nlsy_source_dir: ${NLSY_DATA_DIR}
+  nlsy_variant: resid  # age-residualized ASVAB subtests
+
+years:
+  acs: [2019, 2021, 2022, 2023, 2024]
+  cps:
+    start: "2019-01"
+    end: "2024-12"
+  sipp: [2021, 2022, 2023, 2024]
+  atus: [2019, 2021, 2022, 2023, 2024]
+  context_start_year: 2019
+  context_end_year: 2024
+
+samples:
+  default_sample: prime_age_wage_salary
+  definitions:
+    prime_age_wage_salary:
+      age_min: 25
+      age_max: 54
+      employed_only: true
+      wage_salary_only: true
+      positive_hours_only: true
+      positive_pay_only: true
+      exclude_active_duty: true
+    all_employed_18_64:
+      age_min: 18
+      age_max: 64
+      employed_only: true
+      wage_salary_only: false
+      positive_pay_only: false
+
+nlsy:
+  nlsy79_earnings_year: 2000
+  nlsy97_earnings_year: 2019
+  g_proxy_method: unit_weighted_zscore  # mean of z-scored ASVAB subtests

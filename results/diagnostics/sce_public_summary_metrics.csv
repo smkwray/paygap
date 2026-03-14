@@ -1,0 +1,11 @@
+metric,value,note
+latest_date,2025-11,Latest date present in the official public chart-data workbook.
+latest_expected_offer_wage_women,55.90924835205078,Latest women expected offer wage.
+latest_expected_offer_wage_men,73.3722152709961,Latest men expected offer wage.
+latest_expected_offer_wage_gap_men_minus_women,17.462966918945312,Latest men-minus-women expected offer wage gap.
+latest_reservation_wage_women,69.7811279296875,Latest women reservation wage.
+latest_reservation_wage_men,91.1178970336914,Latest men reservation wage.
+latest_reservation_wage_gap_men_minus_women,21.336769104003906,Latest men-minus-women reservation wage gap.
+trailing_year_expected_offer_gap_mean,16.304485321044922,Average men-minus-women expected offer wage gap over the latest three waves.
+trailing_year_reservation_gap_mean,17.92030080159505,Average men-minus-women reservation wage gap over the latest three waves.
+reservation_wage_gap_change_since_start,8.983802795410156,Change in men-minus-women reservation wage gap from first to latest wave.

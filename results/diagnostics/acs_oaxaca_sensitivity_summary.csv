@@ -1,0 +1,13 @@
+metric,value,note
+pre_2019_total_gap_mean,0.17337217210041675,Average ACS Oaxaca total log gap for 2015-2018.
+post_2019_total_gap_mean,0.16520006308914534,Average ACS Oaxaca total log gap for 2019-2023.
+pre_2019_explained_mean,0.04495369581491762,Average ACS Oaxaca explained component for 2015-2018.
+post_2019_explained_mean,0.020032372113176898,Average ACS Oaxaca explained component for 2019-2023.
+pre_2019_unexplained_mean,0.12841847628549907,Average ACS Oaxaca unexplained component for 2015-2018.
+post_2019_unexplained_mean,0.14516769097596838,Average ACS Oaxaca unexplained component for 2019-2023.
+explained_component_change_post_minus_pre,-0.024921323701740723,Post-2019 average explained component minus pre-2019 average.
+unexplained_component_change_post_minus_pre,0.016749214690469305,Post-2019 average unexplained component minus pre-2019 average.
+unexplained_share_change_pp_post_minus_pre,13.845041878915481,Change in average unexplained share in percentage points.
+post_share_if_pre_explained_mean_held,72.78833011664186,Counterfactual post-2019 unexplained share if the explained component had stayed at its pre-2019 mean.
+post_share_if_pre_unexplained_mean_held,77.73512544980193,Counterfactual post-2019 unexplained share if the unexplained component had stayed at its pre-2019 mean.
+max_unexplained_pct_year,2021.0,Year with the highest unexplained share.

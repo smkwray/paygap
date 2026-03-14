@@ -1,0 +1,19 @@
+dataset,metric,value
+NLSY79,raw_gap_pct,44.43041732383308
+NLSY79,skills_reduction_pp,5.61716597732525
+NLSY79,background_reduction_pp,0.0365472107488145
+NLSY79,occupation_reduction_pp,7.021996623047741
+NLSY79,family_reduction_pp,0.1776875421157839
+NLSY79,resources_reduction_pp,-0.9476687326423416
+NLSY79,largest_reduction_pp,7.021996623047741
+NLSY79,final_gap_pct,34.09866492617171
+NLSY79,largest_reduction_block,occupation sorting
+NLSY97,raw_gap_pct,34.19166821131512
+NLSY97,skills_reduction_pp,1.654838393571474
+NLSY97,background_reduction_pp,-0.0580086986195027
+NLSY97,occupation_reduction_pp,0.0
+NLSY97,family_reduction_pp,-0.2096760378519491
+NLSY97,resources_reduction_pp,6.598256926979154
+NLSY97,largest_reduction_pp,6.598256926979154
+NLSY97,final_gap_pct,31.89018174396373
+NLSY97,largest_reduction_block,adult resources

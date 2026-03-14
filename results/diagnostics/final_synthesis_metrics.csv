@@ -1,0 +1,14 @@
+metric,value,note
+acs_2023_raw_gap_pct,16.81146562386103,ACS 2023 raw hourly gap
+acs_2023_m5_pct_gap,13.23302628579519,ACS 2023 adjusted hourly gap from M5
+acs_2023_raw_gap_ci90_low,16.50186497417671,ACS 2023 raw-gap 90% CI lower bound
+acs_2023_raw_gap_ci90_high,17.12106627354535,ACS 2023 raw-gap 90% CI upper bound
+cps_2023_raw_gap_pct,15.765455908384055,CPS ASEC 2023 raw hourly gap
+cps_2023_m_full_pct_gap,16.957086885490035,CPS ASEC 2023 adjusted hourly gap
+sipp_2023_raw_gap_pct,15.089098651465717,SIPP 2023 raw hourly gap
+sipp_2023_sipp3_pct_gap,10.914606490086964,SIPP 2023 adjusted hourly gap from SIPP3
+atus_paid_work_gap_minutes,-67.9637415190011,Female-minus-male paid-work minutes/day
+atus_housework_gap_minutes,31.912241466097072,Female-minus-male housework minutes/day
+atus_childcare_gap_minutes,11.371427934864196,Female-minus-male childcare minutes/day
+sce_latest_expected_offer_gap,17.462966918945312,Latest men-minus-women expected offer wage gap in SCE public series
+sce_latest_reservation_gap,21.336769104003906,Latest men-minus-women reservation wage gap in SCE public series

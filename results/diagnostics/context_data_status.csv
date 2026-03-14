@@ -1,0 +1,6 @@
+source,status,detail
+LAUS,missing,No cached parquet in raw/context
+CPI_U,missing,No cached parquet in raw/context
+BEA_RPP,present,Regional price parity parquet
+QCEW,present,Parquet years cached: [2023]
+OEWS,staged_manual,Manual staging required; see raw/context/oews/DOWNLOAD_INSTRUCTIONS.md

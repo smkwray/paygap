@@ -1,0 +1,6 @@
+dataset,year,headline_gap_pct,adjusted_gap_pct,main_explaining_block,block_reduction_pp,top_oaxaca_contributors,missing_key_factors
+ACS,2023,16.81146562386103,13.23302628579518,job sorting,8.074775441969628,usual_hours_week (10.02%); age (-4.12%); age_sq (3.67%),"firm/pay-setting, tenure, exact employer, detailed within-job task mix, direct bargaining measures"
+CPS ASEC,2023,15.765455908384055,16.957086885490035,job sorting,3.158369150535524,usual_hours_week (9.06%); age (-5.81%); age_sq (4.66%),"commute, firm effects, direct bargaining measures, richer job-quality variables"
+SIPP,2023,15.089098651465717,10.914606490086964,hours/job structure,0.9481585152887995,actual_hours_last_week (6.96%); usual_hours_week (6.96%); multiple_jobholder (1.18%),"state geography in current release, rich family controls, commute, firm/pay-setting variables"
+ATUS,2023,,,time allocation,,paid work (-67.96 min/day); housework (+31.91); childcare (+11.37),"no direct wage equation, no person-level merge to ACS/CPS/SIPP"
+SCE,2025,,,expectations/outside options,,expected offer gap (+17.46); reservation wage gap (+21.34),cannot merge to main wage files; smaller expectation-based survey

@@ -1,0 +1,13 @@
+section,metric,value,note
+atus,paid_work_gap_minutes,-67.9637415190011,Female minus male gap in daily paid-work minutes.
+atus,housework_gap_minutes,31.912241466097072,Female minus male gap in daily housework minutes.
+atus,childcare_gap_minutes,11.371427934864196,Female minus male gap in daily childcare minutes.
+atus,commute_gap_minutes,-8.069792966626071,Female minus male gap in daily commute-related travel minutes.
+atus,unpaid_work_gap_minutes,43.283669400961266,Housework plus childcare female-minus-male daily gap.
+atus,net_paid_plus_unpaid_gap_minutes,-24.68007211803984,Paid work plus housework plus childcare female-minus-male daily gap.
+acs,m5_mean_female_coef,-0.14495798274476754,Average ACS M5 female coefficient over analysis years.
+acs,m5_latest_female_coef,-0.1407623471371503,Latest ACS M5 female coefficient.
+acs,s2_mean_ipw_worker_gap_pct,19.729933824625977,Mean ACS S2 IPW worker hourly wage gap.
+acs,s2_mean_expected_earnings_gap_pct,38.48179314405586,Mean ACS S2 combined expected annual-earnings gap.
+cps,s2_mean_ipw_worker_gap_pct,19.245591019670236,Mean CPS S2 IPW worker hourly wage gap.
+cps,s2_mean_expected_earnings_gap_pct,31.9854163885597,Mean CPS S2 combined expected annual-earnings gap.

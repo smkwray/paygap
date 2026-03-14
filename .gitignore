@@ -1,0 +1,22 @@
+# OS
+.DS_Store
+
+# Secrets
+.env
+
+# Python
+.pytest_cache/
+__pycache__/
+*.pyc
+
+# Tools
+.playwright-cli/
+
+# Internal / not public
+do/
+gender_gap_public_data_*/
+results/legacy/
+
+# Data (large files)
+data/raw/
+data/processed/*.parquet

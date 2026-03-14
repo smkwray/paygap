@@ -1,0 +1,14 @@
+section,metric,value,note
+acs_uncertainty,raw_gap_avg_moe90_pp,0.2905951603830806,Average ACS raw-gap 90% margin of error in percentage points.
+acs_uncertainty,m5_avg_se,0.001892119709114625,Average ACS M5 SDR standard error.
+acs_family_rebuild,mean_m5_delta,-0.003209502455158313,Average rebuilt minus old ACS year-level M5 coefficient.
+acs_family_rebuild,max_abs_m5_delta,0.0045637314932081,Largest absolute year-level M5 change from correcting ACS family fields.
+acs_family_rebuild,pooled_p5_delta,-0.0042240872998955,Rebuilt minus old pooled ACS P5 coefficient.
+acs_selection,s2_expected_gap_pct_mean,38.48179314405586,Mean ACS S2 combined expected annual-earnings gap.
+acs_selection,s2_ipw_worker_gap_pct_mean,19.729933824625977,Mean ACS S2 IPW worker hourly wage gap.
+cps_selection,s2_expected_gap_pct_mean,31.9854163885597,Mean CPS S2 combined expected annual-earnings gap.
+cps_selection,s2_ipw_worker_gap_pct_mean,19.245591019670236,Mean CPS S2 IPW worker hourly wage gap.
+oaxaca,pre_2019_unexplained_pct_mean,74.07653204750119,Average ACS Oaxaca unexplained share for 2015-2018.
+oaxaca,post_2019_unexplained_pct_mean,87.92157392641667,Average ACS Oaxaca unexplained share for 2019-2023.
+context,present_sources_count,2.0,Count of context sources currently cached and available.
+context,manual_staging_sources_count,1.0,Count of context sources that currently require manual staging.

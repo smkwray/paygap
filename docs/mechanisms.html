@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Mechanisms &mdash; paygap</title>
+  <script src="js/theme.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="site-logo">pay<span class="logo-accent">gap</span></a>
+      <div class="header-controls">
+        <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+        <button id="themeToggle" class="theme-toggle" onclick="pgToggle()" aria-label="Toggle theme">&#9790;</button>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="trends.html">Trends</a></li>
+          <li><a href="heterogeneity.html">Heterogeneity</a></li>
+          <li><a href="mechanisms.html" class="active">Mechanisms</a></li>
+          <li><a href="methods.html">Methods</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="content">
+    <h1>Mechanisms &amp; Channels</h1>
+    <p class="page-intro">
+      Time-use evidence, wage expectations, selection effects, and NLSY cohort analysis
+      exploring channels through which the gender gap operates.
+    </p>
+
+    <!-- ── 1. ATUS Time-Use ── -->
+    <section class="section">
+      <div class="section-header">
+        <h2>ATUS Time-Use Gaps</h2>
+        <span class="section-tag">Daily Minutes</span>
+      </div>
+
+      <div class="chart-container">
+        <h3>Daily Time-Use Gap (Female &minus; Male, minutes)</h3>
+        <p class="chart-subtitle">Positive = women do more; negative = women do less</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="atusChart"></canvas>
+        </div>
+        <p class="chart-note">Source: American Time Use Survey, pooled recent waves.</p>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Activity</th>
+            <th class="num">Gap (min)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Paid work</td><td class="num">&minus;67.96</td></tr>
+          <tr><td>Housework</td><td class="num">+31.91</td></tr>
+          <tr><td>Childcare</td><td class="num">+11.37</td></tr>
+          <tr><td>Commute</td><td class="num">&minus;8.07</td></tr>
+        </tbody>
+      </table>
+
+      <div class="insight-box">
+        <p>Women spend 68 fewer minutes on paid work per day but 43 more minutes on unpaid
+        household and childcare work. The net paid + unpaid gap is roughly &minus;25 minutes/day.</p>
+      </div>
+    </section>
+
+    <!-- ── 2. SCE Wage Expectations ── -->
+    <section class="section">
+      <div class="section-header">
+        <h2>SCE Wage Expectations</h2>
+        <span class="section-tag">Latest Wave (2025)</span>
+      </div>
+
+      <div class="chart-container">
+        <h3>Expected vs. Reservation Wages by Gender (2025)</h3>
+        <p class="chart-subtitle">Grouped bars &mdash; Survey of Consumer Expectations</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="sceChart"></canvas>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Measure</th>
+            <th class="num">Female ($/hr)</th>
+            <th class="num">Male ($/hr)</th>
+            <th class="num">Gap ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Expected Offer Wage</td><td class="num">55.91</td><td class="num">73.37</td><td class="num">17.46</td></tr>
+          <tr><td>Reservation Wage</td><td class="num">69.78</td><td class="num">91.12</td><td class="num">21.34</td></tr>
+        </tbody>
+      </table>
+
+      <div class="insight-box">
+        <p>Men expect $17 more per hour in job offers and set reservation wages $21 higher.
+        This expectations gap persists across all available survey waves.</p>
+      </div>
+    </section>
+
+    <!-- ── 3. Employment Selection ── -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Employment Selection</h2>
+        <span class="section-tag">ACS Mean 2015&ndash;2023</span>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Measure</th>
+            <th class="num">Gap %</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Combined expected annual earnings</td><td class="num">38.48</td></tr>
+          <tr><td>Observed total annual earnings</td><td class="num">36.55</td></tr>
+          <tr><td>Observed worker hourly wages</td><td class="num">18.83</td></tr>
+          <tr><td>IPW-reweighted worker hourly</td><td class="num">19.73</td></tr>
+        </tbody>
+      </table>
+
+      <div class="insight-box">
+        <p>The annual earnings gap (37&ndash;38%) is roughly double the worker hourly gap (19%),
+        reflecting both lower hours and lower participation among women. IPW reweighting
+        for employment selection adds approximately 1 pp to the hourly gap.</p>
+      </div>
+    </section>
+
+    <!-- ── 4. NLSY Cohort Deep Dive ── -->
+    <section class="section">
+      <div class="section-header">
+        <h2>NLSY Cohort Deep Dive</h2>
+        <span class="section-tag">NLSY79 &middot; NLSY97</span>
+      </div>
+
+      <div class="chart-container">
+        <h3>Raw vs. Adjusted Gap by NLSY Cohort</h3>
+        <p class="chart-subtitle">Controls: occupation sorting, skills/traits, family background</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="nlsyChart"></canvas>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Cohort</th>
+            <th class="num">Raw Gap %</th>
+            <th class="num">Adjusted Gap %</th>
+            <th class="num">Reduction (pp)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>NLSY79 (2000 earnings)</td><td class="num">44.43</td><td class="num">34.10</td><td class="num">&minus;10.33</td></tr>
+          <tr><td>NLSY97 (2019 earnings)</td><td class="num">34.19</td><td class="num">31.89</td><td class="num">&minus;2.30</td></tr>
+        </tbody>
+      </table>
+
+      <div class="insight-box">
+        <p>The raw gap narrowed from 44% (NLSY79, year 2000) to 34% (NLSY97, year 2019).
+        Adding occupation, skills, and family-background controls reduces the gap by 10 pp
+        in NLSY79 but only 2 pp in NLSY97.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>paygap &middot; MIT License</span>
+      <span>Data: ACS PUMS, CPS ASEC, SIPP, ATUS, SCE</span>
+    </div>
+  </footer>
+
+  <script>
+    pgDefaults();
+
+    /* ── Data ── */
+    var atusLabels   = ['Paid work', 'Housework', 'Childcare', 'Commute'];
+    var atusValues   = [-67.96, 31.91, 11.37, -8.07];
+
+    var sceLabels    = ['Expected Offer Wage', 'Reservation Wage'];
+    var sceFemale    = [55.91, 69.78];
+    var sceMale      = [73.37, 91.12];
+
+    var nlsyCohorts  = ['NLSY79 (2000)', 'NLSY97 (2019)'];
+    var nlsyRaw      = [44.43, 34.19];
+    var nlsyAdj      = [34.10, 31.89];
+
+    /* ── Chart instances ── */
+    var charts = [];
+
+    function buildCharts() {
+      charts.forEach(function (ch) { ch.destroy(); });
+      charts = [];
+
+      var c = C();
+
+      /* 1. ATUS Time-Use — horizontal bar, color-coded by sign */
+      var atusColors = atusValues.map(function (v) { return v < 0 ? c.red : c.green; });
+
+      charts.push(new Chart(document.getElementById('atusChart'), {
+        type: 'bar',
+        data: {
+          labels: atusLabels,
+          datasets: [{
+            label: 'Gap (min)',
+            data: atusValues,
+            backgroundColor: atusColors,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function (ctx) {
+                  var v = ctx.parsed.x;
+                  return (v > 0 ? '+' : '') + v.toFixed(1) + ' min';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: { display: true, text: 'Female \u2212 Male (minutes/day)' },
+              ticks: { callback: function (v) { return (v > 0 ? '+' : '') + v; } }
+            }
+          }
+        }
+      }));
+
+      /* 2. SCE Wage Expectations — grouped bar */
+      charts.push(new Chart(document.getElementById('sceChart'), {
+        type: 'bar',
+        data: {
+          labels: sceLabels,
+          datasets: [
+            { label: 'Female', data: sceFemale, backgroundColor: c.accent, borderRadius: 4 },
+            { label: 'Male', data: sceMale, backgroundColor: c.orange, borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: { callbacks: { label: function (ctx) { return ctx.dataset.label + ': $' + ctx.parsed.y.toFixed(2); } } }
+          },
+          scales: {
+            y: { beginAtZero: true, ticks: { callback: function (v) { return '$' + v; } }, title: { display: true, text: '$/hour' } }
+          }
+        }
+      }));
+
+      /* 3. NLSY Cohort — grouped bar (raw vs adjusted) */
+      charts.push(new Chart(document.getElementById('nlsyChart'), {
+        type: 'bar',
+        data: {
+          labels: nlsyCohorts,
+          datasets: [
+            { label: 'Raw Gap %', data: nlsyRaw, backgroundColor: c.red, borderRadius: 4 },
+            { label: 'Adjusted Gap %', data: nlsyAdj, backgroundColor: c.accent, borderRadius: 4 }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: 'top' },
+            tooltip: { callbacks: { label: function (ctx) { return ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(2) + '%'; } } }
+          },
+          scales: {
+            y: { beginAtZero: true, max: 50, ticks: { callback: function (v) { return v + '%'; } }, title: { display: true, text: 'Gender Gap %' } }
+          }
+        }
+      }));
+    }
+
+    buildCharts();
+    window.pgRebuild = buildCharts;
+  </script>
+</body>
+</html>

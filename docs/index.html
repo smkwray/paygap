@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>paygap — U.S. Gender Earnings Gap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header class="site-header"><div class="header-inner">
+  <a href="index.html" class="site-logo">pay<span class="logo-accent">gap</span></a>
+  <div class="header-controls">
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+    <button id="themeToggle" class="theme-toggle" onclick="pgToggle()" aria-label="Toggle theme">&#9790;</button>
+  </div>
+  <nav><ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="trends.html">Trends</a></li>
+    <li><a href="heterogeneity.html">Heterogeneity</a></li>
+    <li><a href="mechanisms.html">Mechanisms</a></li>
+    <li><a href="methods.html">Methods</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+  </ul></nav>
+</div></header>
+
+<main>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>U.S. Gender Earnings Gap</h1>
+    <p class="hero-subtitle">Multi-dataset analysis of the hourly gender pay gap using ACS, CPS ASEC, SIPP, ATUS, and SCE public data. Prime-age (25-54) wage/salary workers, 2015-2023.</p>
+    <div class="stat-row">
+      <div class="stat-card">
+        <span class="stat-number">16.8%</span>
+        <span class="stat-label">Raw Hourly Gap (2023)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">13.2%</span>
+        <span class="stat-label">Adjusted Gap (ACS)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">7M+</span>
+        <span class="stat-label">ACS Observations</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-number">88%</span>
+        <span class="stat-label">Unexplained Share</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key Findings -->
+  <section class="section">
+    <h2>Key Findings</h2>
+    <div class="card-grid">
+
+      <div class="card">
+        <h3>Persistent adjusted gap</h3>
+        <p>After controlling for age, education, race, occupation, industry, hours, and family status, a 13.2% hourly gap remains in 2023 ACS data. CPS shows 17.0% adjusted. The gap has been stable at 13-14% across 8 years of ACS data.</p>
+        <a href="trends.html" class="card-link">Trends &rarr;</a>
+      </div>
+
+      <div class="card">
+        <h3>Job sorting drives largest reduction</h3>
+        <p>Adding occupation and industry controls reduces the raw gap by ~8 percentage points (M2&rarr;M3 step). But 88% of the Oaxaca decomposition remains unexplained even after all observables.</p>
+        <a href="mechanisms.html" class="card-link">Mechanisms &rarr;</a>
+      </div>
+
+      <div class="card">
+        <h3>Gap varies sharply by subgroup</h3>
+        <p>Healthcare 30.6%, Black 5.6%, Military 5.5%. The gap is widest among higher-educated workers (Masters 27.4%) and in sales/office occupations (28.6%).</p>
+        <a href="heterogeneity.html" class="card-link">Heterogeneity &rarr;</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- At a Glance Chart -->
+  <section class="section">
+    <h2>At a Glance</h2>
+    <div class="chart-container">
+      <h3>ACS Raw vs Adjusted Hourly Gap (2015-2023)</h3>
+      <canvas id="chartGlance"></canvas>
+      <p class="chart-note">Prime-age wage/salary workers. M5 controls for age, race, education, state, occupation, industry, hours, work-from-home, commute, marital status, children. No 2020 ACS due to COVID collection issues.</p>
+    </div>
+  </section>
+
+  <!-- Explore -->
+  <section class="section">
+    <h2>Explore</h2>
+    <div class="card-grid card-grid-5">
+      <a href="trends.html" class="card nav-card">
+        <h3>Trends</h3>
+        <p>Year-by-year gaps across ACS and CPS, 2015-2023.</p>
+      </a>
+      <a href="heterogeneity.html" class="card nav-card">
+        <h3>Heterogeneity</h3>
+        <p>Gaps by race, education, occupation, and industry.</p>
+      </a>
+      <a href="mechanisms.html" class="card nav-card">
+        <h3>Mechanisms</h3>
+        <p>Oaxaca decomposition and specification ladders.</p>
+      </a>
+      <a href="methods.html" class="card nav-card">
+        <h3>Methods</h3>
+        <p>Sample construction, variable definitions, models.</p>
+      </a>
+      <a href="faq.html" class="card nav-card">
+        <h3>FAQ</h3>
+        <p>Common questions on measurement and interpretation.</p>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer"><div class="footer-inner"><span>paygap &middot; MIT License</span><span>Data: ACS PUMS, CPS ASEC, SIPP, ATUS, SCE (all public federal)</span></div></footer>
+
+<script>
+(function () {
+  pgDefaults();
+  const c = C();
+
+  function buildCharts() {
+    const c = C();
+
+    // At a Glance: ACS Raw vs Adjusted
+    const ctxGlance = document.getElementById('chartGlance');
+    if (ctxGlance._chart) ctxGlance._chart.destroy();
+    ctxGlance._chart = new Chart(ctxGlance, {
+      type: 'line',
+      data: {
+        labels: ['2015', '2016', '2017', '2018', '2019', '2021', '2022', '2023'],
+        datasets: [
+          {
+            label: 'Raw Gap (%)',
+            data: [18.65, 18.43, 17.83, 17.81, 16.95, 15.94, 17.10, 16.81],
+            borderColor: c.accent,
+            backgroundColor: c.accent + '22',
+            tension: 0.3,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          },
+          {
+            label: 'Adjusted M5 (%)',
+            data: [14.20, 13.65, 13.65, 13.59, 13.86, 14.21, 13.76, 13.23],
+            borderColor: c.orange,
+            backgroundColor: c.orange + '22',
+            tension: 0.3,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: c.text } },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          x: { ticks: { color: c.textSec }, grid: { color: c.grid } },
+          y: {
+            ticks: { color: c.textSec, callback: v => v + '%' },
+            grid: { color: c.grid },
+            title: { display: true, text: 'Gap (%)', color: c.textSec }
+          }
+        }
+      }
+    });
+  }
+
+  buildCharts();
+  window.pgRebuild = buildCharts;
+})();
+</script>
+
+</body>
+</html>

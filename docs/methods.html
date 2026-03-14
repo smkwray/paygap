@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Methods — paygap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+<header class="site-header"><div class="header-inner">
+  <a href="index.html" class="site-logo">pay<span class="logo-accent">gap</span></a>
+  <div class="header-controls">
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+    <button id="themeToggle" class="theme-toggle" onclick="pgToggle()" aria-label="Toggle theme">&#9790;</button>
+  </div>
+  <nav><ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="trends.html">Trends</a></li>
+    <li><a href="heterogeneity.html">Heterogeneity</a></li>
+    <li><a href="mechanisms.html">Mechanisms</a></li>
+    <li><a href="methods.html" class="active">Methods</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+  </ul></nav>
+</div></header>
+
+<main>
+
+  <section class="section">
+    <h1>Methodology</h1>
+    <p class="page-intro">Data sources, sample definitions, estimation approaches, and robustness checks.</p>
+  </section>
+
+  <!-- 1. Data Sources -->
+  <section class="section">
+    <h2>1. Data Sources</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Dataset</th>
+          <th>Agency</th>
+          <th>Years</th>
+          <th>Role</th>
+          <th class="num">N per Year</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="highlight">ACS PUMS</td>
+          <td>Census Bureau</td>
+          <td>2015-2019, 2021-2023</td>
+          <td>Primary wage estimates</td>
+          <td class="num">~900K</td>
+        </tr>
+        <tr>
+          <td class="highlight">CPS ASEC</td>
+          <td>Census/BLS</td>
+          <td>2015-2023</td>
+          <td>Cross-check + selection</td>
+          <td class="num">~50-60K</td>
+        </tr>
+        <tr>
+          <td class="highlight">SIPP</td>
+          <td>Census Bureau</td>
+          <td>2023</td>
+          <td>Additional cross-check</td>
+          <td class="num">182,658</td>
+        </tr>
+        <tr>
+          <td class="highlight">ATUS</td>
+          <td>BLS</td>
+          <td>Pooled</td>
+          <td>Time-use mechanisms</td>
+          <td class="num">Various</td>
+        </tr>
+        <tr>
+          <td class="highlight">SCE</td>
+          <td>NY Fed</td>
+          <td>Public chart series</td>
+          <td>Wage expectations</td>
+          <td class="num">Various</td>
+        </tr>
+        <tr>
+          <td class="highlight">NLSY79/97</td>
+          <td>BLS</td>
+          <td>Cohort</td>
+          <td>Background + skills</td>
+          <td class="num">~2,500</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 2. Sample Definition -->
+  <section class="section">
+    <h2>2. Sample Definition</h2>
+    <ul>
+      <li>Age 25-54 (prime working age)</li>
+      <li>Wage/salary workers only</li>
+      <li>Positive hours and positive pay</li>
+      <li>Excludes active-duty military and self-employed</li>
+    </ul>
+  </section>
+
+  <!-- 3. Estimation Approaches -->
+  <section class="section">
+    <h2>3. Estimation Approaches</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="highlight">Sequential OLS (M0-M5)</td>
+          <td>Progressively adds control blocks; primary approach</td>
+        </tr>
+        <tr>
+          <td class="highlight">Oaxaca-Blinder</td>
+          <td>Decomposes gap into explained and unexplained components</td>
+        </tr>
+        <tr>
+          <td class="highlight">DML</td>
+          <td>Double/debiased ML with elastic net; sensitivity check</td>
+        </tr>
+        <tr>
+          <td class="highlight">IPW</td>
+          <td>Inverse probability weighting for employment selection</td>
+        </tr>
+        <tr>
+          <td class="highlight">SDR</td>
+          <td>Successive-difference replication for survey uncertainty</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 4. ACS Control Blocks -->
+  <section class="section">
+    <h2>4. ACS Control Blocks</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Block</th>
+          <th>Controls Added</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="highlight">M0</td>
+          <td>Female indicator only</td>
+        </tr>
+        <tr>
+          <td class="highlight">M1</td>
+          <td>+ age, age&sup2;, race/ethnicity, education</td>
+        </tr>
+        <tr>
+          <td class="highlight">M2</td>
+          <td>+ state</td>
+        </tr>
+        <tr>
+          <td class="highlight">M3</td>
+          <td>+ occupation, industry, class of worker</td>
+        </tr>
+        <tr>
+          <td class="highlight">M4</td>
+          <td>+ usual hours, work from home, commute</td>
+        </tr>
+        <tr>
+          <td class="highlight">M5</td>
+          <td>+ marital status, children, children under 5</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 5. Survey Uncertainty -->
+  <section class="section">
+    <h2>5. Survey Uncertainty</h2>
+    <ul>
+      <li>ACS: 80 replicate weights, successive-difference replication</li>
+      <li>Average 90% margin of error: 0.29 percentage points</li>
+      <li>Raw gap SE: ~0.19 pp (2023)</li>
+      <li>M5 female coefficient SE: 0.0017</li>
+    </ul>
+  </section>
+
+  <!-- 6. Robustness Checks -->
+  <section class="section">
+    <h2>6. Robustness Checks</h2>
+    <ul>
+      <li>Employment selection (IPW reweighting)</li>
+      <li>DML with elastic net</li>
+      <li>Oaxaca decomposition</li>
+      <li>SIPP validation</li>
+      <li>CPS cross-check</li>
+      <li>ACS family field correction</li>
+      <li>Year-by-year stability (8 ACS years)</li>
+      <li>Quantile regression</li>
+    </ul>
+  </section>
+
+  <!-- 7. Limitations -->
+  <section class="section">
+    <h2>7. Limitations</h2>
+    <ul>
+      <li>No firm/employer effects</li>
+      <li>No tenure or work-history interruption data</li>
+      <li>No direct bargaining/negotiation variables</li>
+      <li>No within-occupation task specialization</li>
+      <li>No schedule flexibility measures</li>
+      <li>ACS 2020 unavailable due to COVID collection issues</li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="site-footer"><div class="footer-inner"><span>paygap &middot; MIT License</span><span>Data: ACS PUMS, CPS ASEC, SIPP, ATUS, SCE</span></div></footer>
+
+</body>
+</html>

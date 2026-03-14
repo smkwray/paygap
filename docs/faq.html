@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>FAQ — paygap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+
+<header class="site-header"><div class="header-inner">
+  <a href="index.html" class="site-logo">pay<span class="logo-accent">gap</span></a>
+  <div class="header-controls">
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+    <button id="themeToggle" class="theme-toggle" onclick="pgToggle()" aria-label="Toggle theme">&#9790;</button>
+  </div>
+  <nav><ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="trends.html">Trends</a></li>
+    <li><a href="heterogeneity.html">Heterogeneity</a></li>
+    <li><a href="mechanisms.html">Mechanisms</a></li>
+    <li><a href="methods.html">Methods</a></li>
+    <li><a href="faq.html" class="active">FAQ</a></li>
+  </ul></nav>
+</div></header>
+
+<main>
+
+  <section class="section">
+    <h1>FAQ</h1>
+    <p class="page-intro">Common questions about the gender earnings gap analysis.</p>
+  </section>
+
+  <section class="section">
+
+    <div class="faq-item open">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">What is the gender pay gap?</button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <p>The percentage difference in hourly earnings between male and female workers. In 2023 ACS data, women earn 16.8% less per hour than men among prime-age wage/salary workers (raw gap). After controlling for observable characteristics, the adjusted gap is 13.2%.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">What does "adjusted" mean?</button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <p>The gap after statistically controlling for age, race, education, state, occupation, industry, hours worked, commute, work-from-home status, marital status, and children. It represents the residual difference not explained by these observable factors.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">Why are there different numbers across datasets?</button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <p>ACS (16.8% raw, 13.2% adjusted), CPS (15.8% raw, 17.0% adjusted), and SIPP (15.1% raw, 10.9% adjusted) use different survey designs, sampling frames, and variable definitions. The raw gaps are similar; adjusted gaps vary more because each dataset has different available controls.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">What drives the largest reduction in the gap?</button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <p>Occupation and industry controls (the M2&rarr;M3 step) reduce the gap by about 8 percentage points in ACS data. This is the single largest observable channel.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">What is the Oaxaca decomposition?</button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <p>A statistical technique that decomposes the total gap into an "explained" portion (attributable to differences in characteristics like education or occupation) and an "unexplained" portion (residual). In 2023 ACS data, 88% of the gap is unexplained.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">Why did the unexplained share jump after 2019?</button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <p>The total gap stayed stable, but the explained component collapsed. This appears to be driven by changes in the observable characteristic distributions (convergence in education, occupation) rather than a structural shift in discrimination.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">What do time-use data show?</button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <p>ATUS data shows women spend 68 fewer minutes per day on paid work but 43 more minutes on housework and childcare. The net gap (paid + unpaid) is about 25 minutes/day, with women doing less total paid work but more total work including unpaid labor.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">Does the gap vary by race?</button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <p>Substantially. The raw gap is 19.3% among White non-Hispanic workers, 20.4% among Asian workers, but only 5.6% among Black workers. This reflects differences in both male and female earnings distributions across racial groups.</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">Does education reduce the gap?</button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <p>No. The gap generally widens with education, peaking at the Master's degree level (27.4%). Only at the doctorate level does it narrow slightly (17.7%).</p>
+      </div></div>
+    </div>
+
+    <div class="faq-item">
+      <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">Is the code open source?</button>
+      <div class="faq-answer"><div class="faq-answer-inner">
+        <p>Yes, MIT License. All data sources are free, public U.S. federal datasets (ACS PUMS, CPS ASEC, SIPP, ATUS, SCE).</p>
+      </div></div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer class="site-footer"><div class="footer-inner"><span>paygap &middot; MIT License</span><span>Data: ACS PUMS, CPS ASEC, SIPP, ATUS, SCE</span></div></footer>
+
+</body>
+</html>

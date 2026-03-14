@@ -1,5 +1,7 @@
 # U.S. Gender Earnings Gap — Public Data Analysis
 
+**[Browse the interactive results site](https://smkwray.github.io/paygap/)**
+
 This repo estimates the male/female hourly earnings gap in the United States using
 publicly available federal survey data. It runs multiple estimation methods across
 multiple datasets and years, reports both unadjusted and adjusted gaps, and

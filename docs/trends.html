@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Trends — paygap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header class="site-header"><div class="header-inner">
+  <a href="index.html" class="site-logo">pay<span class="logo-accent">gap</span></a>
+  <div class="header-controls">
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+    <button id="themeToggle" class="theme-toggle" onclick="pgToggle()" aria-label="Toggle theme">&#9790;</button>
+  </div>
+  <nav><ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="trends.html" class="active">Trends</a></li>
+    <li><a href="heterogeneity.html">Heterogeneity</a></li>
+    <li><a href="mechanisms.html">Mechanisms</a></li>
+    <li><a href="methods.html">Methods</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+  </ul></nav>
+</div></header>
+
+<main>
+
+  <section class="section">
+    <h1>Gap Trends 2015-2023</h1>
+    <p class="page-intro">Year-by-year gender earnings gaps across ACS and CPS, with Oaxaca decomposition trends.</p>
+  </section>
+
+  <!-- 1. ACS Hourly Gap Trend -->
+  <section class="section">
+    <h2>1. ACS Hourly Gap Trend</h2>
+    <div class="chart-container">
+      <h3>ACS Raw vs Adjusted Hourly Gap (2015-2023)</h3>
+      <canvas id="chartAcsTrend"></canvas>
+      <p class="chart-note">Prime-age wage/salary workers. M5 controls for age, race, education, state, occupation, industry, hours, work-from-home, commute, marital status, children. No 2020 ACS due to COVID collection issues.</p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Year</th><th>Raw %</th><th>M5 Adjusted %</th><th>N (approx.)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2015</td><td>18.65</td><td>14.20</td><td>~900K</td></tr>
+          <tr><td>2016</td><td>18.43</td><td>13.65</td><td>~900K</td></tr>
+          <tr><td>2017</td><td>17.83</td><td>13.65</td><td>~900K</td></tr>
+          <tr><td>2018</td><td>17.81</td><td>13.59</td><td>~900K</td></tr>
+          <tr><td>2019</td><td>16.95</td><td>13.86</td><td>~900K</td></tr>
+          <tr><td>2021</td><td>15.94</td><td>14.21</td><td>~900K</td></tr>
+          <tr><td>2022</td><td>17.10</td><td>13.76</td><td>~900K</td></tr>
+          <tr><td>2023</td><td>16.81</td><td>13.23</td><td>~900K</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 2. CPS ASEC Trend -->
+  <section class="section">
+    <h2>2. CPS ASEC Trend</h2>
+    <div class="chart-container">
+      <h3>CPS ASEC Raw vs Adjusted Gap (2015-2023)</h3>
+      <canvas id="chartCpsTrend"></canvas>
+      <p class="chart-note">CPS ASEC includes 2020. Adjusted model includes all available CPS controls.</p>
+    </div>
+  </section>
+
+  <!-- 3. Cross-Dataset Comparison -->
+  <section class="section">
+    <h2>3. Cross-Dataset Comparison (2023)</h2>
+    <div class="chart-container">
+      <h3>2023 Gap Comparison Across Datasets</h3>
+      <canvas id="chartCrossDataset"></canvas>
+    </div>
+  </section>
+
+  <!-- 4. Oaxaca Decomposition Trend -->
+  <section class="section">
+    <h2>4. Oaxaca Decomposition Trend</h2>
+    <div class="chart-container">
+      <h3>Oaxaca: Explained vs Unexplained Share (ACS)</h3>
+      <canvas id="chartOaxaca"></canvas>
+    </div>
+    <div class="insight-box">
+      <p>After 2019, the unexplained share rises sharply (74% &rarr; 88-94%) while the total gap stays stable. This reflects a collapse in the explained component, not an explosion in the total gap.</p>
+    </div>
+  </section>
+
+  <!-- 5. ACS Specification Ladder -->
+  <section class="section">
+    <h2>5. ACS Specification Ladder (2023)</h2>
+    <div class="chart-container">
+      <h3>Sequential Control Blocks (ACS 2023)</h3>
+      <canvas id="chartLadder"></canvas>
+    </div>
+    <div class="insight-box">
+      <p>The M2&rarr;M3 step (adding occupation and industry) drives the largest gap reduction: ~8 percentage points. Family controls (M5) add only 0.06 pp.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer"><div class="footer-inner"><span>paygap &middot; MIT License</span><span>Data: ACS PUMS, CPS ASEC, SIPP, ATUS, SCE (all public federal)</span></div></footer>
+
+<script>
+(function () {
+  pgDefaults();
+  const c = C();
+
+  function buildCharts() {
+    const c = C();
+
+    // Helper: destroy previous chart instance
+    function init(id) {
+      const el = document.getElementById(id);
+      if (el._chart) el._chart.destroy();
+      return el;
+    }
+
+    /* ------- 1. ACS Hourly Gap Trend ------- */
+    const ctxAcs = init('chartAcsTrend');
+    ctxAcs._chart = new Chart(ctxAcs, {
+      type: 'line',
+      data: {
+        labels: ['2015', '2016', '2017', '2018', '2019', '2021', '2022', '2023'],
+        datasets: [
+          {
+            label: 'Raw Gap (%)',
+            data: [18.65, 18.43, 17.83, 17.81, 16.95, 15.94, 17.10, 16.81],
+            borderColor: c.accent,
+            backgroundColor: c.accent + '22',
+            tension: 0.3,
+            pointRadius: 5,
+            pointHoverRadius: 7
+          },
+          {
+            label: 'Adjusted M5 (%)',
+            data: [14.20, 13.65, 13.65, 13.59, 13.86, 14.21, 13.76, 13.23],
+            borderColor: c.orange,
+            backgroundColor: c.orange + '22',
+            tension: 0.3,
+            pointRadius: 5,
+            pointHoverRadius: 7
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: c.text } },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          x: { ticks: { color: c.textSec }, grid: { color: c.grid } },
+          y: {
+            ticks: { color: c.textSec, callback: v => v + '%' },
+            grid: { color: c.grid },
+            title: { display: true, text: 'Gap (%)', color: c.textSec }
+          }
+        }
+      }
+    });
+
+    /* ------- 2. CPS ASEC Trend ------- */
+    const ctxCps = init('chartCpsTrend');
+    ctxCps._chart = new Chart(ctxCps, {
+      type: 'line',
+      data: {
+        labels: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023'],
+        datasets: [
+          {
+            label: 'Raw M0 (%)',
+            data: [20.59, 19.64, 20.39, 18.88, 17.11, 17.51, 17.64, 16.15, 15.77],
+            borderColor: c.accent,
+            backgroundColor: c.accent + '22',
+            tension: 0.3,
+            pointRadius: 5,
+            pointHoverRadius: 7
+          },
+          {
+            label: 'Adjusted Full (%)',
+            data: [20.16, 20.26, 20.78, 20.71, 19.46, 18.40, 19.27, 17.49, 16.96],
+            borderColor: c.orange,
+            backgroundColor: c.orange + '22',
+            tension: 0.3,
+            pointRadius: 5,
+            pointHoverRadius: 7
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: c.text } },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          x: { ticks: { color: c.textSec }, grid: { color: c.grid } },
+          y: {
+            ticks: { color: c.textSec, callback: v => v + '%' },
+            grid: { color: c.grid },
+            title: { display: true, text: 'Gap (%)', color: c.textSec }
+          }
+        }
+      }
+    });
+
+    /* ------- 3. Cross-Dataset Comparison (2023) ------- */
+    const ctxCross = init('chartCrossDataset');
+    ctxCross._chart = new Chart(ctxCross, {
+      type: 'bar',
+      data: {
+        labels: ['ACS', 'CPS', 'SIPP'],
+        datasets: [
+          {
+            label: 'Raw (%)',
+            data: [16.81, 15.77, 15.09],
+            backgroundColor: c.accent
+          },
+          {
+            label: 'Adjusted (%)',
+            data: [13.23, 16.96, 10.91],
+            backgroundColor: c.orange
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: c.text } },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          x: { ticks: { color: c.textSec }, grid: { color: c.grid } },
+          y: {
+            ticks: { color: c.textSec, callback: v => v + '%' },
+            grid: { color: c.grid },
+            title: { display: true, text: 'Gap (%)', color: c.textSec },
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    /* ------- 4. Oaxaca Decomposition Trend ------- */
+    const ctxOax = init('chartOaxaca');
+    ctxOax._chart = new Chart(ctxOax, {
+      type: 'bar',
+      data: {
+        labels: ['2015', '2016', '2017', '2018', '2019', '2021', '2022', '2023'],
+        datasets: [
+          {
+            label: 'Explained (%)',
+            data: [26.47, 25.48, 26.13, 25.62, 18.23, 6.38, 11.52, 12.19],
+            backgroundColor: c.teal
+          },
+          {
+            label: 'Unexplained (%)',
+            data: [73.53, 74.52, 73.87, 74.38, 81.77, 93.62, 88.48, 87.81],
+            backgroundColor: c.red
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: c.text } },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          x: { stacked: true, ticks: { color: c.textSec }, grid: { color: c.grid } },
+          y: {
+            stacked: true,
+            ticks: { color: c.textSec, callback: v => v + '%' },
+            grid: { color: c.grid },
+            title: { display: true, text: 'Share of Gap (%)', color: c.textSec },
+            max: 100
+          }
+        }
+      }
+    });
+
+    /* ------- 5. ACS Specification Ladder (2023) ------- */
+    const ctxLad = init('chartLadder');
+    ctxLad._chart = new Chart(ctxLad, {
+      type: 'bar',
+      data: {
+        labels: [
+          'M0 (female only)',
+          'M1 (+ age, race, education)',
+          'M2 (+ state)',
+          'M3 (+ occupation, industry, class)',
+          'M4 (+ hours, WFH, commute)',
+          'M5 (+ marital, children)'
+        ],
+        datasets: [{
+          label: 'Gap (%)',
+          data: [16.81, 20.37, 20.17, 12.10, 13.17, 13.23],
+          backgroundColor: [
+            c.accent, c.purple, c.purple, c.green, c.orange, c.teal
+          ],
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: { label: ctx => ctx.parsed.x + '%' }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: c.textSec, callback: v => v + '%' },
+            grid: { color: c.grid },
+            title: { display: true, text: 'Gap (%)', color: c.textSec },
+            beginAtZero: true
+          },
+          y: {
+            ticks: { color: c.textSec },
+            grid: { color: c.grid }
+          }
+        }
+      }
+    });
+  }
+
+  buildCharts();
+  window.pgRebuild = buildCharts;
+})();
+</script>
+
+</body>
+</html>

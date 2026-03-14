@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Heterogeneity &mdash; paygap</title>
+  <script src="js/theme.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="site-logo">pay<span class="logo-accent">gap</span></a>
+      <div class="header-controls">
+        <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+        <button id="themeToggle" class="theme-toggle" onclick="pgToggle()" aria-label="Toggle theme">&#9790;</button>
+      </div>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="trends.html">Trends</a></li>
+          <li><a href="heterogeneity.html" class="active">Heterogeneity</a></li>
+          <li><a href="mechanisms.html">Mechanisms</a></li>
+          <li><a href="methods.html">Methods</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="content">
+    <h1>Gap Heterogeneity</h1>
+    <p class="page-intro">
+      The gender earnings gap varies substantially across occupation, race/ethnicity, education,
+      and region. All figures are raw hourly gaps from 2023 ACS.
+    </p>
+
+    <!-- ── 1. By Occupation ── -->
+    <section class="section">
+      <div class="section-header">
+        <h2>By Occupation</h2>
+        <span class="section-tag">ACS 2023</span>
+      </div>
+
+      <div class="chart-container">
+        <h3>Raw Gap by Broad Occupation (ACS 2023)</h3>
+        <p class="chart-subtitle">Horizontal bars sorted by gap magnitude</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="occChart"></canvas>
+        </div>
+        <p class="chart-note">Gap = (male median hourly &minus; female median hourly) / male median hourly &times; 100.</p>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Occupation</th>
+            <th class="num">Raw Gap %</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Healthcare</td><td class="num">30.59</td></tr>
+          <tr><td>Sales / Office</td><td class="num">28.63</td></tr>
+          <tr><td>Management / Professional</td><td class="num">25.27</td></tr>
+          <tr><td>Service</td><td class="num">20.06</td></tr>
+          <tr><td>Military</td><td class="num">5.47</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ── 2. By Race / Ethnicity ── -->
+    <section class="section">
+      <div class="section-header">
+        <h2>By Race / Ethnicity</h2>
+        <span class="section-tag">ACS 2023</span>
+      </div>
+
+      <div class="chart-container">
+        <h3>Raw Gap by Race / Ethnicity</h3>
+        <p class="chart-subtitle">Horizontal bars sorted by gap magnitude</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="raceChart"></canvas>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Race / Ethnicity</th>
+            <th class="num">Raw Gap %</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Asian</td><td class="num">20.39</td></tr>
+          <tr><td>White non-Hispanic</td><td class="num">19.30</td></tr>
+          <tr><td>Hispanic</td><td class="num">13.04</td></tr>
+          <tr><td>AIAN</td><td class="num">10.06</td></tr>
+          <tr><td>Black</td><td class="num">5.64</td></tr>
+        </tbody>
+      </table>
+
+      <div class="insight-box">
+        <p>The gap is widest among Asian (20.4%) and White non-Hispanic (19.3%) workers.
+        Among Black workers, the raw gap is only 5.6%&mdash;reflecting both lower male earnings
+        and relatively higher female earnings in that group.</p>
+      </div>
+    </section>
+
+    <!-- ── 3. By Education ── -->
+    <section class="section">
+      <div class="section-header">
+        <h2>By Education</h2>
+        <span class="section-tag">ACS 2023</span>
+      </div>
+
+      <div class="chart-container">
+        <h3>Raw Gap by Education Level</h3>
+        <p class="chart-subtitle">Bar chart by highest degree attained</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="eduChart"></canvas>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Education Level</th>
+            <th class="num">Raw Gap %</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Less than HS</td><td class="num">18.10</td></tr>
+          <tr><td>HS Diploma</td><td class="num">19.30</td></tr>
+          <tr><td>Some College</td><td class="num">22.09</td></tr>
+          <tr><td>Associate&rsquo;s</td><td class="num">19.01</td></tr>
+          <tr><td>Bachelor&rsquo;s</td><td class="num">23.15</td></tr>
+          <tr><td>Master&rsquo;s</td><td class="num">27.42</td></tr>
+          <tr><td>Professional</td><td class="num">20.55</td></tr>
+          <tr><td>Doctorate</td><td class="num">17.69</td></tr>
+        </tbody>
+      </table>
+
+      <div class="insight-box">
+        <p>The gap is widest among workers with a Master&rsquo;s degree (27.4%) and narrowest
+        among doctorate holders (17.7%). The gap generally widens with education through
+        the Master&rsquo;s level.</p>
+      </div>
+    </section>
+
+    <!-- ── 4. By Region ── -->
+    <section class="section">
+      <div class="section-header">
+        <h2>By Region</h2>
+        <span class="section-tag">ACS 2023</span>
+      </div>
+
+      <div class="chart-container">
+        <h3>Raw Gap by Census Region</h3>
+        <p class="chart-subtitle">Four Census regions</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="regionChart"></canvas>
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Region</th>
+            <th class="num">Raw Gap %</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>South</td><td class="num">17.49</td></tr>
+          <tr><td>Midwest</td><td class="num">16.90</td></tr>
+          <tr><td>West</td><td class="num">16.06</td></tr>
+          <tr><td>Northeast</td><td class="num">15.93</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ── 5. Method Comparison ── -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Method Comparison (2023)</h2>
+        <span class="section-tag">ACS &middot; CPS &middot; SIPP</span>
+      </div>
+
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th class="num">ACS</th>
+            <th class="num">CPS</th>
+            <th class="num">SIPP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Raw gap %</td><td class="num">16.81</td><td class="num">15.77</td><td class="num">15.09</td></tr>
+          <tr><td>OLS adjusted %</td><td class="num">13.23</td><td class="num">16.96</td><td class="num">10.91</td></tr>
+          <tr><td>DML adjusted %</td><td class="num">17.88</td><td class="num">19.61</td><td class="num">12.89</td></tr>
+          <tr><td>Oaxaca unexplained %</td><td class="num">87.81</td><td class="num">90.88</td><td class="num">85.60</td></tr>
+        </tbody>
+      </table>
+
+      <div class="insight-box">
+        <p>DML (double/debiased machine learning with elastic net) produces larger adjusted
+        gaps than OLS in all three datasets, suggesting OLS may understate the residual gap.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <span>paygap &middot; MIT License</span>
+      <span>Data: ACS PUMS, CPS ASEC, SIPP, ATUS, SCE</span>
+    </div>
+  </footer>
+
+  <script>
+    pgDefaults();
+
+    /* ── Data ── */
+    var occLabels = ['Healthcare', 'Sales / Office', 'Mgmt / Professional', 'Service', 'Military'];
+    var occValues = [30.59, 28.63, 25.27, 20.06, 5.47];
+
+    var raceLabels = ['Asian', 'White non-Hisp.', 'Hispanic', 'AIAN', 'Black'];
+    var raceValues = [20.39, 19.30, 13.04, 10.06, 5.64];
+
+    var eduLabels = ['< HS', 'HS Diploma', 'Some College', "Associate's", "Bachelor's", "Master's", 'Professional', 'Doctorate'];
+    var eduValues = [18.10, 19.30, 22.09, 19.01, 23.15, 27.42, 20.55, 17.69];
+
+    var regionLabels = ['South', 'Midwest', 'West', 'Northeast'];
+    var regionValues = [17.49, 16.90, 16.06, 15.93];
+
+    /* ── Chart instances ── */
+    var charts = [];
+
+    function buildCharts() {
+      charts.forEach(function (ch) { ch.destroy(); });
+      charts = [];
+
+      var c = C();
+
+      /* 1. Occupation — horizontal bar, sorted descending */
+      charts.push(new Chart(document.getElementById('occChart'), {
+        type: 'bar',
+        data: {
+          labels: occLabels,
+          datasets: [{
+            label: 'Raw Gap %',
+            data: occValues,
+            backgroundColor: c.palette.slice(0, occLabels.length),
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: function (ctx) { return ctx.parsed.x.toFixed(2) + '%'; } } }
+          },
+          scales: {
+            x: { beginAtZero: true, max: 35, ticks: { callback: function (v) { return v + '%'; } }, title: { display: true, text: 'Raw Gap %' } }
+          }
+        }
+      }));
+
+      /* 2. Race / Ethnicity — horizontal bar, sorted descending */
+      charts.push(new Chart(document.getElementById('raceChart'), {
+        type: 'bar',
+        data: {
+          labels: raceLabels,
+          datasets: [{
+            label: 'Raw Gap %',
+            data: raceValues,
+            backgroundColor: c.palette.slice(0, raceLabels.length),
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          indexAxis: 'y',
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: function (ctx) { return ctx.parsed.x.toFixed(2) + '%'; } } }
+          },
+          scales: {
+            x: { beginAtZero: true, max: 25, ticks: { callback: function (v) { return v + '%'; } }, title: { display: true, text: 'Raw Gap %' } }
+          }
+        }
+      }));
+
+      /* 3. Education — vertical bar */
+      charts.push(new Chart(document.getElementById('eduChart'), {
+        type: 'bar',
+        data: {
+          labels: eduLabels,
+          datasets: [{
+            label: 'Raw Gap %',
+            data: eduValues,
+            backgroundColor: c.accent,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: function (ctx) { return ctx.parsed.y.toFixed(2) + '%'; } } }
+          },
+          scales: {
+            y: { beginAtZero: true, max: 32, ticks: { callback: function (v) { return v + '%'; } }, title: { display: true, text: 'Raw Gap %' } }
+          }
+        }
+      }));
+
+      /* 4. Region — vertical bar */
+      charts.push(new Chart(document.getElementById('regionChart'), {
+        type: 'bar',
+        data: {
+          labels: regionLabels,
+          datasets: [{
+            label: 'Raw Gap %',
+            data: regionValues,
+            backgroundColor: c.palette.slice(0, regionLabels.length),
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: function (ctx) { return ctx.parsed.y.toFixed(2) + '%'; } } }
+          },
+          scales: {
+            y: { beginAtZero: true, max: 22, ticks: { callback: function (v) { return v + '%'; } }, title: { display: true, text: 'Raw Gap %' } }
+          }
+        }
+      }));
+    }
+
+    buildCharts();
+    window.pgRebuild = buildCharts;
+  </script>
+</body>
+</html>

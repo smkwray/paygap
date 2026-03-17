@@ -231,29 +231,44 @@ read as mechanism-sensitive accounting, not a pre-market explanation.
 <details>
 <summary><strong>Reproductive-burden extension</strong></summary>
 
-The reproductive extension adds three model steps beyond the baseline family controls:
+The baseline analysis controls for family status (married, number of children) but
+treats all parents the same. This extension asks a sharper question: does the gap
+vary by *reproductive stage* — whether someone recently gave birth, has a toddler
+vs. a school-age child, or lives with a same-sex vs. opposite-sex partner?
 
-| Step | Controls Added | Pooled Coef | Gap % |
-|------|----------------|------------:|------:|
-| Family (baseline) | marital, children | −0.147 | 13.7 |
-| Reproductive stage | + reproductive stage, couple type, birth | −0.114 | 10.8 |
-| Job context | + O\*NET rigidity, autonomy, etc. | −0.115 | 10.8 |
-| Interactions | + female × reproductive × job interactions | −0.006\* | 0.6\* |
+**What it adds to the specification ladder:**
 
-\*The main female effect at the interactions step is not significant (p=0.63) — the gap
-is redistributed to interaction terms, principally female × job rigidity (−0.121) and
-female × recent marriage (−0.100).
+| Step | What it controls for | Adjusted gap |
+|------|---------------------|-------------:|
+| Family (baseline) | Marital status, number of children | 13.7% |
+| + Reproductive stage | Recent birth, child age, couple type | 10.8% |
+| + Job context | O\*NET schedule rigidity, autonomy, physical demands | 10.8% |
+| + Interactions | Female × reproductive × job-context cross-terms | \* |
 
-Additional outputs:
+\*At the interaction step, the baseline female penalty becomes statistically
+insignificant (p=0.63) because it is absorbed by specific channels: women in
+rigid-schedule jobs face a 12.1 pp additional penalty, and recently married women
+face a 10.0 pp penalty. The gap doesn't disappear — it moves into these pathways.
+
+**Supporting analyses:**
+
 - **Fertility-risk gradient:** Among childless women 25–44, those with the highest
-  predicted fertility risk earn $12.62/hr less than those with the lowest risk —
-  before any children are born.
+  predicted fertility risk already earn $12.62/hr less than those with the lowest —
+  before any children are born. This is consistent with anticipatory sorting or
+  employer statistical discrimination, though neither can be isolated here.
 - **Same-sex placebo:** Lesbian married women earn 12% more than comparable
-  heterosexual married women after full controls.
-- **ATUS by stage:** Mothers of children under 6 work 149 fewer paid minutes/day
-  than men — 2× the overall gap.
-- **SIPP robustness:** Stage gaps range from −1.2% (childless unpartnered) to
-  −26.4% (mothers 6–17).
+  heterosexual married women after full controls — consistent with different
+  household specialization patterns in same-sex couples.
+- **Time-use evidence (ATUS):** Mothers of children under 6 work 149 fewer paid
+  minutes per day than fathers — more than double the overall gender gap in paid
+  work time. Childcare and housework burdens scale sharply with young children.
+- **SIPP cross-check:** Reproductive-stage gaps in SIPP range from −1.2% (childless
+  unpartnered) to −26.4% (mothers of school-age children), directionally matching
+  ACS despite a different survey design.
+
+All results are descriptive. They show how much of the gap is statistically
+associated with reproductive-burden channels, not whether employers or workers
+drive the pattern.
 
 Outputs: `results/repro/`, `reports/atus_repro_mechanisms.md`
 Run: `python scripts/run_repro_extension.py`

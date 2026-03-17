@@ -27,6 +27,10 @@ inventory/inventory_paths.yaml
 diagnostics/
 results/diagnostics/
 
+# Google Drive conflict copies
+*\ 2.*
+*\ 2/
+
 # Data (large files)
 data/raw/
 data/processed/*.parquet

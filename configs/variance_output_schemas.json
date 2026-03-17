@@ -1,0 +1,212 @@
+{
+  "files": {
+    "results/variance/acs_gap_ladder_extended.csv": [
+      "model",
+      "female_coef",
+      "female_se",
+      "female_pvalue",
+      "r_squared",
+      "n_obs",
+      "controls"
+    ],
+    "results/variance/acs_gap_ladder_by_year.csv": [
+      "year",
+      "model",
+      "female_coef",
+      "female_se",
+      "female_pvalue",
+      "r_squared",
+      "n_obs",
+      "controls"
+    ],
+    "results/variance/acs_fertility_risk_penalty.csv": [
+      "sample",
+      "outcome",
+      "model",
+      "term",
+      "coef",
+      "se",
+      "pvalue",
+      "n_obs",
+      "r_squared"
+    ],
+    "results/variance/acs_fertility_risk_by_quartile.csv": [
+      "sample",
+      "outcome",
+      "risk_quartile",
+      "mean_outcome",
+      "n_obs",
+      "weighted_n"
+    ],
+    "results/variance/acs_same_sex_placebos.csv": [
+      "sample",
+      "same_sex_couple_household",
+      "n_obs",
+      "mean_hourly_wage",
+      "mean_hours",
+      "mean_recent_birth"
+    ],
+    "results/variance/acs_variance_suite.csv": [
+      "suite",
+      "outcome",
+      "stratifier",
+      "stratum",
+      "metric",
+      "value",
+      "n_obs"
+    ],
+    "results/variance/acs_tail_metrics.csv": [
+      "suite",
+      "outcome",
+      "stratifier",
+      "stratum",
+      "metric",
+      "value",
+      "n_obs"
+    ],
+    "results/variance/acs_reproductive_dispersion.csv": [
+      "suite",
+      "outcome",
+      "stratifier",
+      "stratum",
+      "metric",
+      "value",
+      "n_obs"
+    ],
+    "results/variance/acs_onet_dispersion.csv": [
+      "suite",
+      "outcome",
+      "stratifier",
+      "stratum",
+      "metric",
+      "value",
+      "n_obs"
+    ],
+    "results/variance/acs_occupation_dispersion.csv": [
+      "suite",
+      "outcome",
+      "stratifier",
+      "stratum",
+      "metric",
+      "value",
+      "n_obs",
+      "occupation_harmonized_code",
+      "occupation_harmonized_title",
+      "occupation_harmonization_type",
+      "occupation_title_vintage",
+      "soc_major_group",
+      "soc_major_label"
+    ],
+    "results/variance/acs_occupation_variability_leaders.csv": [
+      "leaderboard",
+      "rank",
+      "outcome",
+      "occupation_harmonized_code",
+      "occupation_harmonized_title",
+      "occupation_harmonization_type",
+      "occupation_title_vintage",
+      "soc_major_group",
+      "soc_major_label",
+      "n_obs",
+      "raw_variance_ratio",
+      "residual_variance_ratio",
+      "female_p90_p10",
+      "male_p90_p10",
+      "female_top10_share",
+      "male_top10_share",
+      "female_top5_share",
+      "male_top5_share",
+      "raw_variance_gap_from_parity",
+      "residual_variance_gap_from_parity",
+      "top10_share_gap_pp",
+      "top5_share_gap_pp"
+    ],
+    "results/variance/acs_selection_corrected_variance.csv": [
+      "status",
+      "reason",
+      "suite",
+      "outcome",
+      "stratifier",
+      "stratum",
+      "metric",
+      "value",
+      "n_obs"
+    ],
+    "results/diagnostics/variance_occupation_harmonization_map.csv": [
+      "occupation_code_raw",
+      "occupation_title_raw",
+      "occupation_title_vintage",
+      "occupation_mapping_regime",
+      "occupation_harmonized_code",
+      "occupation_harmonized_title",
+      "occupation_harmonization_type",
+      "soc_major_group",
+      "soc_major_label"
+    ],
+    "results/variance/acs_tail_contrast_summary.csv": [
+      "suite",
+      "outcome",
+      "stratifier",
+      "stratum",
+      "n_obs",
+      "raw_variance_ratio",
+      "residual_variance_ratio",
+      "female_top10_share",
+      "male_top10_share",
+      "female_top5_share",
+      "male_top5_share",
+      "top10_share_gap_pp",
+      "top5_share_gap_pp",
+      "female_to_male_top10_ratio",
+      "female_to_male_top5_ratio"
+    ],
+    "results/variance/acs_year_regime_variance_summary.csv": [
+      "suite",
+      "outcome",
+      "metric",
+      "regime",
+      "weighted_mean_value",
+      "n_obs_total"
+    ],
+    "results/variance/acs_soc_group_leaderboard_counts.csv": [
+      "outcome",
+      "leaderboard",
+      "soc_major_group",
+      "soc_major_label",
+      "top10_count"
+    ],
+    "results/variance/acs_fertility_risk_variance_bridge.csv": [
+      "normalized_outcome",
+      "risk_quartile",
+      "mean_outcome",
+      "n_obs",
+      "weighted_n",
+      "raw_variance_ratio",
+      "residual_variance_ratio",
+      "female_top10_share",
+      "male_top10_share",
+      "female_to_male_top10_ratio",
+      "female_penalty_coef",
+      "female_penalty_n_obs"
+    ],
+    "results/variance/atus_mechanisms.csv": [
+      "status",
+      "reproductive_stage",
+      "metric",
+      "male_mean_minutes",
+      "female_mean_minutes",
+      "gap_minutes",
+      "n_male",
+      "n_female",
+      "weighted_n_male",
+      "weighted_n_female"
+    ],
+    "results/variance/sipp_robustness.csv": [
+      "status",
+      "section",
+      "metric",
+      "value",
+      "note"
+    ]
+  }
+}

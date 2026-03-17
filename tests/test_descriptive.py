@@ -6,6 +6,8 @@ import pytest
 import statsmodels.api as sm
 
 from gender_gap.models.descriptive import (
+    build_lesbian_married_adjusted_table,
+    build_lesbian_married_summary,
     gap_by_subgroup,
     raw_gap,
     raw_gap_with_sdr,
@@ -90,6 +92,101 @@ class TestMedianGap:
     def test_median_gap_positive(self, gap_df):
         result = weighted_median_gap(gap_df)
         assert result["gap_dollars"] > 0
+
+
+class TestLesbianMarriedSummary:
+    def test_build_lesbian_married_summary_returns_target_groups(self):
+        df = pd.DataFrame(
+            {
+                "female": [1, 1, 1, 0, 0, 0],
+                "same_sex_couple_household": [1, 0, 1, 1, 0, 1],
+                "couple_type": ["same_sex", "opposite_sex", "same_sex", "same_sex", "opposite_sex", "same_sex"],
+                "marital_status": ["married"] * 6,
+                "hourly_wage_real": [42.0, 30.0, 38.0, 46.0, 34.0, 44.0],
+                "annual_earnings_real": [90000.0, 65000.0, 82000.0, 98000.0, 70000.0, 94000.0],
+                "usual_hours_week": [41.0, 39.0, 40.0, 43.0, 40.0, 42.0],
+                "recent_birth": [0, 1, 0, 0, 1, 0],
+                "recent_marriage": [1, 1, 0, 1, 0, 0],
+                "own_child_under6": [0, 1, 0, 0, 1, 0],
+                "person_weight": [2.0, 1.0, 1.0, 1.5, 1.0, 0.5],
+            }
+        )
+
+        result = build_lesbian_married_summary(df)
+
+        groups = set(result.loc[result["section"] == "summary", "group"])
+        assert {
+            "lesbian_married",
+            "women_opposite_sex_married",
+            "gay_married",
+            "men_opposite_sex_married",
+        }.issubset(groups)
+
+        lesbian_hourly = result.loc[
+            (result["section"] == "summary")
+            & (result["group"] == "lesbian_married")
+            & (result["metric"] == "mean_hourly_wage"),
+            "value",
+        ].iloc[0]
+        assert lesbian_hourly > 40
+
+        comparison = result.loc[
+            (result["section"] == "comparison")
+            & (result["group"] == "lesbian_married")
+            & (result["comparison_group"] == "women_opposite_sex_married")
+            & (result["metric"] == "hourly_wage_gap_dollars"),
+            "value",
+        ].iloc[0]
+        assert comparison > 0
+
+    def test_build_lesbian_married_adjusted_table_returns_indicator_coefficients(self):
+        n = 40
+        df = pd.DataFrame(
+            {
+                "female": [1] * n,
+                "same_sex_couple_household": [1] * 20 + [0] * 20,
+                "marital_status": ["married"] * n,
+                "race_ethnicity": ["white_non_hispanic"] * n,
+                "education_level": ["bachelors"] * n,
+                "age": np.linspace(30, 49, n),
+                "state_fips": [6] * n,
+                "occupation_code": [1010] * n,
+                "industry_code": [7860] * n,
+                "class_of_worker": [1] * n,
+                "usual_hours_week": [40] * n,
+                "work_from_home": [0] * n,
+                "commute_minutes_one_way": [25.0] * n,
+                "number_children": [0] * 20 + [1] * 20,
+                "children_under_5": [0] * 20 + [1] * 20,
+                "recent_birth": [0] * 20 + [1] * 20,
+                "recent_marriage": [1] * n,
+                "has_own_child": [0] * 20 + [1] * 20,
+                "own_child_under6": [0] * 20 + [1] * 20,
+                "own_child_6_17_only": [0] * n,
+                "reproductive_stage": ["childless_other_partnered"] * 20 + ["mother_under6"] * 20,
+                "autonomy": [0.2] * n,
+                "schedule_unpredictability": [0.3] * n,
+                "time_pressure": [0.4] * n,
+                "coordination_responsibility": [0.5] * n,
+                "physical_proximity": [0.6] * n,
+                "job_rigidity": [0.7] * n,
+                "hourly_wage_real": [36.0] * 20 + [30.0] * 20,
+                "annual_earnings_real": [72000.0] * 20 + [60000.0] * 20,
+                "person_weight": [1.0] * n,
+            }
+        )
+
+        result = build_lesbian_married_adjusted_table(df)
+
+        assert not result.empty
+        assert set(result["term"]) == {"lesbian_married"}
+        assert {"L0_raw", "L5_onet_context"}.issubset(set(result["model"]))
+        hourly = result.loc[
+            (result["outcome"] == "log_hourly_wage_real")
+            & (result["model"] == "L0_raw"),
+            "pct_effect",
+        ].iloc[0]
+        assert hourly > 0
 
 
 class TestOLS:

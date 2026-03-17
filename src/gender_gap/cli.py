@@ -42,7 +42,7 @@ def _add_download_parser(sub: argparse._SubParsersAction) -> None:
 def _add_standardize_parser(sub: argparse._SubParsersAction) -> None:
     p = sub.add_parser("standardize", help="Standardize raw data")
     p.add_argument("--dataset", required=True,
-                   choices=["acs", "cps", "sipp", "atus", "nlsy", "context"],
+                   choices=["acs", "cps", "sipp", "atus", "nlsy", "psid", "context"],
                    help="Dataset to standardize")
     p.add_argument("--input", type=Path, help="Input file/directory")
     p.add_argument("--output", type=Path, help="Output parquet path")
@@ -70,7 +70,8 @@ def _add_model_parser(sub: argparse._SubParsersAction) -> None:
     p.add_argument("--models", nargs="+",
                    default=["descriptive", "ols", "oaxaca"],
                    choices=["descriptive", "ols", "oaxaca", "elastic_net",
-                            "boosting", "dml", "quantile", "heterogeneity"],
+                            "boosting", "dml", "quantile", "heterogeneity",
+                            "fertility_risk", "variance_suite"],
                    help="Models to run")
     p.add_argument("--weight-col", default="person_weight",
                    help="Survey weight column")
@@ -89,6 +90,25 @@ def _add_report_parser(sub: argparse._SubParsersAction) -> None:
                    help="Output formats")
 
 
+def _add_repro_parser(sub: argparse._SubParsersAction) -> None:
+    sub.add_parser(
+        "repro",
+        help="Run the reproductive-burden extension using available shared/local inputs",
+    )
+
+
+def _add_variance_parser(sub: argparse._SubParsersAction) -> None:
+    p = sub.add_parser(
+        "variance",
+        help="Run the dedicated variance addon using shared/local public-core inputs",
+    )
+    p.add_argument(
+        "--config",
+        type=Path,
+        help="Optional path to a variance addon config file",
+    )
+
+
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(
         prog="gender-gap",
@@ -104,6 +124,8 @@ def main(argv: list[str] | None = None) -> None:
     _add_features_parser(sub)
     _add_model_parser(sub)
     _add_report_parser(sub)
+    _add_repro_parser(sub)
+    _add_variance_parser(sub)
 
     args = parser.parse_args(argv)
 
@@ -123,6 +145,8 @@ def main(argv: list[str] | None = None) -> None:
         "features": _cmd_features,
         "model": _cmd_model,
         "report": _cmd_report,
+        "repro": _cmd_repro,
+        "variance": _cmd_variance,
     }.get(args.command)
 
     if handler:
@@ -306,6 +330,11 @@ def _cmd_standardize(args: argparse.Namespace) -> None:
         else:
             result = standardize_nlsy97_for_gap(source_dir)
 
+    elif dataset == "psid":
+        from gender_gap.standardize.psid_standardize import standardize_psid_2023_for_gap
+
+        result = standardize_psid_2023_for_gap(raw_dir=args.input)
+
     elif dataset == "context":
         from gender_gap.standardize.context_standardize import (
             standardize_bea_rpp,
@@ -350,6 +379,11 @@ def _infer_year_from_path(path: Path) -> int | None:
 def _cmd_features(args: argparse.Namespace) -> None:
     import pandas as pd
 
+    from gender_gap.features import (
+        add_fertility_risk_features,
+        add_repro_interactions,
+        add_reproductive_features,
+    )
     from gender_gap.crosswalks.industry_crosswalks import (
         census_ind_to_naics2,
         naics2_to_broad,
@@ -383,7 +417,7 @@ def _cmd_features(args: argparse.Namespace) -> None:
             method="annual",
         )
     if "hourly_wage_real" in df.columns:
-        df = winsorize_wages(df, wage_col="hourly_wage_real")
+        df["hourly_wage_real"] = winsorize_wages(df["hourly_wage_real"])
         df["log_hourly_wage_real"] = log_wage(df["hourly_wage_real"])
 
     # Family features
@@ -410,6 +444,10 @@ def _cmd_features(args: argparse.Namespace) -> None:
     if "age" in df.columns and "age_sq" not in df.columns:
         df["age_sq"] = df["age"] ** 2
 
+    df = add_reproductive_features(df)
+    df = add_fertility_risk_features(df)
+    df = add_repro_interactions(df)
+
     args.output.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(args.output, index=False)
     print(f"Features built: {len(df):,} rows → {args.output}")
@@ -429,7 +467,7 @@ def _cmd_model(args: argparse.Namespace) -> None:
 
     if "descriptive" in args.models:
         from gender_gap.models.descriptive import raw_gap
-        raw = raw_gap(df, weight_col=weight_col)
+        raw = raw_gap(df, weight=weight_col)
         all_results["raw_gap"] = raw
         pd.DataFrame([raw]).to_csv(output_dir / "raw_gap.csv", index=False)
         logger.info("Raw gap: %.1f%%", raw["gap_pct"])
@@ -438,7 +476,7 @@ def _cmd_model(args: argparse.Namespace) -> None:
         from gender_gap.models.ols import results_to_dataframe, run_sequential_ols
         if args.nlsy:
             from gender_gap.models.ols import NLSY_BLOCK_DEFINITIONS
-            ols = run_sequential_ols(df, block_definitions=NLSY_BLOCK_DEFINITIONS,
+            ols = run_sequential_ols(df, blocks=NLSY_BLOCK_DEFINITIONS,
                                      weight_col=weight_col)
         else:
             ols = run_sequential_ols(df, weight_col=weight_col)
@@ -500,6 +538,21 @@ def _cmd_model(args: argparse.Namespace) -> None:
             )
         all_results["heterogeneity"] = het
 
+    if "fertility_risk" in args.models:
+        from gender_gap.models.fertility_risk import run_fertility_risk_penalty
+
+        penalty, quartiles = run_fertility_risk_penalty(df, weight_col=weight_col)
+        penalty.to_csv(output_dir / "acs_fertility_risk_penalty.csv", index=False)
+        quartiles.to_csv(output_dir / "acs_fertility_risk_by_quartile.csv", index=False)
+        all_results["fertility_risk"] = {"penalty": penalty, "quartiles": quartiles}
+
+    if "variance_suite" in args.models:
+        from gender_gap.models.variance_suite import run_variance_suite
+
+        variance = run_variance_suite(df, weight_col=weight_col)
+        variance.to_csv(output_dir / "acs_variance_suite.csv", index=False)
+        all_results["variance_suite"] = variance
+
     # Save a manifest of what was run
     manifest = {
         "models_run": args.models,
@@ -548,7 +601,7 @@ def _cmd_report(args: argparse.Namespace) -> None:
             ols_df = pd.read_csv(ols_path)
             for _, row in ols_df.iterrows():
                 ols_results.append(OLSResult(
-                    model_name=row["model_name"],
+                    model_name=row.get("model_name", row.get("model")),
                     female_coef=row["female_coef"],
                     female_se=row["female_se"],
                     female_pvalue=row["female_pvalue"],
@@ -567,6 +620,24 @@ def _cmd_report(args: argparse.Namespace) -> None:
         logger.info("Generated plots")
 
     print(f"Reports generated → {output_dir}")
+
+
+def _cmd_repro(args: argparse.Namespace) -> None:
+    from gender_gap.repro import run_repro_extension
+
+    outputs = run_repro_extension()
+    print("Reproductive-burden extension complete:")
+    for name, path in outputs.items():
+        print(f"- {name}: {path}")
+
+
+def _cmd_variance(args: argparse.Namespace) -> None:
+    from gender_gap.variance import run_variance_addon
+
+    outputs = run_variance_addon(config_path=args.config)
+    print("Variance addon complete:")
+    for name, path in outputs.items():
+        print(f"- {name}: {path}")
 
 
 if __name__ == "__main__":

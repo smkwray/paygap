@@ -6,17 +6,28 @@
 
 # Python
 .pytest_cache/
+.ruff_cache*/
 __pycache__/
+__pycache__*/
 *.pyc
 
 # Tools
 .playwright-cli/
+.playwright-mcp/
+*.png
 
 # Internal / not public
 do/
+changes.md
+src/sitecustomize.py
 gender_gap_public_data_*/
 results/legacy/
+logs/
+inventory/inventory_paths.yaml
+diagnostics/
+results/diagnostics/
 
 # Data (large files)
 data/raw/
 data/processed/*.parquet
+data/external/

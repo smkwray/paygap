@@ -177,7 +177,10 @@ class TestGeographyCrosswalks:
                 "state_fips": ["06", "36"],
                 "puma": ["03700", "03800"],
                 "cbsa_code": ["31080", "35620"],
-                "cbsa_title": ["Los Angeles-Long Beach-Anaheim, CA", "New York-Newark-Jersey City, NY-NJ-PA"],
+                "cbsa_title": [
+                    "Los Angeles-Long Beach-Anaheim, CA",
+                    "New York-Newark-Jersey City, NY-NJ-PA",
+                ],
                 "metro_status": ["metropolitan", "metropolitan"],
                 "dominant_overlap_area": [1.0, 2.0],
             }

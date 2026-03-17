@@ -4,9 +4,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from gender_gap.models import ols as ols_module
 from gender_gap.models.dml import run_dml
 from gender_gap.models.elastic_net import run_elastic_net
 from gender_gap.models.oaxaca import oaxaca_blinder, oaxaca_summary_table
+from gender_gap.models.ols import run_sequential_ols
 
 
 @pytest.fixture()
@@ -125,3 +127,23 @@ class TestDML:
 
         assert result.n_obs == len(df)
         assert result.std_error > 0
+
+
+class TestSequentialOLS:
+    def test_auto_log_wage_handles_object_hourly_wage(self, synth_df):
+        df = synth_df.drop(columns=["log_hourly_wage_real"]).copy()
+        df["hourly_wage_real"] = df["hourly_wage_real"].astype(object)
+        df.loc[df.index[0], "hourly_wage_real"] = "25.0"
+
+        results = run_sequential_ols(df, blocks={"M0": ["female"]})
+
+        assert len(results) == 1
+        assert results[0].n_obs > 0
+
+    def test_runs_with_sparse_design_path(self, synth_df, monkeypatch):
+        monkeypatch.setattr(ols_module, "SPARSE_DESIGN_ROW_THRESHOLD", 10)
+
+        results = run_sequential_ols(synth_df, blocks={"M1": ["female", "age", "age_sq", "C(marital_status)"]})
+
+        assert len(results) == 1
+        assert results[0].n_obs == len(synth_df)

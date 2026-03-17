@@ -37,6 +37,11 @@ def mock_acs_raw():
             "PERNP": [78000, 87000, 62000],
             "ADJINC": [1050000, 1050000, 1050000],
             "PWGTP": [50, 45, 60],
+            "FER": [0, 1, 0],
+            "MARHM": [0, 5, 0],
+            "CPLT": [1, 1, 0],
+            "PARTNER": [1, 1, 0],
+            "RELSHIPP": [20, 21, 37],
         }
     )
 
@@ -89,6 +94,21 @@ def test_standardize_family_fields_from_person_summaries(mock_acs_raw):
     assert result["children_under_5"].tolist() == [1, 0, 0]
 
 
+def test_standardize_reproductive_extension_fields(mock_acs_raw):
+    result = standardize_acs(mock_acs_raw, survey_year=2022)
+
+    assert result["recent_birth"].tolist() == [0, 1, 0]
+    assert result["recent_marriage"].tolist() == [0, 1, 0]
+    assert result["has_own_child"].tolist() == [1, 1, 0]
+    assert result["same_sex_couple_household"].tolist() == [0, 0, 0]
+    assert result["opposite_sex_couple_household"].tolist() == [1, 1, 0]
+    assert result["reproductive_stage"].tolist() == [
+        "mother_under6",
+        "recent_birth",
+        "childless_unpartnered",
+    ]
+
+
 def test_standardize_optionally_keeps_replicate_weights(mock_acs_raw):
     raw = mock_acs_raw.copy()
     raw["PWGTP1"] = [55, 49, 64]
@@ -124,3 +144,12 @@ def test_standardize_handles_numeric_fields_stored_as_strings(mock_acs_raw):
     assert result["female"].tolist() == [0, 1, 1]
     assert result["education_level"].tolist() == ["bachelors", "masters", "hs_diploma"]
     assert result["children_under_5"].tolist() == [1, 0, 0]
+
+
+def test_standardize_uses_state_fallback_for_2023plus_style_api_extracts(mock_acs_raw):
+    raw = mock_acs_raw.drop(columns=["ST"]).copy()
+    raw["STATE"] = ["06", "06", "36"]
+
+    result = standardize_acs(raw, survey_year=2024)
+
+    assert result["state_fips"].tolist() == ["06", "06", "36"]

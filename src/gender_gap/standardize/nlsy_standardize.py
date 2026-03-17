@@ -17,13 +17,34 @@ from pathlib import Path
 
 import pandas as pd
 
+from gender_gap.settings import shared_source_path
+
 logger = logging.getLogger(__name__)
 
 # ASVAB subtests used for g_proxy (unit-weighted composite after z-scoring)
 ASVAB_SUBTESTS = ["GS", "AR", "WK", "PC", "NO", "CS", "AS", "MK", "MC", "EI"]
 
-# Path to NLSY processed data (set NLSY_DATA_DIR env var)
-NLSY_DATA_DIR = Path(os.environ.get("NLSY_DATA_DIR", "data/external/nlsy"))
+DEFAULT_LOCAL_NLSY_DIR = Path("data/external/nlsy")
+DEFAULT_SHARED_NLSY_DIR = shared_source_path(
+    "misc",
+    "large_payloads",
+    "wave4",
+    "paygap",
+    "processed",
+    "nlsy",
+)
+
+
+def _resolve_nlsy_dir() -> Path:
+    """Return the preferred directory for processed NLSY files."""
+    env_dir = os.environ.get("NLSY_DATA_DIR")
+    if env_dir:
+        return Path(env_dir).expanduser()
+    if DEFAULT_LOCAL_NLSY_DIR.exists():
+        return DEFAULT_LOCAL_NLSY_DIR
+    if DEFAULT_SHARED_NLSY_DIR.exists():
+        return DEFAULT_SHARED_NLSY_DIR
+    return DEFAULT_LOCAL_NLSY_DIR
 
 
 def load_nlsy79(
@@ -41,7 +62,7 @@ def load_nlsy79(
     """
     if path is None:
         suffix = f"_cfa_{variant}" if variant else "_cfa"
-        path = NLSY_DATA_DIR / f"nlsy79{suffix}.csv"
+        path = _resolve_nlsy_dir() / f"nlsy79{suffix}.csv"
 
     logger.info("Loading NLSY79 from %s", path)
     df = pd.read_csv(path)
@@ -56,7 +77,7 @@ def load_nlsy97(
     """Load NLSY97 processed data."""
     if path is None:
         suffix = f"_cfa_{variant}" if variant else "_cfa"
-        path = NLSY_DATA_DIR / f"nlsy97{suffix}.csv"
+        path = _resolve_nlsy_dir() / f"nlsy97{suffix}.csv"
 
     logger.info("Loading NLSY97 from %s", path)
     df = pd.read_csv(path)

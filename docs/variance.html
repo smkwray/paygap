@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Variance &mdash; paygap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header class="site-header"><div class="header-inner">
+  <a href="index.html" class="site-logo">pay<span class="logo-accent">gap</span></a>
+  <div class="header-controls">
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+    <button id="themeToggle" class="theme-toggle" onclick="pgToggle()" aria-label="Toggle theme">&#9790;</button>
+  </div>
+  <nav><ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="trends.html">Trends</a></li>
+    <li><a href="heterogeneity.html">Heterogeneity</a></li>
+    <li><a href="mechanisms.html">Mechanisms</a></li>
+    <li><a href="reproductive.html">Reproductive</a></li>
+    <li><a href="variance.html" class="active">Variance</a></li>
+    <li><a href="occupations.html">Occupations</a></li>
+    <li><a href="methods.html">Methods</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+  </ul></nav>
+</div></header>
+
+<main class="content">
+
+  <section class="section">
+    <h1>Variance &amp; Distributional Analysis</h1>
+    <p class="page-intro">
+      Mean gaps tell only part of the story. This extension examines the full distribution of
+      earnings by gender &mdash; variance ratios, tail concentration, and how dispersion varies
+      across reproductive stages and job contexts.
+    </p>
+  </section>
+
+  <!-- ── Headline Findings ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Headline Findings</h2>
+      <span class="section-tag">ACS Pooled &middot; 9.7M obs</span>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>1.10&times; raw dispersion</h3>
+        <p>Male hourly-wage variance is 10% higher than female. The male P90/P10 ratio is 1.82 vs. female 1.75.</p>
+      </div>
+      <div class="card">
+        <h3>1.04&times; residual dispersion</h3>
+        <p>After full controls, the male variance advantage shrinks to 4%. Most raw dispersion differences are driven by observables.</p>
+      </div>
+      <div class="card">
+        <h3>1.7&times; top-5% overrepresentation</h3>
+        <p>Men hold 6.3% of total hourly earnings in the top 5% vs. women&rsquo;s 3.6%. Tail concentration is strongly male.</p>
+      </div>
+      <div class="card">
+        <h3>~0 pp from selection</h3>
+        <p>IPW selection correction moves the residual variance ratio from 1.039 to 1.047. Employment selection does not explain the dispersion gap.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── V1: Raw / Residual Dispersion ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>V1: Raw &amp; Residual Dispersion</h2>
+      <span class="section-tag">Log Hourly Wage</span>
+    </div>
+
+    <div class="chart-container">
+      <h3>Variance Ratio and Tail Metrics by Gender (Pooled)</h3>
+      <p class="chart-subtitle">Variance ratio = male variance / female variance</p>
+      <div class="chart-canvas-wrap">
+        <canvas id="v1Chart"></canvas>
+      </div>
+      <p class="chart-note">All metrics computed on log real hourly wages. Residual variance is from a full-controls specification (demographics, geography, job sorting, schedule, family).</p>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th class="num">Male</th>
+          <th class="num">Female</th>
+          <th class="num">Ratio / Gap</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Raw variance ratio</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">1.101</td></tr>
+        <tr><td>Residual variance ratio</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">1.039</td></tr>
+        <tr><td>P90/P10 ratio</td><td class="num">1.823</td><td class="num">1.747</td><td class="num">+0.076</td></tr>
+        <tr><td>P95/P50 ratio</td><td class="num">1.233</td><td class="num">1.167</td><td class="num">+0.066</td></tr>
+        <tr><td>Top-10% earnings share</td><td class="num">12.2%</td><td class="num">7.6%</td><td class="num">+4.7 pp</td></tr>
+        <tr><td>Top-5% earnings share</td><td class="num">6.3%</td><td class="num">3.6%</td><td class="num">+2.7 pp</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <p>Men are more spread out at the top of the hourly-wage distribution. The P90/P10 gap is
+      modest (0.08 log points), but top-earner shares diverge sharply: men capture 12.2% of total
+      earnings in the top decile vs. 7.6% for women.</p>
+    </div>
+  </section>
+
+  <!-- ── V2: Selection-Corrected ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>V2: Selection-Corrected Variance</h2>
+      <span class="section-tag">IPW Adjustment</span>
+    </div>
+
+    <div class="chart-container">
+      <h3>Raw vs. Selection-Corrected Residual Variance Ratio by Year</h3>
+      <p class="chart-subtitle">IPW reweights for employment probability; dashed = selection-corrected</p>
+      <div class="chart-canvas-wrap">
+        <canvas id="v2Chart"></canvas>
+      </div>
+    </div>
+
+    <div class="insight-box">
+      <p>Selection correction nudges the residual variance ratio from 1.039 to 1.047 overall &mdash;
+      a shift of less than 1 pp. Employment selection does not account for the variance gap
+      between male and female earners, paralleling the mean-gap finding that IPW adds only
+      ~1 pp to the hourly gap.</p>
+    </div>
+  </section>
+
+  <!-- ── V3: Reproductive Stage ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>V3: Dispersion by Reproductive Stage</h2>
+      <span class="section-tag">Within-Stage Comparisons</span>
+    </div>
+
+    <div class="chart-container">
+      <h3>Residual Variance Ratio by Reproductive Stage</h3>
+      <p class="chart-subtitle">Ratio &gt; 1 = male more dispersed; &lt; 1 = female more dispersed</p>
+      <div class="chart-canvas-wrap">
+        <canvas id="v3Chart"></canvas>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Stage</th>
+          <th class="num">Raw Ratio</th>
+          <th class="num">Residual Ratio</th>
+          <th class="num">N</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Childless recently married</td><td class="num">1.146</td><td class="num">1.092</td><td class="num">2,956,274</td></tr>
+        <tr><td>Childless unpartnered</td><td class="num">1.125</td><td class="num">1.174</td><td class="num">2,216,122</td></tr>
+        <tr><td>Childless other partnered</td><td class="num">1.144</td><td class="num">1.000</td><td class="num">22,902</td></tr>
+        <tr><td>Mother (mixed/other)</td><td class="num">1.243</td><td class="num">0.857</td><td class="num">2,318,307</td></tr>
+        <tr><td>Mother (child under 6)</td><td class="num">0.953</td><td class="num">0.816</td><td class="num">662,428</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <p>The pattern inverts for mothers. Among childless workers, men are modestly more dispersed
+      (ratio 1.09&ndash;1.17). Among mothers, women&rsquo;s residual variance <em>compresses</em> relative to
+      their partners (ratio 0.82&ndash;0.86) &mdash; consistent with motherhood narrowing the range of
+      viable work arrangements rather than simply lowering the mean.</p>
+    </div>
+  </section>
+
+  <!-- ── V4: O*NET Job Context ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>V4: Dispersion by Job Rigidity</h2>
+      <span class="section-tag">O*NET Context Quartiles</span>
+    </div>
+
+    <div class="chart-container">
+      <h3>Variance Ratio by Job-Rigidity Quartile</h3>
+      <p class="chart-subtitle">Q1 = most flexible jobs, Q4 = most rigid</p>
+      <div class="chart-canvas-wrap">
+        <canvas id="v4Chart"></canvas>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Rigidity Quartile</th>
+          <th class="num">Raw Ratio</th>
+          <th class="num">Residual Ratio</th>
+          <th class="num">N</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Q1 (most flexible)</td><td class="num">1.103</td><td class="num">1.048</td><td class="num">2,415,808</td></tr>
+        <tr><td>Q2</td><td class="num">1.035</td><td class="num">1.001</td><td class="num">2,415,807</td></tr>
+        <tr><td>Q3</td><td class="num">1.367</td><td class="num">1.104</td><td class="num">2,415,807</td></tr>
+        <tr><td>Q4 (most rigid)</td><td class="num">0.894</td><td class="num">0.868</td><td class="num">2,415,807</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <p>In the most rigid occupations (Q4), the variance ratio <em>flips</em>: women are more
+      dispersed than men (0.87). In moderately rigid jobs (Q3), men are most dispersed
+      (ratio 1.37 raw, 1.10 residual). This non-monotonic pattern suggests that job rigidity
+      interacts with gender in ways that affect the shape of the distribution, not just its center.</p>
+    </div>
+  </section>
+
+  <!-- ── Interpretation ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Interpretation Limits</h2>
+    </div>
+    <div class="warning-box">
+      <p>Variance ratios and tail shares are <strong>descriptive summaries</strong> of the earnings
+      distribution, not causal estimates. A higher male variance could reflect greater returns
+      to risk-taking, occupational sorting into high-variance fields, or measurement differences.
+      The reproductive-stage and job-rigidity breakdowns show where dispersion patterns shift,
+      but cannot identify whether the shift reflects employer behavior, worker preferences, or
+      structural constraints.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer"><div class="footer-inner"><span>paygap &middot; MIT License</span><span>Data: ACS PUMS, O*NET (all public federal)</span></div></footer>
+
+<script>
+(function () {
+  pgDefaults();
+
+  var charts = [];
+
+  function buildCharts() {
+    charts.forEach(function (ch) { ch.destroy(); });
+    charts = [];
+    var c = C();
+
+    /* V1: Tail metrics — grouped bar (male vs female) */
+    charts.push(new Chart(document.getElementById('v1Chart'), {
+      type: 'bar',
+      data: {
+        labels: ['P90/P10', 'P95/P50', 'Top-10% Share', 'Top-5% Share'],
+        datasets: [
+          {
+            label: 'Male',
+            data: [1.823, 1.233, 0.122, 0.063],
+            backgroundColor: c.accent,
+            borderRadius: 4
+          },
+          {
+            label: 'Female',
+            data: [1.747, 1.167, 0.076, 0.036],
+            backgroundColor: c.orange,
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top', labels: { color: c.text } },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                var v = ctx.parsed.y;
+                var idx = ctx.dataIndex;
+                if (idx >= 2) return ctx.dataset.label + ': ' + (v * 100).toFixed(1) + '%';
+                return ctx.dataset.label + ': ' + v.toFixed(3);
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { color: c.textSec },
+            grid: { color: c.grid }
+          },
+          x: { ticks: { color: c.textSec }, grid: { color: c.grid } }
+        }
+      }
+    }));
+
+    /* V2: Selection correction over time — dual line */
+    var v2Years = ['2013', '2014', '2015', '2016', '2017', '2018', '2019', '2021', '2022', '2023', '2024'];
+    var v1Resid = [1.088, 0.956, 1.066, 1.066, 1.054, 1.044, 1.036, 1.021, 1.042, 1.044, 1.053];
+    var v2Resid = [1.057, 1.073, 1.047, 1.051, 1.035, 1.032, 1.037, 1.022, 1.042, 1.052, 1.061];
+
+    charts.push(new Chart(document.getElementById('v2Chart'), {
+      type: 'line',
+      data: {
+        labels: v2Years,
+        datasets: [
+          {
+            label: 'V1 Residual Ratio (raw)',
+            data: v1Resid,
+            borderColor: c.accent,
+            backgroundColor: c.accent + '22',
+            tension: 0.3,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          },
+          {
+            label: 'V2 Residual Ratio (selection-corrected)',
+            data: v2Resid,
+            borderColor: c.orange,
+            backgroundColor: c.orange + '22',
+            borderDash: [6, 3],
+            tension: 0.3,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: c.text } },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          x: { ticks: { color: c.textSec }, grid: { color: c.grid } },
+          y: {
+            ticks: { color: c.textSec },
+            grid: { color: c.grid },
+            title: { display: true, text: 'Residual Variance Ratio (M/F)', color: c.textSec }
+          }
+        }
+      }
+    }));
+
+    /* V3: Reproductive stage — bar chart */
+    var v3Labels = ['Childless\nrec. married', 'Childless\nunpartnered', 'Childless\noth. partnered', 'Mother\nmixed/other', 'Mother\nunder 6'];
+    var v3Raw = [1.146, 1.125, 1.144, 1.243, 0.953];
+    var v3Resid = [1.092, 1.174, 1.000, 0.857, 0.816];
+
+    charts.push(new Chart(document.getElementById('v3Chart'), {
+      type: 'bar',
+      data: {
+        labels: v3Labels,
+        datasets: [
+          { label: 'Raw Ratio', data: v3Raw, backgroundColor: c.accent, borderRadius: 4 },
+          { label: 'Residual Ratio', data: v3Resid, backgroundColor: c.orange, borderRadius: 4 }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top', labels: { color: c.text } },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) { return ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(3); }
+            }
+          },
+          annotation: {
+            annotations: {
+              line1: {
+                type: 'line',
+                yMin: 1,
+                yMax: 1,
+                borderColor: c.textSec,
+                borderWidth: 1,
+                borderDash: [4, 4]
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            min: 0.7,
+            max: 1.35,
+            ticks: { color: c.textSec },
+            grid: { color: c.grid },
+            title: { display: true, text: 'Variance Ratio (M/F)', color: c.textSec }
+          },
+          x: { ticks: { color: c.textSec, font: { size: 11 } }, grid: { color: c.grid } }
+        }
+      }
+    }));
+
+    /* V4: Job rigidity — bar chart */
+    var v4Labels = ['Q1 (flexible)', 'Q2', 'Q3', 'Q4 (rigid)'];
+    var v4Raw = [1.103, 1.035, 1.367, 0.894];
+    var v4Resid = [1.048, 1.001, 1.104, 0.868];
+
+    charts.push(new Chart(document.getElementById('v4Chart'), {
+      type: 'bar',
+      data: {
+        labels: v4Labels,
+        datasets: [
+          { label: 'Raw Ratio', data: v4Raw, backgroundColor: c.accent, borderRadius: 4 },
+          { label: 'Residual Ratio', data: v4Resid, backgroundColor: c.orange, borderRadius: 4 }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top', labels: { color: c.text } },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) { return ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(3); }
+            }
+          }
+        },
+        scales: {
+          y: {
+            min: 0.7,
+            max: 1.5,
+            ticks: { color: c.textSec },
+            grid: { color: c.grid },
+            title: { display: true, text: 'Variance Ratio (M/F)', color: c.textSec }
+          },
+          x: { ticks: { color: c.textSec }, grid: { color: c.grid } }
+        }
+      }
+    }));
+  }
+
+  buildCharts();
+  window.pgRebuild = buildCharts;
+})();
+</script>
+
+</body>
+</html>

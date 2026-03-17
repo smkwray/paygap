@@ -61,9 +61,9 @@ def run_dml(
     random_seed : int
         Random seed.
     """
-    import doubleml as dml
     from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
     from sklearn.linear_model import ElasticNetCV
+    import statsmodels.api as sm
 
     if controls is None:
         controls = _default_controls(df)
@@ -94,54 +94,64 @@ def run_dml(
 
     dml_frame = pd.concat([clean[[outcome, treatment]].reset_index(drop=True), X.reset_index(drop=True)], axis=1)
 
-    # Build DoubleML data object
-    dml_data = dml.DoubleMLData(
-        dml_frame,
-        y_col=outcome,
-        d_cols=treatment,
-        x_cols=list(X.columns),
-    )
+    try:
+        import doubleml as dml
 
-    # Select nuisance learner
-    if nuisance_learner == "lgbm":
-        ml_l = GradientBoostingRegressor(
-            n_estimators=200, max_depth=5, learning_rate=0.05,
-            random_state=random_seed,
+        # Build DoubleML data object
+        dml_data = dml.DoubleMLData(
+            dml_frame,
+            y_col=outcome,
+            d_cols=treatment,
+            x_cols=list(X.columns),
         )
-        ml_m = GradientBoostingRegressor(
-            n_estimators=200, max_depth=5, learning_rate=0.05,
-            random_state=random_seed,
-        )
-    elif nuisance_learner == "rf":
-        ml_l = RandomForestRegressor(
-            n_estimators=200, max_depth=10, random_state=random_seed,
-        )
-        ml_m = RandomForestRegressor(
-            n_estimators=200, max_depth=10, random_state=random_seed,
-        )
-    elif nuisance_learner == "elasticnet":
-        ml_l = ElasticNetCV(l1_ratio=[0.1, 0.5, 0.9], cv=3, max_iter=5000)
-        ml_m = ElasticNetCV(l1_ratio=[0.1, 0.5, 0.9], cv=3, max_iter=5000)
-    else:
-        raise ValueError(f"Unknown nuisance_learner: {nuisance_learner}")
 
-    # Fit partial linear model
-    dml_plr = dml.DoubleMLPLR(
-        dml_data,
-        ml_l=ml_l,
-        ml_m=ml_m,
-        n_folds=n_folds,
-    )
-    dml_plr.fit()
+        if nuisance_learner == "lgbm":
+            ml_l = GradientBoostingRegressor(
+                n_estimators=200, max_depth=5, learning_rate=0.05,
+                random_state=random_seed,
+            )
+            ml_m = GradientBoostingRegressor(
+                n_estimators=200, max_depth=5, learning_rate=0.05,
+                random_state=random_seed,
+            )
+        elif nuisance_learner == "rf":
+            ml_l = RandomForestRegressor(
+                n_estimators=200, max_depth=10, random_state=random_seed,
+            )
+            ml_m = RandomForestRegressor(
+                n_estimators=200, max_depth=10, random_state=random_seed,
+            )
+        elif nuisance_learner == "elasticnet":
+            ml_l = ElasticNetCV(l1_ratio=[0.1, 0.5, 0.9], cv=3, max_iter=5000)
+            ml_m = ElasticNetCV(l1_ratio=[0.1, 0.5, 0.9], cv=3, max_iter=5000)
+        else:
+            raise ValueError(f"Unknown nuisance_learner: {nuisance_learner}")
 
-    # Extract results
-    summary = dml_plr.summary
-    coef = float(summary["coef"].iloc[0])
-    se = float(summary["std err"].iloc[0])
-    pval = float(summary["P>|t|"].iloc[0])
-    ci = dml_plr.confint()
-    ci_lo = float(ci.iloc[0, 0])
-    ci_hi = float(ci.iloc[0, 1])
+        dml_plr = dml.DoubleMLPLR(
+            dml_data,
+            ml_l=ml_l,
+            ml_m=ml_m,
+            n_folds=n_folds,
+        )
+        dml_plr.fit()
+
+        summary = dml_plr.summary
+        coef = float(summary["coef"].iloc[0])
+        se = float(summary["std err"].iloc[0])
+        pval = float(summary["P>|t|"].iloc[0])
+        ci = dml_plr.confint()
+        ci_lo = float(ci.iloc[0, 0])
+        ci_hi = float(ci.iloc[0, 1])
+    except ImportError:
+        logger.warning("doubleml is unavailable; falling back to weighted OLS approximation")
+        X_fallback = sm.add_constant(pd.concat([clean[[treatment]].reset_index(drop=True), X.reset_index(drop=True)], axis=1))
+        y_fallback = clean[outcome].reset_index(drop=True)
+        weights = clean[weight_col].reset_index(drop=True) if weight_col in clean.columns else None
+        fit = sm.WLS(y_fallback, X_fallback, weights=weights).fit()
+        coef = float(fit.params[treatment])
+        se = float(fit.bse[treatment])
+        pval = float(fit.pvalues[treatment])
+        ci_lo, ci_hi = fit.conf_int().loc[treatment].tolist()
 
     return DMLResult(
         treatment_effect=coef,

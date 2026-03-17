@@ -26,6 +26,14 @@ logging.getLogger("httpcore").setLevel(logging.WARNING)
 DEFAULT_YEARS = [2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023]
 
 
+def _display_path(path: Path) -> str:
+    """Render a project-relative path when possible, otherwise absolute."""
+    try:
+        return str(path.relative_to(PROJECT_ROOT))
+    except ValueError:
+        return str(path)
+
+
 def _repweight_inventory(paths: list[Path]) -> pd.DataFrame:
     rows = []
     for path in paths:
@@ -37,7 +45,7 @@ def _repweight_inventory(paths: list[Path]) -> pd.DataFrame:
         year = int(path.stem.split("_")[2])
         rows.append({
             "year": year,
-            "path": str(path.relative_to(PROJECT_ROOT)),
+            "path": _display_path(path),
             "rows": len(df),
             "repweight_columns": len(repweight_cols),
             "has_full_repweights": len(repweight_cols) == 80,

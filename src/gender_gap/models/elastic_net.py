@@ -108,7 +108,7 @@ def run_elastic_net(
     # Fit
     model = ElasticNetCV(
         l1_ratio=l1_ratios,
-        alphas=n_alphas,
+        n_alphas=n_alphas,
         cv=cv,
         max_iter=10000,
     )

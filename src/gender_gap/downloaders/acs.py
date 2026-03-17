@@ -18,7 +18,10 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 
-import httpx
+try:
+    import httpx
+except ImportError:  # pragma: no cover - exercised only in lean environments
+    import requests as httpx
 import pandas as pd
 
 from gender_gap.downloaders.base import BaseDownloader, DownloadResult
@@ -50,21 +53,21 @@ ACS_API_KEY_COLUMNS = ["SERIALNO", "SPORDER"]
 ACS_VARS_2023PLUS = [
     "SERIALNO", "SPORDER", "SEX", "AGEP", "SCHL", "HISP", "RAC1P",
     "WAGP", "PERNP", "WKHP", "WKWN", "COW", "OCCP", "INDP", "ESR",
-    "NOC", "PAOC",
+    "NOC", "PAOC", "FER", "MARHM", "CPLT", "PARTNER", "RELSHIPP",
     "JWTRNS", "JWMNP", "STATE", "PUMA", "PWGTP", "MAR", "ADJINC",
 ]
 
 ACS_VARS_2019PLUS = [
     "SERIALNO", "SPORDER", "SEX", "AGEP", "SCHL", "HISP", "RAC1P",
     "WAGP", "PERNP", "WKHP", "WKWN", "COW", "OCCP", "INDP", "ESR",
-    "NOC", "PAOC",
+    "NOC", "PAOC", "FER", "MARHM", "CPLT", "PARTNER", "RELSHIPP",
     "JWTRNS", "JWMNP", "ST", "PUMA", "PWGTP", "MAR", "ADJINC",
 ]
 
 ACS_VARS_PRE2019 = [
     "SERIALNO", "SPORDER", "SEX", "AGEP", "SCHL", "HISP", "RAC1P",
     "WAGP", "PERNP", "WKHP", "WKW", "COW", "OCCP", "INDP", "ESR",
-    "NOC", "PAOC",
+    "NOC", "PAOC", "FER", "MARHM", "PARTNER", "RELP",
     "JWTR", "JWMNP", "ST", "PUMA", "PWGTP", "MAR", "ADJINC",
 ]
 
@@ -72,6 +75,7 @@ ACS_NUMERIC_COLS = [
     "SEX", "AGEP", "WAGP", "PERNP", "WKHP", "WKWN", "WKW", "COW",
     "JWTRNS", "JWTR", "JWMNP", "ST", "STATE", "PWGTP", "MAR", "ADJINC", "HISP",
     "SCHL", "RAC1P", "SPORDER", "OCCP", "INDP", "ESR", "NOC", "PAOC",
+    "FER", "MARHM", "CPLT", "PARTNER", "RELSHIPP", "RELP",
 ]
 ACS_REPLICATE_WEIGHT_COLUMNS = [f"PWGTP{i}" for i in range(1, 81)]
 

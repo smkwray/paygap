@@ -4,14 +4,19 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from string import Template
 
-import yaml
+from gender_gap.utils.yaml_compat import load_yaml
 
 # ---------------------------------------------------------------------------
 # Path helpers
 # ---------------------------------------------------------------------------
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_SHARED_DATA_ROOT = PROJECT_ROOT.parent / "data"
+SHARED_DATA_ROOT = Path(
+    os.environ.get("PROJ_SHARED_DATA_ROOT", str(DEFAULT_SHARED_DATA_ROOT))
+).expanduser()
 
 DATA_RAW = PROJECT_ROOT / "data" / "raw"
 DATA_INTERIM = PROJECT_ROOT / "data" / "interim"
@@ -21,6 +26,12 @@ DATA_EXTERNAL = PROJECT_ROOT / "data" / "external"
 CROSSWALKS_DIR = PROJECT_ROOT / "crosswalks"
 CONFIGS_DIR = PROJECT_ROOT / "configs"
 REPORTS_DIR = PROJECT_ROOT / "reports"
+RESULTS_DIR = PROJECT_ROOT / "results"
+
+SHARED_SOURCES_DIR = SHARED_DATA_ROOT / "sources"
+SHARED_CATALOG_DIR = SHARED_DATA_ROOT / "catalog"
+SHARED_DATASETS_CATALOG = SHARED_CATALOG_DIR / "datasets.csv"
+SHARED_ALIASES_CATALOG = SHARED_CATALOG_DIR / "aliases.csv"
 
 # ---------------------------------------------------------------------------
 # Config loader
@@ -39,10 +50,46 @@ def load_config(path: Path | None = None) -> dict:
     if not path.exists():
         return {}
     with open(path) as f:
-        cfg = yaml.safe_load(f) or {}
+        raw = f.read()
+    expanded = Template(raw).safe_substitute(os.environ)
+    cfg = load_yaml(expanded) or {}
     if path == CONFIGS_DIR / "datasets.yaml":
         _CONFIG_CACHE = cfg
     return cfg
+
+
+def load_repro_config(path: Path | None = None) -> dict:
+    """Load the reproductive-burden extension config."""
+    if path is None:
+        path = CONFIGS_DIR / "repro_extension.yaml"
+    if not path.exists():
+        return {}
+    with open(path) as f:
+        raw = f.read()
+    expanded = Template(raw).safe_substitute(os.environ)
+    return load_yaml(expanded) or {}
+
+
+def load_variance_config(path: Path | None = None) -> dict:
+    """Load the variance addon config."""
+    if path is None:
+        path = CONFIGS_DIR / "variance_addon.yaml"
+    if not path.exists():
+        return {}
+    with open(path) as f:
+        raw = f.read()
+    expanded = Template(raw).safe_substitute(os.environ)
+    return load_yaml(expanded) or {}
+
+
+def shared_source_path(*parts: str) -> Path:
+    """Build a canonical shared-source path under the project data root."""
+    return SHARED_SOURCES_DIR.joinpath(*parts)
+
+
+def shared_catalog_path(name: str) -> Path:
+    """Return a file path inside the shared catalog directory."""
+    return SHARED_CATALOG_DIR / name
 
 
 # Default base year for inflation adjustment

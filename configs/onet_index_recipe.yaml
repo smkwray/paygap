@@ -1,0 +1,59 @@
+version: "1"
+
+sources:
+  work_context: "Work Context.txt"
+
+indices:
+  autonomy:
+    source: work_context
+    scale_id: "CX"
+    components:
+      - element: "Freedom to Make Decisions"
+        weight: 1.0
+      - element: "Determine Tasks, Priorities and Goals"
+        weight: 1.0
+
+  schedule_unpredictability:
+    source: work_context
+    scale_id: "CT"
+    components:
+      - element: "Work Schedules"
+        weight: 1.0
+      - element: "Duration of Typical Work Week"
+        weight: 0.5
+
+  time_pressure:
+    source: work_context
+    scale_id: "CX"
+    components:
+      - element: "Time Pressure"
+        weight: 1.0
+      - element: "Pace Determined by Speed of Equipment"
+        weight: 0.5
+
+  coordination_responsibility:
+    source: work_context
+    scale_id: "CX"
+    components:
+      - element: "Coordinate or Lead Others in Accomplishing Work Activities"
+        weight: 1.0
+      - element: "Frequency of Decision Making"
+        weight: 1.0
+      - element: "Work Outcomes and Results of Other Workers"
+        weight: 0.75
+
+  physical_proximity:
+    source: work_context
+    scale_id: "CX"
+    components:
+      - element: "Physical Proximity"
+        weight: 1.0
+
+  job_rigidity:
+    composite:
+      - index: "schedule_unpredictability"
+        weight: 0.5
+      - index: "time_pressure"
+        weight: 0.5
+      - index: "autonomy"
+        weight: -0.5

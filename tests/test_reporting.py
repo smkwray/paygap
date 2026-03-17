@@ -1,6 +1,7 @@
 """Tests for reporting modules: charts, artifacts, tables."""
 
 import json
+from pathlib import Path
 
 import pandas as pd
 import pytest
@@ -17,6 +18,7 @@ from gender_gap.reporting.charts import (
 from gender_gap.reporting.tables import (
     export_markdown_summary,
 )
+from gender_gap.reporting import repro as repro_reporting
 
 
 @pytest.fixture
@@ -153,6 +155,126 @@ class TestArtifacts:
         path = export_json_artifacts(inp, out)
         data = json.loads(path.read_text())
         assert data["models"] == {}
+
+
+class TestReproReporting:
+    def test_build_optional_validation_status_detects_raw_nlsy_and_public_psid(self, tmp_path, monkeypatch):
+        project_root = tmp_path / "paygap"
+        project_root.mkdir(parents=True)
+        (project_root / "data" / "external" / "nlsy").mkdir(parents=True)
+
+        shared_root = tmp_path / "shared"
+        catalog_dir = shared_root / "catalog"
+        catalog_dir.mkdir(parents=True)
+        (catalog_dir / "datasets.csv").write_text("canonical_path,source_url\n", encoding="utf-8")
+        (catalog_dir / "aliases.csv").write_text("project,legacy_path,canonical_path,status\n", encoding="utf-8")
+
+        nlsy_dir = shared_root / "sources" / "misc" / "large_payloads" / "wave3c" / "sexg" / "raw"
+        nlsy_dir.mkdir(parents=True)
+        (nlsy_dir / "nlsy79_all_1979-2022.zip").write_text("stub", encoding="utf-8")
+        (nlsy_dir / "nlsy97_all_1997-2023.zip").write_text("stub", encoding="utf-8")
+
+        psid_dir = shared_root / "sources" / "umich" / "psid_cds_tas" / "public"
+        psid_dir.mkdir(parents=True)
+
+        monkeypatch.setattr(repro_reporting, "PROJECT_ROOT", project_root)
+        monkeypatch.setattr(repro_reporting, "SHARED_DATASETS_CATALOG", catalog_dir / "datasets.csv")
+        monkeypatch.setattr(repro_reporting, "SHARED_ALIASES_CATALOG", catalog_dir / "aliases.csv")
+        monkeypatch.setattr(
+            repro_reporting,
+            "shared_source_path",
+            lambda *parts: shared_root / "sources" / Path(*parts),
+        )
+
+        status = repro_reporting.build_optional_validation_status()
+
+        assert status.set_index("dataset").loc["NLSY79", "status"] == "raw_only"
+        assert status.set_index("dataset").loc["NLSY97", "status"] == "raw_only"
+        assert status.set_index("dataset").loc["PSID", "status"] == "public_bundle_only"
+
+    def test_build_optional_validation_status_detects_raw_main_panel_psid(self, tmp_path, monkeypatch):
+        project_root = tmp_path / "paygap"
+        project_root.mkdir(parents=True)
+        (project_root / "data" / "external" / "nlsy").mkdir(parents=True)
+
+        shared_root = tmp_path / "shared"
+        catalog_dir = shared_root / "catalog"
+        catalog_dir.mkdir(parents=True)
+        (catalog_dir / "datasets.csv").write_text("canonical_path,source_url\n", encoding="utf-8")
+        (catalog_dir / "aliases.csv").write_text("project,legacy_path,canonical_path,status\n", encoding="utf-8")
+
+        psid_raw_dir = shared_root / "sources" / "umich" / "psid" / "main_public" / "paygap" / "raw" / "psid"
+        psid_raw_dir.mkdir(parents=True)
+        (psid_raw_dir / "psid_family_2023.zip").write_text("stub", encoding="utf-8")
+
+        monkeypatch.setattr(repro_reporting, "PROJECT_ROOT", project_root)
+        monkeypatch.setattr(repro_reporting, "SHARED_DATASETS_CATALOG", catalog_dir / "datasets.csv")
+        monkeypatch.setattr(repro_reporting, "SHARED_ALIASES_CATALOG", catalog_dir / "aliases.csv")
+        monkeypatch.setattr(
+            repro_reporting,
+            "shared_source_path",
+            lambda *parts: shared_root / "sources" / Path(*parts),
+        )
+
+        status = repro_reporting.build_optional_validation_status()
+
+        assert status.set_index("dataset").loc["PSID", "status"] == "raw_main_panel"
+        assert status.set_index("dataset").loc["PSID", "expected_processed"] == "data/external/psid/psid_2023_analysis_ready.parquet"
+
+    def test_build_optional_validation_status_detects_ready_psid(self, tmp_path, monkeypatch):
+        project_root = tmp_path / "paygap"
+        project_root.mkdir(parents=True)
+        (project_root / "data" / "external" / "nlsy").mkdir(parents=True)
+
+        shared_root = tmp_path / "shared"
+        catalog_dir = shared_root / "catalog"
+        catalog_dir.mkdir(parents=True)
+        (catalog_dir / "datasets.csv").write_text(
+            "canonical_path,source_url\n"
+            "data/sources/umich/psid/main_public/paygap/processed/psid/psid_2023_analysis_ready.parquet,test-source\n",
+            encoding="utf-8",
+        )
+        (catalog_dir / "aliases.csv").write_text("project,legacy_path,canonical_path,status\n", encoding="utf-8")
+
+        psid_processed_dir = shared_root / "sources" / "umich" / "psid" / "main_public" / "paygap" / "processed" / "psid"
+        psid_processed_dir.mkdir(parents=True)
+        (psid_processed_dir / "psid_2023_analysis_ready.parquet").write_text("stub", encoding="utf-8")
+
+        monkeypatch.setattr(repro_reporting, "PROJECT_ROOT", project_root)
+        monkeypatch.setattr(repro_reporting, "SHARED_DATASETS_CATALOG", catalog_dir / "datasets.csv")
+        monkeypatch.setattr(repro_reporting, "SHARED_ALIASES_CATALOG", catalog_dir / "aliases.csv")
+        monkeypatch.setattr(
+            repro_reporting,
+            "shared_source_path",
+            lambda *parts: shared_root / "sources" / Path(*parts),
+        )
+
+        status = repro_reporting.build_optional_validation_status()
+
+        assert status.set_index("dataset").loc["PSID", "status"] == "ready"
+
+    def test_write_repro_summary_includes_optional_validation_section(self, tmp_path):
+        out = tmp_path / "summary.md"
+        optional = pd.DataFrame(
+            [
+                {"dataset": "NLSY79", "status": "raw_only", "note": "Needs adapter."},
+                {"dataset": "PSID", "status": "public_bundle_only", "note": "Public bundle only."},
+            ]
+        )
+
+        repro_reporting.write_repro_summary(
+            output_path=out,
+            available_years=[2023],
+            inventory_usage=pd.DataFrame([{"x": 1}]),
+            missing_inputs=[],
+            generated_files=[tmp_path / "results.csv"],
+            optional_validation=optional,
+        )
+
+        text = out.read_text()
+        assert "## Optional validation data status" in text
+        assert "NLSY79: raw_only: Needs adapter." in text
+        assert "PSID: public_bundle_only: Public bundle only." in text
 
 
 # --- Tables tests ---

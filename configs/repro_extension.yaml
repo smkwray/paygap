@@ -1,0 +1,51 @@
+project:
+  name: paygap_reproductive_burden_extension
+  extend_repo: paygap
+  canonical_shared_data_root: ${PROJ_SHARED_DATA_ROOT}
+
+datasets:
+  acs:
+    years: [2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024]
+    include_replicate_weights: true
+    skip_standard_2020: true
+  onet:
+    version: "30.2"
+    required_files:
+      - "Work Context.txt"
+      - "Scales Reference.txt"
+  atus:
+    years: [2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2021, 2022, 2023, 2024]
+  sipp:
+    years: [2023]
+
+paths:
+  results_dir: results/repro
+  diagnostics_dir: results/diagnostics
+  report_path: reports/repro_extension_summary.md
+  acs_panel_output: data/processed/acs_repro_panel.parquet
+  onet_indices_output: data/processed/onet_indices.parquet
+  onet_merge_coverage: results/diagnostics/onet_merge_coverage.csv
+  inventory_usage_output: results/diagnostics/repro_inventory_usage.csv
+  inventory_usage_report: reports/repro_inventory_usage.md
+  optional_validation_output: results/diagnostics/repro_optional_validation_status.csv
+  inventory_config: inventory/inventory_paths.yaml
+  local_inventory_output: diagnostics/local_inventory_report.json
+  atus_report_output: reports/atus_repro_mechanisms.md
+  nlsy_validation_output: results/repro/nlsy_validation.csv
+  release_manifest_output: diagnostics/repro_release_manifest.json
+  schema_snapshot_path: configs/repro_output_schemas.json
+  schema_check_output: diagnostics/repro_schema_check.json
+
+analysis:
+  sample: prime_age_wage_salary
+  outcomes:
+    - log_hourly_wage_real
+    - log_annual_earnings_real
+    - employment_indicator
+    - usual_hours_week
+    - ftfy_indicator
+  variance_stratifiers:
+    - reproductive_stage
+    - fertility_risk_quartile
+    - job_rigidity_quartile
+    - couple_type

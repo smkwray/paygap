@@ -6,7 +6,10 @@ import logging
 from datetime import datetime, timezone
 from pathlib import Path
 
-import httpx
+try:
+    import httpx
+except ImportError:  # pragma: no cover - exercised only in lean environments
+    import requests as httpx
 
 from gender_gap.downloaders.base import BaseDownloader, DownloadResult
 from gender_gap.settings import DATA_RAW

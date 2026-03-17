@@ -44,6 +44,29 @@ class TestCLIBasics:
         with pytest.raises(SystemExit):
             main(["features"])
 
+    def test_repro_command_invokes_runner(self, monkeypatch):
+        called = {}
+
+        def _fake_run():
+            called["ran"] = True
+            return {"summary_report": Path("/tmp/repro.md")}
+
+        monkeypatch.setattr("gender_gap.repro.run_repro_extension", _fake_run)
+        main(["repro"])
+        assert called["ran"] is True
+
+    def test_variance_command_invokes_runner(self, monkeypatch, tmp_path: Path):
+        called = {}
+
+        def _fake_run(config_path=None):
+            called["config_path"] = config_path
+            return {"summary_report": tmp_path / "variance.md"}
+
+        monkeypatch.setattr("gender_gap.variance.run_variance_addon", _fake_run)
+        config_path = tmp_path / "variance.yaml"
+        main(["variance", "--config", str(config_path)])
+        assert called["config_path"] == config_path
+
     def test_download_sce_labor_market_writes_instructions(self, tmp_path: Path):
         main([
             "download",
@@ -154,3 +177,26 @@ class TestCLIBasics:
 
         result = pd.read_parquet(output_path)
         assert result["calendar_year"].iloc[0] == 2023
+
+    def test_standardize_psid_uses_raw_dir(self, monkeypatch, tmp_path: Path):
+        called = {}
+
+        def _fake_standardize_psid_2023_for_gap(raw_dir=None):
+            called["raw_dir"] = raw_dir
+            return pd.DataFrame({"calendar_year": [2023], "female": [1]})
+
+        monkeypatch.setattr(
+            "gender_gap.standardize.psid_standardize.standardize_psid_2023_for_gap",
+            _fake_standardize_psid_2023_for_gap,
+        )
+
+        output_path = tmp_path / "psid_standardized.parquet"
+        main([
+            "standardize",
+            "--dataset", "psid",
+            "--input", str(tmp_path),
+            "--output", str(output_path),
+        ])
+
+        assert called["raw_dir"] == tmp_path
+        assert output_path.exists()

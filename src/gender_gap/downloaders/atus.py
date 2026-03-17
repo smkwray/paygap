@@ -11,7 +11,10 @@ import logging
 from datetime import datetime, timezone
 from pathlib import Path
 
-import httpx
+try:
+    import httpx
+except ImportError:  # pragma: no cover - exercised only in lean environments
+    import requests as httpx
 
 from gender_gap.downloaders.base import BaseDownloader, DownloadResult
 from gender_gap.settings import DATA_RAW
@@ -22,13 +25,14 @@ logger = logging.getLogger(__name__)
 ATUS_BLS_URL = "https://www.bls.gov/tus/datafiles.htm"
 ATUS_IPUMS_URL = "https://www.atusdata.org/"
 
-# Direct download URLs for multi-year BLS ATUS zip bundles
+# Direct download URLs for multi-year BLS ATUS zip bundles.
+# The current BLS bundle spans 2003-2024.
 ATUS_FILE_URLS = {
-    "respondent": "https://www.bls.gov/tus/datafiles/atusresp-0323.zip",
-    "activity": "https://www.bls.gov/tus/datafiles/atusact-0323.zip",
-    "activity_summary": "https://www.bls.gov/tus/datafiles/atussum-0323.zip",
-    "roster": "https://www.bls.gov/tus/datafiles/atusrost-0323.zip",
-    "cps": "https://www.bls.gov/tus/datafiles/atuscps-0323.zip",
+    "respondent": "https://www.bls.gov/tus/datafiles/atusresp-0324.zip",
+    "activity": "https://www.bls.gov/tus/datafiles/atusact-0324.zip",
+    "activity_summary": "https://www.bls.gov/tus/datafiles/atussum-0324.zip",
+    "roster": "https://www.bls.gov/tus/datafiles/atusrost-0324.zip",
+    "cps": "https://www.bls.gov/tus/datafiles/atuscps-0324.zip",
 }
 
 

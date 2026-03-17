@@ -1,0 +1,148 @@
+{
+  "version": 1,
+  "files": {
+    "results/repro/acs_gap_ladder_extended.csv": [
+      "model",
+      "female_coef",
+      "female_se",
+      "female_pvalue",
+      "r_squared",
+      "n_obs",
+      "controls"
+    ],
+    "results/repro/acs_gap_ladder_by_year.csv": [
+      "year",
+      "model",
+      "female_coef",
+      "female_se",
+      "female_pvalue",
+      "r_squared",
+      "n_obs",
+      "controls"
+    ],
+    "results/repro/acs_onet_interactions.csv": [
+      "model",
+      "term",
+      "coef",
+      "se",
+      "pvalue",
+      "n_obs",
+      "r_squared"
+    ],
+    "results/repro/acs_fertility_risk_penalty.csv": [
+      "sample",
+      "outcome",
+      "model",
+      "term",
+      "coef",
+      "se",
+      "pvalue",
+      "n_obs",
+      "r_squared"
+    ],
+    "results/repro/acs_fertility_risk_by_quartile.csv": [
+      "sample",
+      "outcome",
+      "risk_quartile",
+      "mean_outcome",
+      "n_obs",
+      "weighted_n"
+    ],
+    "results/repro/acs_same_sex_placebos.csv": [
+      "sample",
+      "same_sex_couple_household",
+      "n_obs",
+      "mean_hourly_wage",
+      "mean_hours",
+      "mean_recent_birth"
+    ],
+    "results/repro/acs_lesbian_married_subgroup.csv": [
+      "section",
+      "group",
+      "comparison_group",
+      "metric",
+      "value",
+      "n_obs",
+      "weighted_n"
+    ],
+    "results/repro/acs_lesbian_married_adjusted.csv": [
+      "sample",
+      "outcome",
+      "model",
+      "term",
+      "coef",
+      "se",
+      "pvalue",
+      "n_obs",
+      "r_squared",
+      "pct_effect"
+    ],
+    "results/repro/acs_variance_suite.csv": [
+      "stratifier",
+      "stratum",
+      "metric",
+      "value",
+      "n_obs"
+    ],
+    "results/repro/acs_tail_metrics.csv": [
+      "stratifier",
+      "stratum",
+      "metric",
+      "value",
+      "n_obs"
+    ],
+    "results/repro/atus_mechanisms.csv": [
+      "status",
+      "reproductive_stage",
+      "metric",
+      "male_mean_minutes",
+      "female_mean_minutes",
+      "gap_minutes",
+      "n_male",
+      "n_female",
+      "weighted_n_male",
+      "weighted_n_female"
+    ],
+    "results/repro/sipp_robustness.csv": [
+      "status",
+      "section",
+      "metric",
+      "value",
+      "note"
+    ],
+    "results/repro/nlsy_validation.csv": [
+      "dataset",
+      "raw_gap_pct",
+      "demographics_gap_pct",
+      "skills_gap_pct",
+      "background_gap_pct",
+      "occupation_gap_pct",
+      "family_gap_pct",
+      "resources_gap_pct",
+      "skills_reduction_pp",
+      "background_reduction_pp",
+      "occupation_reduction_pp",
+      "family_reduction_pp",
+      "resources_reduction_pp",
+      "largest_reduction_block",
+      "largest_reduction_pp",
+      "final_gap_pct",
+      "common_sample_n"
+    ],
+    "results/diagnostics/repro_inventory_usage.csv": [
+      "asset_group",
+      "asset_name",
+      "status",
+      "legacy_path",
+      "canonical_path",
+      "note"
+    ],
+    "results/diagnostics/repro_optional_validation_status.csv": [
+      "dataset",
+      "status",
+      "canonical_path",
+      "expected_processed",
+      "note"
+    ]
+  }
+}

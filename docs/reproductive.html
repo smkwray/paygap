@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Reproductive Burden &mdash; paygap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<header class="site-header"><div class="header-inner">
+  <a href="index.html" class="site-logo">pay<span class="logo-accent">gap</span></a>
+  <div class="header-controls">
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+    <button id="themeToggle" class="theme-toggle" onclick="pgToggle()" aria-label="Toggle theme">&#9790;</button>
+  </div>
+  <nav><ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="trends.html">Trends</a></li>
+    <li><a href="heterogeneity.html">Heterogeneity</a></li>
+    <li><a href="mechanisms.html">Mechanisms</a></li>
+    <li><a href="reproductive.html" class="active">Reproductive</a></li>
+    <li><a href="variance.html">Variance</a></li>
+    <li><a href="occupations.html">Occupations</a></li>
+    <li><a href="methods.html">Methods</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+  </ul></nav>
+</div></header>
+
+<main class="content">
+
+  <section class="section">
+    <h1>Reproductive-Burden Extension</h1>
+    <p class="page-intro">
+      The baseline ladder controls for demographics, geography, job sorting, schedule,
+      and family status. This extension adds reproductive stage, couple type, O*NET job context,
+      and their interactions to ask: how much of the remaining gap runs through
+      reproductive-burden channels?
+    </p>
+  </section>
+
+  <!-- ── 1. Extended Specification Ladder ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Extended Specification Ladder</h2>
+      <span class="section-tag">9 Steps &middot; Pooled ACS &middot; 9.7M obs</span>
+    </div>
+
+    <div class="chart-container">
+      <h3>Full Ladder: Baseline + Reproductive Extension</h3>
+      <p class="chart-subtitle">Female coefficient &rarr; gap %, sequential OLS on log hourly wages</p>
+      <div class="chart-canvas-wrap">
+        <canvas id="ladderChart"></canvas>
+      </div>
+      <p class="chart-note">The main female effect at the Interactions step is not statistically significant (p=0.63); the gap is redistributed to interaction terms. Pooled across all ACS years with O*NET match (N=9.7M).</p>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Controls Added</th>
+          <th class="num">Coef</th>
+          <th class="num">Gap %</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="highlight">Raw gap</td><td>female only</td><td class="num">&minus;0.165</td><td class="num">15.2</td></tr>
+        <tr><td class="highlight">Demographics</td><td>+ age, race, education</td><td class="num">&minus;0.235</td><td class="num">20.9</td></tr>
+        <tr><td class="highlight">Geography</td><td>+ state</td><td class="num">&minus;0.231</td><td class="num">20.6</td></tr>
+        <tr><td class="highlight">Job sorting</td><td>+ occupation, industry, class</td><td class="num">&minus;0.135</td><td class="num">12.6</td></tr>
+        <tr><td class="highlight">Schedule</td><td>+ hours, WFH, commute</td><td class="num">&minus;0.147</td><td class="num">13.7</td></tr>
+        <tr><td class="highlight">Family</td><td>+ marital status, children</td><td class="num">&minus;0.147</td><td class="num">13.7</td></tr>
+        <tr><td class="highlight">Reproductive stage</td><td>+ reproductive stage, couple type, birth</td><td class="num">&minus;0.114</td><td class="num">10.8</td></tr>
+        <tr><td class="highlight">Job context</td><td>+ O*NET rigidity, autonomy, etc.</td><td class="num">&minus;0.115</td><td class="num">10.8</td></tr>
+        <tr><td class="highlight">Interactions</td><td>+ female &times; reproductive &times; job interactions</td><td class="num">&minus;0.006*</td><td class="num">0.6*</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <p><strong>Family &rarr; Reproductive stage:</strong> Adding reproductive-stage and couple-type controls
+      reduces the gap by ~3 pp (13.7% &rarr; 10.8%). <strong>Job context &rarr; Interactions:</strong>
+      Interaction terms absorb the remaining main female effect &mdash; the gap does not disappear
+      but gets channeled through specific reproductive &times; job-context pathways.</p>
+    </div>
+  </section>
+
+  <!-- ── 2. Interaction Channels ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Interaction Channels</h2>
+      <span class="section-tag">Where the Gap Goes</span>
+    </div>
+
+    <div class="chart-container">
+      <h3>Female &times; Context Interaction Coefficients</h3>
+      <p class="chart-subtitle">Negative = penalty for women in that context; positive = premium</p>
+      <div class="chart-canvas-wrap">
+        <canvas id="interactionChart"></canvas>
+      </div>
+      <p class="chart-note">Coefficients from the final interaction step on log hourly wages. Negative values indicate a wage penalty for women in that context; positive values indicate a premium. All interactions are conditional on the full job-context control set.</p>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Interaction</th>
+          <th class="num">Coef</th>
+          <th class="num">p-value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>female &times; job rigidity</td><td class="num">&minus;0.121</td><td class="num">&lt;0.001</td></tr>
+        <tr><td>female &times; recent marriage</td><td class="num">&minus;0.100</td><td class="num">&lt;0.001</td></tr>
+        <tr><td>female &times; child under 6 &times; job rigidity</td><td class="num">&minus;0.046</td><td class="num">&lt;0.001</td></tr>
+        <tr><td>female &times; autonomy</td><td class="num">&minus;0.007</td><td class="num">0.013</td></tr>
+        <tr><td>female &times; same-sex household</td><td class="num">+0.024</td><td class="num">&lt;0.001</td></tr>
+        <tr><td>female &times; child under 6</td><td class="num">+0.111</td><td class="num">0.053</td></tr>
+        <tr><td>female &times; recent birth</td><td class="num">+0.153</td><td class="num">0.021</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <p><strong>Job rigidity is the largest single channel:</strong> women in rigid-schedule occupations
+      face a 12.1 pp additional penalty. Having a young child in a rigid job compounds this by
+      another 4.6 pp. The positive coefficients for recent birth and young children reflect
+      survivor selection &mdash; women who remain employed through these events tend to be
+      in higher-paying positions.</p>
+    </div>
+  </section>
+
+  <!-- ── 3. Fertility Risk Gradient ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Fertility-Risk Gradient</h2>
+      <span class="section-tag">Childless 25&ndash;44 &middot; ACS Pooled</span>
+    </div>
+
+    <div class="chart-container">
+      <h3>Earnings by Fertility-Risk Quartile (Childless Women 25&ndash;44)</h3>
+      <p class="chart-subtitle">Q1 = lowest predicted fertility risk, Q4 = highest</p>
+      <div class="chart-canvas-wrap">
+        <canvas id="fertilityChart"></canvas>
+      </div>
+      <p class="chart-note">Fertility risk predicted from demographic and geographic covariates
+      among childless women aged 25&ndash;44. ~343K observations per quartile.</p>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Quartile</th>
+          <th class="num">Hourly Wage</th>
+          <th class="num">Annual Earnings</th>
+          <th class="num">Hours/Week</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Q1 (lowest risk)</td><td class="num">$33.49</td><td class="num">$64,015</td><td class="num">41.1</td></tr>
+        <tr><td>Q2</td><td class="num">$28.68</td><td class="num">$51,708</td><td class="num">39.7</td></tr>
+        <tr><td>Q3</td><td class="num">$25.61</td><td class="num">$44,786</td><td class="num">38.4</td></tr>
+        <tr><td>Q4 (highest risk)</td><td class="num">$20.87</td><td class="num">$32,312</td><td class="num">37.0</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <p>Among childless women who have not yet had children, those with the highest predicted
+      fertility risk earn $12.62 less per hour than those with the lowest risk.
+      This gradient exists before any children are born and likely reflects both sorting
+      and anticipatory labor-market behavior.</p>
+    </div>
+  </section>
+
+  <!-- ── 4. Same-Sex Placebo ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Same-Sex Placebo &amp; Lesbian Married Premium</h2>
+      <span class="section-tag">Negative Control</span>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Group (Childless 25&ndash;44)</th>
+          <th class="num">N</th>
+          <th class="num">Mean Hourly</th>
+          <th class="num">Mean Hours</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Opposite-sex couple</td><td class="num">1,355,171</td><td class="num">$26.68</td><td class="num">38.9</td></tr>
+        <tr><td>Same-sex couple</td><td class="num">18,565</td><td class="num">$45.10</td><td class="num">40.2</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Lesbian Married Wage Premium (Married Women Only, N=2.7M)</h4>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th class="num">Coef</th>
+          <th class="num">Premium %</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>L0 raw</td><td class="num">+0.209</td><td class="num">+23.2</td></tr>
+        <tr><td>L2 + job sorting</td><td class="num">+0.101</td><td class="num">+10.6</td></tr>
+        <tr><td>L4 + reproductive controls</td><td class="num">+0.115</td><td class="num">+12.2</td></tr>
+        <tr><td>L5 + O*NET context</td><td class="num">+0.115</td><td class="num">+12.2</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <p>Lesbian married women earn 12% more than otherwise-similar heterosexual married women
+      even after full controls. This is consistent with same-sex couples facing different
+      household specialization incentives &mdash; if the motherhood penalty is partly driven by
+      gendered household division, couples without a male earner may specialize differently.</p>
+    </div>
+  </section>
+
+  <!-- ── 5. ATUS Time-Use by Reproductive Stage ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Time-Use by Reproductive Stage</h2>
+      <span class="section-tag">ATUS Mechanism Evidence</span>
+    </div>
+
+    <div class="chart-container">
+      <h3>Paid-Work Gap by Reproductive Stage (min/day)</h3>
+      <p class="chart-subtitle">Female &minus; Male daily minutes of paid work</p>
+      <div class="chart-canvas-wrap">
+        <canvas id="atusStageChart"></canvas>
+      </div>
+      <p class="chart-note">Source: American Time Use Survey, pooled recent waves. Gaps are female minus male average daily minutes. Stages defined by presence and age of own children in household.</p>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Stage</th>
+          <th class="num">Paid Work Gap</th>
+          <th class="num">Childcare Gap</th>
+          <th class="num">Housework Gap</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Childless partnered</td><td class="num">&minus;43.3</td><td class="num">+0.6</td><td class="num">+37.5</td></tr>
+        <tr><td>Childless unpartnered</td><td class="num">&minus;41.1</td><td class="num">+1.2</td><td class="num">+17.6</td></tr>
+        <tr><td>Mother (child 6&ndash;17)</td><td class="num">&minus;113.6</td><td class="num">+7.7</td><td class="num">+37.9</td></tr>
+        <tr><td>Mother (child under 6)</td><td class="num">&minus;148.8</td><td class="num">+39.6</td><td class="num">+49.1</td></tr>
+        <tr><td class="highlight">Overall</td><td class="num">&minus;68.0</td><td class="num">+11.4</td><td class="num">+31.9</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <p>Mothers of children under 6 work 149 fewer paid minutes per day than comparable men &mdash;
+      more than double the overall gender gap. The childcare and housework burden increases
+      sharply with young children, consistent with the schedule-rigidity penalty found in
+      the wage regressions.</p>
+    </div>
+  </section>
+
+  <!-- ── 6. SIPP Cross-Check ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>SIPP Robustness</h2>
+      <span class="section-tag">Cross-Dataset Validation</span>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>SIPP Stage</th>
+          <th class="num">Gap %</th>
+          <th class="num">N</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Childless unpartnered</td><td class="num">&minus;1.2</td><td class="num">37,707</td></tr>
+        <tr><td>Mother (child under 6)</td><td class="num">&minus;14.0</td><td class="num">19,654</td></tr>
+        <tr><td>Childless other partnered</td><td class="num">&minus;19.3</td><td class="num">16,561</td></tr>
+        <tr><td>Mother (child 6&ndash;17)</td><td class="num">&minus;26.4</td><td class="num">36,763</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <p>SIPP confirms the ACS pattern: the gap is smallest among childless unpartnered workers
+      (&minus;1.2%) and largest among mothers with school-age children (&minus;26.4%). The SIPP
+      reproductive controls are noisier than ACS but directionally consistent.</p>
+    </div>
+  </section>
+
+  <!-- ── Interpretation Limits ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Interpretation Limits</h2>
+    </div>
+    <div class="warning-box">
+      <p>This extension is <strong>descriptive and accounting-based</strong>, not causal. It shows
+      how much of the observed gap can be statistically attributed to reproductive-burden channels,
+      but cannot distinguish employer discrimination from self-selection, preference differences, or
+      constrained choices. The fertility-risk gradient and same-sex placebo are consistent with
+      reproductive-burden mechanisms but do not constitute direct proof of discrimination.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer"><div class="footer-inner"><span>paygap &middot; MIT License</span><span>Data: ACS PUMS, SIPP, ATUS, O*NET (all public federal)</span></div></footer>
+
+<script>
+(function () {
+  pgDefaults();
+
+  var charts = [];
+
+  function buildCharts() {
+    charts.forEach(function (ch) { ch.destroy(); });
+    charts = [];
+    var c = C();
+
+    /* 1. Extended ladder — horizontal bar */
+    charts.push(new Chart(document.getElementById('ladderChart'), {
+      type: 'bar',
+      data: {
+        labels: [
+          'Raw gap',
+          'Demographics',
+          'Geography',
+          'Job sorting',
+          'Schedule',
+          'Family',
+          'Reproductive stage',
+          'Job context (O*NET)',
+          'Interactions*'
+        ],
+        datasets: [{
+          label: 'Gap (%)',
+          data: [15.2, 20.9, 20.6, 12.6, 13.7, 13.7, 10.8, 10.8, 0.6],
+          backgroundColor: [
+            c.accent, c.purple, c.purple, c.green, c.orange, c.teal,
+            c.red, c.red, c.muted
+          ],
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: function (ctx) { return ctx.parsed.x + '%'; } } }
+        },
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: { color: c.textSec, callback: function (v) { return v + '%'; } },
+            grid: { color: c.grid },
+            title: { display: true, text: 'Gap (%)', color: c.textSec }
+          },
+          y: { ticks: { color: c.textSec, font: { size: 11 } }, grid: { color: c.grid } }
+        }
+      }
+    }));
+
+    /* 2. Interaction coefficients — horizontal bar */
+    var intLabels = [
+      'female \u00d7 job rigidity',
+      'female \u00d7 recent marriage',
+      'female \u00d7 child<6 \u00d7 rigidity',
+      'female \u00d7 autonomy',
+      'female \u00d7 same-sex',
+      'female \u00d7 child under 6',
+      'female \u00d7 recent birth'
+    ];
+    var intValues = [-0.121, -0.100, -0.046, -0.007, 0.024, 0.111, 0.153];
+    var intColors = intValues.map(function (v) { return v < 0 ? c.red : c.green; });
+
+    charts.push(new Chart(document.getElementById('interactionChart'), {
+      type: 'bar',
+      data: {
+        labels: intLabels,
+        datasets: [{
+          label: 'Coefficient',
+          data: intValues,
+          backgroundColor: intColors,
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                var v = ctx.parsed.x;
+                return (v > 0 ? '+' : '') + v.toFixed(3);
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: c.textSec, callback: function (v) { return (v > 0 ? '+' : '') + v.toFixed(2); } },
+            grid: { color: c.grid },
+            title: { display: true, text: 'Coefficient on log hourly wage', color: c.textSec }
+          },
+          y: { ticks: { color: c.textSec, font: { size: 11 } }, grid: { color: c.grid } }
+        }
+      }
+    }));
+
+    /* 3. Fertility risk gradient — grouped bar */
+    charts.push(new Chart(document.getElementById('fertilityChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Q1 (lowest risk)', 'Q2', 'Q3', 'Q4 (highest risk)'],
+        datasets: [
+          {
+            label: 'Hourly Wage ($)',
+            data: [33.49, 28.68, 25.61, 20.87],
+            backgroundColor: c.accent,
+            borderRadius: 4,
+            yAxisID: 'y'
+          },
+          {
+            label: 'Hours/Week',
+            data: [41.1, 39.7, 38.4, 37.0],
+            backgroundColor: c.orange,
+            borderRadius: 4,
+            yAxisID: 'y1'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top', labels: { color: c.text } },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                if (ctx.datasetIndex === 0) return '$' + ctx.parsed.y.toFixed(2) + '/hr';
+                return ctx.parsed.y.toFixed(1) + ' hrs/wk';
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            position: 'left',
+            ticks: { color: c.textSec, callback: function (v) { return '$' + v; } },
+            grid: { color: c.grid },
+            title: { display: true, text: 'Hourly Wage ($)', color: c.textSec }
+          },
+          y1: {
+            beginAtZero: false,
+            min: 34,
+            max: 44,
+            position: 'right',
+            ticks: { color: c.textSec },
+            grid: { drawOnChartArea: false },
+            title: { display: true, text: 'Hours/Week', color: c.textSec }
+          },
+          x: { ticks: { color: c.textSec }, grid: { color: c.grid } }
+        }
+      }
+    }));
+
+    /* 4. ATUS paid work gap by stage — horizontal bar */
+    var stageLabels = ['Childless partnered', 'Childless unpartnered', 'Mother (6\u201317)', 'Mother (under 6)', 'Overall'];
+    var stageValues = [-43.3, -41.1, -113.6, -148.8, -68.0];
+
+    charts.push(new Chart(document.getElementById('atusStageChart'), {
+      type: 'bar',
+      data: {
+        labels: stageLabels,
+        datasets: [{
+          label: 'Paid work gap (min)',
+          data: stageValues,
+          backgroundColor: c.red,
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) { return ctx.parsed.x.toFixed(1) + ' min/day'; }
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: c.textSec },
+            grid: { color: c.grid },
+            title: { display: true, text: 'Female \u2212 Male (minutes/day)', color: c.textSec }
+          },
+          y: { ticks: { color: c.textSec }, grid: { color: c.grid } }
+        }
+      }
+    }));
+  }
+
+  buildCharts();
+  window.pgRebuild = buildCharts;
+})();
+</script>
+
+</body>
+</html>

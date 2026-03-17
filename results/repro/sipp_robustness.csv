@@ -1,0 +1,11 @@
+status,section,metric,value,note
+ok_partial,ols,SIPP0,-0.14056273107437542,pct_gap=-13.11; r2=0.0064; n=110685
+ok_partial,ols,SIPP1,-0.1420881328366782,pct_gap=-13.25; r2=0.0220; n=110685
+ok_partial,ols,SIPP2,-0.14071347245135746,pct_gap=-13.13; r2=0.2931; n=110685
+ok_partial,ols,SIPP3_reproductive,-0.16765402480256658,pct_gap=-15.44; r2=0.3490; n=66871
+ok_partial,stage_gap,childless_other_partnered,-0.21485580340510044,pct_gap=-19.33; n=16561
+ok_partial,stage_gap,childless_unpartnered,-0.01221957733284306,pct_gap=-1.21; n=37707
+ok_partial,stage_gap,mother_6_17_only,-0.30644881402088364,pct_gap=-26.39; n=36763
+ok_partial,stage_gap,mother_under6,-0.15059975419475458,pct_gap=-13.98; n=19654
+ok_partial,status,fertility_risk_proxy,,"Public-use SIPP supports reproductive controls and age-at-first-birth, but not a clean ACS-style recent-birth/fertility-risk score."
+ok_partial,status,sample_size,110685.0,Employed worker-month sample with positive hourly wage and merged reproductive fields.

@@ -298,10 +298,10 @@ def download_all_cps(years: list[int]) -> dict[int, pd.DataFrame]:
 # ═══════════════════════════════════════════════════════════════════
 
 ATUS_FILES = {
-    "respondent": "https://www.bls.gov/tus/datafiles/atusresp-0323.zip",
-    "activity_summary": "https://www.bls.gov/tus/datafiles/atussum-0323.zip",
-    "roster": "https://www.bls.gov/tus/datafiles/atusrost-0323.zip",
-    "cps_link": "https://www.bls.gov/tus/datafiles/atuscps-0323.zip",
+    "respondent": "https://www.bls.gov/tus/datafiles/atusresp-0324.zip",
+    "activity_summary": "https://www.bls.gov/tus/datafiles/atussum-0324.zip",
+    "roster": "https://www.bls.gov/tus/datafiles/atusrost-0324.zip",
+    "cps_link": "https://www.bls.gov/tus/datafiles/atuscps-0324.zip",
 }
 
 

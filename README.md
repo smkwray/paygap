@@ -9,11 +9,11 @@ includes mechanism evidence from time-use and labor-market expectations surveys.
 
 ## Cross-dataset headline (2023)
 
-| Dataset | Raw hourly gap | Adjusted hourly gap | Model | N |
-|---------|---------------:|--------------------:|-------|--:|
-| ACS     | 16.81%         | 13.23%              | M5    | ~900K/yr |
-| CPS ASEC| 15.77%         | 16.96%              | M_full| ~60K/yr |
-| SIPP    | 15.09%         | 10.91%              | SIPP3 | 182,658 |
+| Dataset | Raw hourly gap | Adjusted hourly gap | Controls | N |
+|---------|---------------:|--------------------:|----------|--:|
+| ACS     | 16.81%         | 13.23%              | Full (family) | ~900K/yr |
+| CPS ASEC| 15.77%         | 16.96%              | Full | ~60K/yr |
+| SIPP    | 15.09%         | 10.91%              | Full | 182,658 |
 
 - ACS 2023 raw gap 90% CI: 16.50% – 17.12% (successive-difference replication, 80 replicate weights)
 - ACS adjusted gap is stable at 13–14% across all available years (2015–2019, 2021–2023)
@@ -25,10 +25,9 @@ includes mechanism evidence from time-use and labor-market expectations surveys.
 <summary><strong>ACS year-by-year trend</strong></summary>
 
 The ACS is the primary headline dataset. Sequential OLS progressively adds control
-blocks: demographics (M1), geography (M2), job sorting (M3), schedule/commute (M4),
-and family (M5).
+blocks: demographics, geography, job sorting, schedule/commute, and family.
 
-| Year | Raw gap % | M5 adjusted gap % |
+| Year | Raw gap % | Adjusted gap % |
 |-----:|----------:|-------------------:|
 | 2015 | 18.65     | 14.20              |
 | 2016 | 18.43     | 13.65              |
@@ -40,9 +39,9 @@ and family (M5).
 | 2023 | 16.81     | 13.23              |
 
 - Raw gap ranges from 15.9% to 18.7% across years
-- M5 adjusted gap stays in a narrow 13.2–14.2% band
+- Adjusted gap stays in a narrow 13.2–14.2% band
 - ACS raw-gap 90% margins of error average 0.29 percentage points (tight)
-- ACS M5 SDR standard errors average 0.0019
+- ACS adjusted-gap SDR standard errors average 0.0019
 
 </details>
 
@@ -53,9 +52,9 @@ and family (M5).
 - Pooled P5 adjusted gap: ~19.0% (−0.2110 log points)
 - Pooled Oaxaca unexplained share: 81.54%
 
-The pooled result is larger than year-by-year M5 because the pooled specification
-uses broad occupation/industry controls for tractability over 7.0M rows. The
-year-by-year M5 trend is the more conservative headline series.
+The pooled result is larger than the year-by-year adjusted estimate because the pooled
+specification uses broad occupation/industry controls for tractability over 7.0M rows.
+The year-by-year trend is the more conservative headline series.
 
 </details>
 
@@ -108,7 +107,7 @@ treated as supplemental.
 <details>
 <summary><strong>Oaxaca-Blinder decomposition trend</strong></summary>
 
-| Year | Total log gap | Explained % | Unexplained % | M5 adjusted gap % |
+| Year | Total log gap | Explained % | Unexplained % | Adjusted gap % |
 |-----:|:-------------:|:-----------:|:-------------:|-------------------:|
 | 2015 | 0.1794        | 26.47       | 73.53         | 14.20              |
 | 2016 | 0.1731        | 25.48       | 74.52         | 13.65              |
@@ -120,7 +119,7 @@ treated as supplemental.
 | 2023 | 0.1623        | 12.19       | 87.81         | 13.23              |
 
 The unexplained share rises sharply after 2019 (from ~74% to ~88–94%), while the
-M5 adjusted gap stays stable. The post-2019 shift is driven by the explained component
+The adjusted gap stays stable. The post-2019 shift is driven by the explained component
 collapsing under a stable total gap, not by the total gap exploding. This makes
 Oaxaca secondary to the sequential OLS trend for headline reporting.
 
@@ -230,12 +229,94 @@ read as mechanism-sensitive accounting, not a pre-market explanation.
 </details>
 
 <details>
+<summary><strong>Reproductive-burden extension</strong></summary>
+
+The reproductive extension adds three model steps beyond the baseline family controls:
+
+| Step | Controls Added | Pooled Coef | Gap % |
+|------|----------------|------------:|------:|
+| Family (baseline) | marital, children | −0.147 | 13.7 |
+| Reproductive stage | + reproductive stage, couple type, birth | −0.114 | 10.8 |
+| Job context | + O\*NET rigidity, autonomy, etc. | −0.115 | 10.8 |
+| Interactions | + female × reproductive × job interactions | −0.006\* | 0.6\* |
+
+\*The main female effect at the interactions step is not significant (p=0.63) — the gap
+is redistributed to interaction terms, principally female × job rigidity (−0.121) and
+female × recent marriage (−0.100).
+
+Additional outputs:
+- **Fertility-risk gradient:** Among childless women 25–44, Q4 (highest predicted
+  fertility risk) earn $12.62/hr less than Q1 — before any children are born.
+- **Same-sex placebo:** Lesbian married women earn 12% more than comparable
+  heterosexual married women after full controls.
+- **ATUS by stage:** Mothers of children under 6 work 149 fewer paid minutes/day
+  than men — 2× the overall gap.
+- **SIPP robustness:** Stage gaps range from −1.2% (childless unpartnered) to
+  −26.4% (mothers 6–17).
+
+Outputs: `results/repro/`, `reports/atus_repro_mechanisms.md`
+Run: `python scripts/run_repro_extension.py`
+
+</details>
+
+<details>
+<summary><strong>Variance extension (V1–V4)</strong></summary>
+
+The variance suite examines the full earnings distribution, not just the mean:
+
+| Suite | What it measures | Headline |
+|-------|-----------------|----------|
+| V1 | Raw and residual variance ratios | Male variance 10% higher raw, 4% higher residual |
+| V2 | Selection-corrected variance (IPW) | Barely changes (1.039 → 1.047) |
+| V3 | Variance by reproductive stage | Mothers' residual variance *compresses* (ratio 0.82–0.86) |
+| V4 | Variance by O\*NET job rigidity | Ratio flips in rigid jobs: women more dispersed (0.87) |
+
+Key tail-concentration finding: men hold 6.3% of total hourly earnings in the
+top 5% vs. women's 3.6% — a 1.7× overrepresentation.
+
+Outputs: `results/variance/`, `reports/variance_addon_summary.md`
+Run: `python scripts/run_repro_extension.py` (produces both repro and variance outputs)
+
+</details>
+
+<details>
+<summary><strong>Harmonized occupation variance (V5)</strong></summary>
+
+Occupation codes changed between the 2010 and 2018 Census vintages. This extension
+harmonizes both into a single frame and computes within-occupation dispersion by gender.
+
+The site presents both female-higher-variance and male-higher-variance occupation
+rankings symmetrically, with annual/hourly toggles.
+
+Key findings:
+- **Female-higher-variance occupations** concentrate in production (4/10), construction
+  (2/10), and installation/repair (2/10).
+- **Male-higher-variance occupations** concentrate in community/social service (3/10)
+  and legal (2/10).
+- **Largest male top-decile advantage:** Probation officers (−75.3 pp) and Parts
+  salespersons (−73.4 pp). Only one occupation (Agents/business managers of artists)
+  shows a female top-decile advantage in the top 25.
+- **Post-2020:** Hourly raw variance ratio moved from 0.89 to 0.92 (modestly toward
+  parity). Residual ratio was unchanged.
+
+Outputs:
+- `results/variance/acs_occupation_variability_leaders.csv` — top-25 per leaderboard
+- `results/variance/acs_occupation_dispersion.csv` — full occupation-level metrics
+- `results/variance/acs_soc_group_leaderboard_counts.csv` — SOC group concentration
+- `results/variance/acs_year_regime_variance_summary.csv` — pre/post-2020 comparison
+- `results/variance/acs_tail_contrast_summary.csv` — tail-metric contrasts
+- `results/diagnostics/variance_occupation_harmonization_map.csv` — crosswalk map
+- `reports/variance_addon_summary.md` — narrative summary
+
+</details>
+
+<details>
 <summary><strong>Robustness summary</strong></summary>
 
-- **Survey uncertainty:** ACS raw-gap 90% margins of error average 0.29 pp. M5
-  standard errors average 0.0019. Sampling noise is not the main source of
-  uncertainty.
-- **Family-field sensitivity:** Correcting ACS family variables shifts the M5
+- **Survey uncertainty:** ACS raw-gap 90% margins of error average 0.29 pp.
+  Adjusted-gap standard errors average 0.0019. Sampling noise is not the main
+  source of uncertainty.
+- **Family-field sensitivity:** Correcting ACS family variables shifts the adjusted
   coefficient by −0.0032 on average (largest year-level shift: 0.0046). The bug
   was real and worth fixing but does not overturn results.
 - **Selection robustness:** Annual-earnings gaps are larger than worker-only hourly
@@ -259,6 +340,7 @@ All data are free, public, and U.S. federal:
 | [ATUS](https://www.bls.gov/tus/) | BLS | Pooled | Time-use mechanism evidence |
 | [SCE Labor Market Survey](https://www.newyorkfed.org/microeconomics/sce/labor) | NY Fed | Public chart series | Expectations + reservation wages |
 | [NLSY79/97](https://www.bls.gov/nls/) | BLS | Cohort | Background + skills sub-analysis |
+| [O\*NET](https://www.onetcenter.org/) | DOL/ETA | Current | Job context (rigidity, autonomy) |
 
 ## Methods
 
@@ -317,6 +399,8 @@ src/gender_gap/   Shared library (registry, settings, CLI)
 data/             Raw and processed survey microdata (gitignored)
 results/          CSV outputs, trend files, diagnostics
   trends/         Cross-year trend series
+  repro/          Reproductive-burden extension outputs
+  variance/       Variance extension outputs
   diagnostics/    Robustness checks and validation artifacts
 reports/          Narrative reports and technical notes
 configs/          Dataset configuration and registry

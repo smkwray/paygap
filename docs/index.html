@@ -22,6 +22,9 @@
     <li><a href="trends.html">Trends</a></li>
     <li><a href="heterogeneity.html">Heterogeneity</a></li>
     <li><a href="mechanisms.html">Mechanisms</a></li>
+    <li><a href="reproductive.html">Reproductive</a></li>
+    <li><a href="variance.html">Variance</a></li>
+    <li><a href="occupations.html">Occupations</a></li>
     <li><a href="methods.html">Methods</a></li>
     <li><a href="faq.html">FAQ</a></li>
   </ul></nav>
@@ -68,7 +71,7 @@
 
       <div class="card">
         <h3>Job sorting drives largest reduction</h3>
-        <p>Adding occupation and industry controls reduces the raw gap by ~8 percentage points (M2&rarr;M3 step). But 88% of the Oaxaca decomposition remains unexplained even after all observables.</p>
+        <p>Adding occupation and industry controls reduces the raw gap by ~8 percentage points. But 88% of the Oaxaca decomposition remains unexplained even after all observables.</p>
         <a href="mechanisms.html" class="card-link">Mechanisms &rarr;</a>
       </div>
 
@@ -76,6 +79,18 @@
         <h3>Gap varies sharply by subgroup</h3>
         <p>Healthcare 30.6%, Black 5.6%, Military 5.5%. The gap is widest among higher-educated workers (Masters 27.4%) and in sales/office occupations (28.6%).</p>
         <a href="heterogeneity.html" class="card-link">Heterogeneity &rarr;</a>
+      </div>
+
+      <div class="card">
+        <h3>Reproductive burden explains ~3 pp</h3>
+        <p>Adding reproductive stage and couple type reduces the adjusted gap from 13.7% to 10.8%. Job rigidity and motherhood interactions absorb most of the remainder.</p>
+        <a href="reproductive.html" class="card-link">Reproductive &rarr;</a>
+      </div>
+
+      <div class="card">
+        <h3>Male earnings more dispersed</h3>
+        <p>Men&rsquo;s hourly wage variance is 10% higher. Men are 1.7&times; overrepresented in the top 5% of earners. Selection correction barely moves these patterns.</p>
+        <a href="variance.html" class="card-link">Variance &rarr;</a>
       </div>
 
     </div>
@@ -87,7 +102,7 @@
     <div class="chart-container">
       <h3>ACS Raw vs Adjusted Hourly Gap (2015-2023)</h3>
       <canvas id="chartGlance"></canvas>
-      <p class="chart-note">Prime-age wage/salary workers. M5 controls for age, race, education, state, occupation, industry, hours, work-from-home, commute, marital status, children. No 2020 ACS due to COVID collection issues.</p>
+      <p class="chart-note">Prime-age wage/salary workers. Adjusted series controls for age, race, education, state, occupation, industry, hours, work-from-home, commute, marital status, children. No 2020 ACS due to COVID collection issues.</p>
     </div>
   </section>
 
@@ -106,6 +121,18 @@
       <a href="mechanisms.html" class="card nav-card">
         <h3>Mechanisms</h3>
         <p>Oaxaca decomposition and specification ladders.</p>
+      </a>
+      <a href="reproductive.html" class="card nav-card">
+        <h3>Reproductive</h3>
+        <p>Reproductive-burden extension: fertility risk, same-sex placebo, interaction channels.</p>
+      </a>
+      <a href="variance.html" class="card nav-card">
+        <h3>Variance</h3>
+        <p>Distributional analysis: dispersion, tails, reproductive &amp; job-context heterogeneity.</p>
+      </a>
+      <a href="occupations.html" class="card nav-card">
+        <h3>Occupations</h3>
+        <p>Harmonized occupation-level variance, leaderboards, and pre/post-2020 shifts.</p>
       </a>
       <a href="methods.html" class="card nav-card">
         <h3>Methods</h3>
@@ -148,7 +175,7 @@
             pointHoverRadius: 6
           },
           {
-            label: 'Adjusted M5 (%)',
+            label: 'Adjusted (%)',
             data: [14.20, 13.65, 13.65, 13.59, 13.86, 14.21, 13.76, 13.23],
             borderColor: c.orange,
             backgroundColor: c.orange + '22',

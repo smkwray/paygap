@@ -22,6 +22,9 @@
     <li><a href="trends.html" class="active">Trends</a></li>
     <li><a href="heterogeneity.html">Heterogeneity</a></li>
     <li><a href="mechanisms.html">Mechanisms</a></li>
+    <li><a href="reproductive.html">Reproductive</a></li>
+    <li><a href="variance.html">Variance</a></li>
+    <li><a href="occupations.html">Occupations</a></li>
     <li><a href="methods.html">Methods</a></li>
     <li><a href="faq.html">FAQ</a></li>
   </ul></nav>
@@ -40,13 +43,13 @@
     <div class="chart-container">
       <h3>ACS Raw vs Adjusted Hourly Gap (2015-2023)</h3>
       <canvas id="chartAcsTrend"></canvas>
-      <p class="chart-note">Prime-age wage/salary workers. M5 controls for age, race, education, state, occupation, industry, hours, work-from-home, commute, marital status, children. No 2020 ACS due to COVID collection issues.</p>
+      <p class="chart-note">Prime-age wage/salary workers. Adjusted series controls for age, race, education, state, occupation, industry, hours, work-from-home, commute, marital status, children. No 2020 ACS due to COVID collection issues.</p>
     </div>
 
     <div class="table-wrap">
       <table>
         <thead>
-          <tr><th>Year</th><th>Raw %</th><th>M5 Adjusted %</th><th>N (approx.)</th></tr>
+          <tr><th>Year</th><th>Raw %</th><th>Adjusted %</th><th>N (approx.)</th></tr>
         </thead>
         <tbody>
           <tr><td>2015</td><td>18.65</td><td>14.20</td><td>~900K</td></tr>
@@ -101,7 +104,7 @@
       <canvas id="chartLadder"></canvas>
     </div>
     <div class="insight-box">
-      <p>The M2&rarr;M3 step (adding occupation and industry) drives the largest gap reduction: ~8 percentage points. Family controls (M5) add only 0.06 pp.</p>
+      <p>Adding occupation and industry controls drives the largest gap reduction: ~8 percentage points. Family controls add only 0.06 pp.</p>
     </div>
   </section>
 
@@ -141,7 +144,7 @@
             pointHoverRadius: 7
           },
           {
-            label: 'Adjusted M5 (%)',
+            label: 'Adjusted (%)',
             data: [14.20, 13.65, 13.65, 13.59, 13.86, 14.21, 13.76, 13.23],
             borderColor: c.orange,
             backgroundColor: c.orange + '22',
@@ -176,7 +179,7 @@
         labels: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023'],
         datasets: [
           {
-            label: 'Raw M0 (%)',
+            label: 'Raw (%)',
             data: [20.59, 19.64, 20.39, 18.88, 17.11, 17.51, 17.64, 16.15, 15.77],
             borderColor: c.accent,
             backgroundColor: c.accent + '22',
@@ -293,12 +296,12 @@
       type: 'bar',
       data: {
         labels: [
-          'M0 (female only)',
-          'M1 (+ age, race, education)',
-          'M2 (+ state)',
-          'M3 (+ occupation, industry, class)',
-          'M4 (+ hours, WFH, commute)',
-          'M5 (+ marital, children)'
+          'Raw gap',
+          'Demographics',
+          'Geography',
+          'Job sorting',
+          'Schedule',
+          'Family'
         ],
         datasets: [{
           label: 'Gap (%)',

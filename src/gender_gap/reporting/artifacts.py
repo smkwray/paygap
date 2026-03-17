@@ -74,6 +74,23 @@ def export_json_artifacts(input_dir: Path, output_dir: Path) -> Path:
     if qr:
         artifact["models"]["quantile_regression"] = qr
 
+    # Reproductive-extension outputs
+    fertility = _csv_to_records(input_dir / "acs_fertility_risk_penalty.csv")
+    if fertility:
+        artifact["models"]["fertility_risk_penalty"] = fertility
+
+    fertility_quartiles = _csv_to_records(input_dir / "acs_fertility_risk_by_quartile.csv")
+    if fertility_quartiles:
+        artifact["models"]["fertility_risk_quartiles"] = fertility_quartiles
+
+    variance = _csv_to_records(input_dir / "acs_variance_suite.csv")
+    if variance:
+        artifact["models"]["variance_suite"] = variance
+
+    interactions = _csv_to_records(input_dir / "acs_onet_interactions.csv")
+    if interactions:
+        artifact["models"]["onet_interactions"] = interactions
+
     # Heterogeneity (one entry per dimension)
     het = {}
     for het_path in sorted(input_dir.glob("heterogeneity_*.csv")):

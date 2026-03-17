@@ -29,7 +29,7 @@ COMMUTE_MODE_MAP = {
 
 def standardize_acs(
     df: pd.DataFrame,
-    survey_year: int,
+    survey_year: int | None = None,
     adj_factor_col: str = "ADJINC",
     keep_replicate_weights: bool = False,
 ) -> pd.DataFrame:
@@ -51,7 +51,7 @@ def standardize_acs(
     pd.DataFrame
         Standardized person_year_core table.
     """
-    out = pd.DataFrame()
+    out = pd.DataFrame(index=df.index)
     age = _numeric_series(df.get("AGEP"), index=df.index)
     sex = _numeric_series(df.get("SEX"), index=df.index)
     schl = _numeric_series(df.get("SCHL"), index=df.index)
@@ -59,7 +59,18 @@ def standardize_acs(
     cow = _numeric_series(df.get("COW"), index=df.index)
     hisp = _numeric_series(df.get("HISP"), index=df.index)
     rac1p = _numeric_series(df.get("RAC1P"), index=df.index)
+    fer = _numeric_series(df.get("FER"), index=df.index)
+    marhm = _numeric_series(df.get("MARHM"), index=df.index)
+    cplt = _numeric_series(df.get("CPLT"), index=df.index)
+    partner = _numeric_series(df.get("PARTNER"), index=df.index)
+    relshipp = _numeric_series(df.get("RELSHIPP", df.get("RELP")), index=df.index)
+    noc = _numeric_series(df.get("NOC"), index=df.index)
+    paoc = _numeric_series(df.get("PAOC"), index=df.index)
     jwtrns = _numeric_series(df.get("JWTRNS", df.get("JWTR")), index=df.index)
+    if survey_year is None:
+        survey_year = _infer_survey_year(df)
+    if survey_year is None:
+        raise ValueError("survey_year is required when the ACS frame does not include YEAR")
 
     # Keys
     out["person_id"] = df["SERIALNO"].astype(str) + "_" + df["SPORDER"].astype(str)
@@ -67,6 +78,8 @@ def standardize_acs(
     out["data_source"] = "ACS"
     out["survey_year"] = survey_year
     out["calendar_year"] = survey_year
+    out["acs_serialno"] = df["SERIALNO"].astype(str)
+    out["acs_sporder"] = _numeric_series(df.get("SPORDER"), index=df.index)
 
     # Demographics
     out["female"] = (sex == 2).astype(int)
@@ -79,8 +92,26 @@ def standardize_acs(
 
     # Family
     # `NOC` and `PAOC` are ACS PUMS person-level summaries for own children.
+    out["fer"] = fer
+    out["marhm"] = marhm
+    out["cplt"] = cplt
+    out["partner"] = partner
+    out["relshipp"] = relshipp
+    out["paoc"] = paoc
+    out["noc"] = noc
     out["number_children"] = _recode_number_children(df)
     out["children_under_5"] = _recode_children_under_5(df)
+    out["recent_birth"] = (fer == 1).astype(int)
+    out["recent_marriage"] = _recode_recent_marriage(marhm)
+    out["has_own_child"] = _recode_has_own_child(noc, paoc)
+    out["own_child_under6"] = paoc.isin([1, 3]).astype(int)
+    out["own_child_6_17_only"] = (paoc == 2).astype(int)
+    out["same_sex_couple_household"] = cplt.isin([2, 4]).astype(int)
+    out["opposite_sex_couple_household"] = cplt.isin([1, 3]).astype(int)
+    out["couple_type"] = _recode_couple_type(out)
+    out["reproductive_stage"] = _recode_reproductive_stage(out)
+    out["age_fertility_band"] = _age_fertility_band(age)
+    out["older_low_fertility_placebo"] = age.between(45, 54, inclusive="both").astype(int)
 
     # Job
     out["occupation_code"] = df.get("OCCP", df.get("SOCP", pd.NA))
@@ -99,7 +130,7 @@ def standardize_acs(
     out["commute_mode"] = jwtrns.map(COMMUTE_MODE_MAP) if jwtrns is not None else pd.NA
 
     # Geography
-    out["state_fips"] = df.get("ST", pd.NA)
+    out["state_fips"] = df.get("ST", df.get("STATE", pd.NA))
     out["residence_puma"] = df.get("PUMA", pd.NA)
     out["place_of_work_state"] = df.get("POWSP", pd.NA)
     out["place_of_work_puma"] = df.get("POWPUMA", pd.NA)
@@ -196,3 +227,67 @@ def _recode_children_under_5(df: pd.DataFrame) -> pd.Series:
     """
     paoc = pd.to_numeric(df.get("PAOC", 0), errors="coerce").fillna(0)
     return paoc.isin([1, 3]).astype(int)
+
+
+def _recode_recent_marriage(marhm: pd.Series) -> pd.Series:
+    """Convert ACS MARHM into a married-within-12-months indicator."""
+    return marhm.between(1, 12, inclusive="both").astype(int)
+
+
+def _recode_has_own_child(noc: pd.Series, paoc: pd.Series) -> pd.Series:
+    """Prefer NOC with PAOC as a fallback presence check."""
+    return ((noc.fillna(0) > 0) | paoc.isin([1, 2, 3])).astype(int)
+
+
+def _recode_couple_type(df: pd.DataFrame) -> pd.Series:
+    """Collapse same/opposite-sex couple structure into one label."""
+    result = pd.Series("unpartnered", index=df.index, dtype="string")
+    result.loc[df["opposite_sex_couple_household"] == 1] = "opposite_sex"
+    result.loc[df["same_sex_couple_household"] == 1] = "same_sex"
+    return result
+
+
+def _recode_reproductive_stage(df: pd.DataFrame) -> pd.Series:
+    """Build a mutually exclusive reproductive-stage label."""
+    result = pd.Series("childless_unpartnered", index=df.index, dtype="string")
+
+    childless = df["has_own_child"].fillna(0) == 0
+    partnered = (
+        df["same_sex_couple_household"].fillna(0).astype(int)
+        | df["opposite_sex_couple_household"].fillna(0).astype(int)
+        | df["partner"].fillna(0).gt(0).astype(int)
+    ).astype(bool)
+
+    result.loc[childless & partnered] = "childless_other_partnered"
+    result.loc[childless & (df["recent_marriage"].fillna(0) == 1)] = "childless_recently_married"
+    result.loc[df["own_child_6_17_only"].fillna(0) == 1] = "mother_6_17_only"
+    result.loc[df["own_child_under6"].fillna(0) == 1] = "mother_under6"
+    result.loc[df["has_own_child"].fillna(0).eq(1) & ~df["own_child_under6"].fillna(0).eq(1) & ~df["own_child_6_17_only"].fillna(0).eq(1)] = "mother_mixed_or_other"
+    result.loc[df["recent_birth"].fillna(0) == 1] = "recent_birth"
+    return result
+
+
+def _age_fertility_band(age: pd.Series) -> pd.Series:
+    """Bucket age into the seeded fertility-analysis bands."""
+    result = pd.Series("outside_range", index=age.index, dtype="string")
+    bands = [
+        (25, 29, "25_29"),
+        (30, 34, "30_34"),
+        (35, 39, "35_39"),
+        (40, 44, "40_44"),
+        (45, 49, "45_49"),
+        (50, 54, "50_54"),
+    ]
+    for lo, hi, label in bands:
+        result.loc[age.between(lo, hi, inclusive="both")] = label
+    return result
+
+
+def _infer_survey_year(df: pd.DataFrame) -> int | None:
+    """Infer the ACS survey year when a YEAR column is present."""
+    if "YEAR" not in df.columns:
+        return None
+    values = pd.to_numeric(df["YEAR"], errors="coerce").dropna().astype(int)
+    if values.empty:
+        return None
+    return int(values.iloc[0])

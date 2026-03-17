@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Occupations &mdash; paygap</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/theme.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .tag { display:inline-block; font-size:0.7rem; padding:0.1em 0.45em; border-radius:4px; font-family:var(--font-mono); vertical-align:middle; }
+    .tag-2018  { background:var(--color-accent);color:#fff; }
+    .tag-mixed { background:var(--color-warn);color:#fff; }
+    .tag-split { background:var(--color-negative);color:#fff; }
+    .tag-2010  { background:var(--color-text-light);color:#fff; }
+    .tag-small { background:var(--color-nonuse-bg);color:var(--color-nonuse-text);border:1px solid var(--color-nonuse-border);font-weight:600; }
+    .outcome-toggle { display:inline-flex; gap:0; border:1px solid var(--color-border); border-radius:6px; overflow:hidden; margin-bottom:1rem; }
+    .outcome-toggle button { background:var(--color-bg-alt); border:none; padding:0.4rem 1rem; font-size:0.85rem; font-family:var(--font-sans); font-weight:500; color:var(--color-text-secondary); cursor:pointer; transition:all var(--transition); }
+    .outcome-toggle button.active { background:var(--color-accent); color:#fff; }
+  </style>
+</head>
+<body>
+
+<header class="site-header"><div class="header-inner">
+  <a href="index.html" class="site-logo">pay<span class="logo-accent">gap</span></a>
+  <div class="header-controls">
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('open')" aria-label="Toggle navigation">&#9776;</button>
+    <button id="themeToggle" class="theme-toggle" onclick="pgToggle()" aria-label="Toggle theme">&#9790;</button>
+  </div>
+  <nav><ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="trends.html">Trends</a></li>
+    <li><a href="heterogeneity.html">Heterogeneity</a></li>
+    <li><a href="mechanisms.html">Mechanisms</a></li>
+    <li><a href="reproductive.html">Reproductive</a></li>
+    <li><a href="variance.html">Variance</a></li>
+    <li><a href="occupations.html" class="active">Occupations</a></li>
+    <li><a href="methods.html">Methods</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+  </ul></nav>
+</div></header>
+
+<main class="content">
+
+  <section class="section">
+    <h1>Occupation-Level Variance</h1>
+    <p class="page-intro">
+      Occupation codes changed between 2010 and 2018 Census vintages. This analysis harmonizes
+      both into a single frame and examines within-occupation earnings dispersion by gender
+      across ~500 occupations and 11 ACS years (2013&ndash;2024, pooled 9.7M observations).
+    </p>
+  </section>
+
+  <!-- ── How to Read This ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>How to Read This</h2>
+    </div>
+    <div class="insight-box">
+      <p><strong>Variance ratio &gt; 1:</strong> female earnings are more dispersed than male in that occupation.<br>
+      <strong>Variance ratio &lt; 1:</strong> male earnings are more dispersed than female.<br>
+      <strong>Top-decile gap &lt; 0:</strong> men account for a larger share of the top earnings decile.<br>
+      <strong>Top-decile gap &gt; 0:</strong> women account for a larger share of the top earnings decile.<br>
+      All results are <strong>descriptive summaries</strong> of the earnings distribution, not causal estimates.
+      Small cell sizes (marked <span class="tag tag-small">N&lt;1K</span>) increase noise in individual occupation estimates.</p>
+    </div>
+    <p style="font-size:0.85rem;color:var(--color-text-secondary)">
+      Harmonization types:
+      <span class="tag tag-2018">2018</span> native 2018 code &nbsp;
+      <span class="tag tag-mixed">mixed</span> 1:1 crosswalk &nbsp;
+      <span class="tag tag-split">split</span> 1-to-many split bucket &nbsp;
+      <span class="tag tag-2010">2010</span> legacy 2010 only
+    </p>
+  </section>
+
+  <!-- ── 1. Variance Leaderboards ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Variance Leaderboards</h2>
+      <span class="section-tag">Top 10 Each Direction</span>
+    </div>
+
+    <div class="outcome-toggle" id="varOutcome">
+      <button class="active" onclick="setVarOutcome('annual')">Annual Earnings</button>
+      <button onclick="setVarOutcome('hourly')">Hourly Wages</button>
+    </div>
+
+    <div class="tabs" id="varTabs">
+      <button class="tab-btn active" onclick="setVarTab(0)">Female More Dispersed</button>
+      <button class="tab-btn" onclick="setVarTab(1)">Male More Dispersed</button>
+    </div>
+
+    <!-- Female more variable — Annual -->
+    <div class="tab-panel active" id="var-f-annual">
+      <div class="chart-container">
+        <h3>Female-Higher-Variance Occupations (Annual)</h3>
+        <p class="chart-subtitle">Raw variance ratio (female/male) &mdash; top 10</p>
+        <div class="chart-canvas-wrap"><canvas id="fmvAnnualChart"></canvas></div>
+        <p class="chart-note">Female earnings are more dispersed than male earnings in these occupations. Source: <code>results/variance/acs_occupation_variability_leaders.csv</code></p>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Occupation</th><th class="num">Ratio</th><th class="num">Residual</th><th>SOC</th><th class="num">N</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td>Agents/biz mgrs of artists</td><td class="num">7.98</td><td class="num">15.97</td><td>Business/Fin.</td><td class="num">2,603</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Misc. vehicle/mobile equip mechanics</td><td class="num">4.76</td><td class="num">4.41</td><td>Install./Repair</td><td class="num">5,011</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Elevator &amp; escalator installers</td><td class="num">4.07</td><td class="num">4.07</td><td>Construction</td><td class="num">2,085</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Parts salespersons</td><td class="num">3.82</td><td class="num">5.15</td><td>Sales</td><td class="num">7,017</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Solar photovoltaic installers</td><td class="num">3.75</td><td class="num">3.07</td><td>Construction</td><td class="num">645</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Metal workers, all other (2010)</td><td class="num">3.70</td><td class="num">4.04</td><td>Production</td><td class="num">13,392</td><td><span class="tag tag-2010">2010</span></td></tr>
+          <tr><td>Food/tobacco machine operators</td><td class="num">2.55</td><td class="num">2.36</td><td>Production</td><td class="num">719</td><td><span class="tag tag-mixed">mixed</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Electrical power-line installers</td><td class="num">2.49</td><td class="num">2.30</td><td>Install./Repair</td><td class="num">9,850</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Furnace/kiln/oven operators</td><td class="num">2.45</td><td class="num">3.10</td><td>Production</td><td class="num">842</td><td><span class="tag tag-mixed">mixed</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Forming machine operators</td><td class="num">2.25</td><td class="num">1.96</td><td>Production</td><td class="num">1,182</td><td><span class="tag tag-2018">2018</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Male more variable — Annual -->
+    <div class="tab-panel" id="var-m-annual">
+      <div class="chart-container">
+        <h3>Male-Higher-Variance Occupations (Annual)</h3>
+        <p class="chart-subtitle">Raw variance ratio (female/male) &mdash; bottom 10 (male more dispersed)</p>
+        <div class="chart-canvas-wrap"><canvas id="mmvAnnualChart"></canvas></div>
+        <p class="chart-note">Male earnings are more dispersed than female earnings in these occupations. Source: <code>results/variance/acs_occupation_variability_leaders.csv</code></p>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Occupation</th><th class="num">Ratio</th><th class="num">Residual</th><th>SOC</th><th class="num">N</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td>Child/family/school social workers</td><td class="num">0.48</td><td class="num">0.43</td><td>Community/Social</td><td class="num">3,216</td><td><span class="tag tag-2018">2018</span></td></tr>
+          <tr><td>Rehabilitation counselors</td><td class="num">0.49</td><td class="num">0.53</td><td>Community/Social</td><td class="num">952</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Production helpers (2010)</td><td class="num">0.49</td><td class="num">0.52</td><td>Production</td><td class="num">1,271</td><td><span class="tag tag-split">split</span></td></tr>
+          <tr><td>Avionics technicians</td><td class="num">0.52</td><td class="num">0.65</td><td>Install./Repair</td><td class="num">1,518</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Mental health/substance abuse social workers</td><td class="num">0.55</td><td class="num">0.66</td><td>Community/Social</td><td class="num">1,116</td><td><span class="tag tag-2018">2018</span></td></tr>
+          <tr><td>Title examiners/abstractors</td><td class="num">0.55</td><td class="num">0.71</td><td>Legal</td><td class="num">3,402</td><td><span class="tag tag-2018">2018</span></td></tr>
+          <tr><td>Paralegals and legal assistants</td><td class="num">0.55</td><td class="num">0.59</td><td>Legal</td><td class="num">30,142</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Photographers</td><td class="num">0.56</td><td class="num">0.37</td><td>Arts/Design</td><td class="num">5,416</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Passenger attendants</td><td class="num">0.59</td><td class="num">0.62</td><td>Transportation</td><td class="num">780</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Fundraisers</td><td class="num">0.60</td><td class="num">0.63</td><td>Business/Fin.</td><td class="num">7,095</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Female more variable — Hourly -->
+    <div class="tab-panel" id="var-f-hourly">
+      <div class="chart-container">
+        <h3>Female-Higher-Variance Occupations (Hourly)</h3>
+        <p class="chart-subtitle">Raw variance ratio (female/male) &mdash; top 10</p>
+        <div class="chart-canvas-wrap"><canvas id="fmvHourlyChart"></canvas></div>
+        <p class="chart-note">Female hourly wages are more dispersed than male in these occupations.</p>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Occupation</th><th class="num">Ratio</th><th class="num">Residual</th><th>SOC</th><th class="num">N</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td>Agents/biz mgrs of artists</td><td class="num">4.03</td><td class="num">8.97</td><td>Business/Fin.</td><td class="num">2,603</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Cement masons/concrete finishers</td><td class="num">3.29</td><td class="num">3.69</td><td>Construction</td><td class="num">3,882</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Elevator &amp; escalator installers</td><td class="num">2.88</td><td class="num">2.83</td><td>Construction</td><td class="num">2,085</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Millwrights</td><td class="num">2.71</td><td class="num">2.36</td><td>Install./Repair</td><td class="num">3,715</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Metal workers, all other (2010)</td><td class="num">2.67</td><td class="num">3.46</td><td>Production</td><td class="num">13,392</td><td><span class="tag tag-2010">2010</span></td></tr>
+          <tr><td>Food/tobacco machine operators</td><td class="num">2.63</td><td class="num">2.25</td><td>Production</td><td class="num">719</td><td><span class="tag tag-mixed">mixed</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Tool and die makers</td><td class="num">2.38</td><td class="num">2.34</td><td>Production</td><td class="num">3,052</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Helpers, install./repair</td><td class="num">2.32</td><td class="num">2.31</td><td>Install./Repair</td><td class="num">628</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Electrical/electronics engineers</td><td class="num">2.31</td><td class="num">2.13</td><td>Architecture/Eng.</td><td class="num">17,223</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Other personal appearance workers</td><td class="num">2.11</td><td class="num">2.23</td><td>Personal Care</td><td class="num">591</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Male more variable — Hourly -->
+    <div class="tab-panel" id="var-m-hourly">
+      <div class="chart-container">
+        <h3>Male-Higher-Variance Occupations (Hourly)</h3>
+        <p class="chart-subtitle">Raw variance ratio (female/male) &mdash; bottom 10 (male more dispersed)</p>
+        <div class="chart-canvas-wrap"><canvas id="mmvHourlyChart"></canvas></div>
+        <p class="chart-note">Male hourly wages are more dispersed than female in these occupations.</p>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Occupation</th><th class="num">Ratio</th><th class="num">Residual</th><th>SOC</th><th class="num">N</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td>Photographers</td><td class="num">0.35</td><td class="num">0.24</td><td>Arts/Design</td><td class="num">5,419</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Production helpers (2010)</td><td class="num">0.38</td><td class="num">0.44</td><td>Production</td><td class="num">1,271</td><td><span class="tag tag-split">split</span></td></tr>
+          <tr><td>Helpers, install./repair (2010)</td><td class="num">0.39</td><td class="num">0.46</td><td>Install./Repair</td><td class="num">577</td><td><span class="tag tag-split">split</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Medical transcriptionists</td><td class="num">0.45</td><td class="num">0.52</td><td>Healthcare Supp.</td><td class="num">2,127</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Control/valve installers</td><td class="num">0.46</td><td class="num">0.44</td><td>Install./Repair</td><td class="num">1,614</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Explosives workers/blasters</td><td class="num">0.46</td><td class="num">0.36</td><td>Construction</td><td class="num">635</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Library assistants, clerical</td><td class="num">0.47</td><td class="num">0.52</td><td>Office/Admin.</td><td class="num">5,638</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Marine engineers/naval architects</td><td class="num">0.48</td><td class="num">0.47</td><td>Architecture/Eng.</td><td class="num">1,084</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Fishing and hunting workers</td><td class="num">0.51</td><td class="num">0.37</td><td>Farming/Fishing</td><td class="num">660</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Credit analysts</td><td class="num">0.51</td><td class="num">0.51</td><td>Business/Fin.</td><td class="num">2,485</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="insight-box">
+      <p>Female earnings are more dispersed in occupations concentrated in production,
+      construction, and installation/repair. Male earnings are more dispersed in occupations
+      concentrated in community/social service, legal, and arts fields. The pattern is consistent
+      with the minority gender in a given occupation tending to show wider earnings spread,
+      though other factors may also contribute.</p>
+    </div>
+  </section>
+
+  <!-- ── 2. Top-Decile Gap ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Top-Decile Concentration</h2>
+      <span class="section-tag">Who Reaches the Top 10%</span>
+    </div>
+
+    <div class="outcome-toggle" id="tailOutcome">
+      <button class="active" onclick="setTailOutcome('annual')">Annual Earnings</button>
+      <button onclick="setTailOutcome('hourly')">Hourly Wages</button>
+    </div>
+
+    <div class="tabs" id="tailTabs">
+      <button class="tab-btn active" onclick="setTailTab(0)">Male Top-Decile Advantage</button>
+      <button class="tab-btn" onclick="setTailTab(1)">Female Top-Decile Advantage</button>
+    </div>
+
+    <!-- Male advantage — Annual -->
+    <div class="tab-panel active" id="tail-m-annual">
+      <div class="chart-container">
+        <h3>Largest Male Top-Decile Advantage (Annual)</h3>
+        <p class="chart-subtitle">Occupations where men account for the largest share of top-decile earnings</p>
+        <div class="chart-canvas-wrap"><canvas id="tailMaleAnnualChart"></canvas></div>
+        <p class="chart-note">Gap = female top-10% share &minus; male top-10% share (pp). More negative = larger male advantage.</p>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Occupation</th><th class="num">F Top-10%</th><th class="num">M Top-10%</th><th class="num">Gap (pp)</th><th class="num">N</th></tr></thead>
+        <tbody>
+          <tr><td>Probation officers / correctional</td><td class="num">0.8%</td><td class="num">76.1%</td><td class="num">&minus;75.3</td><td class="num">7,560</td></tr>
+          <tr><td>Parts salespersons</td><td class="num">4.3%</td><td class="num">77.7%</td><td class="num">&minus;73.4</td><td class="num">7,017</td></tr>
+          <tr><td>Photographers</td><td class="num">3.6%</td><td class="num">37.3%</td><td class="num">&minus;33.7</td><td class="num">5,416</td></tr>
+          <tr><td>Dental hygienists</td><td class="num">9.1%</td><td class="num">32.3%</td><td class="num">&minus;23.1</td><td class="num">15,322</td></tr>
+          <tr><td>Diagnostic medical sonographers</td><td class="num">6.3%</td><td class="num">26.2%</td><td class="num">&minus;20.0</td><td class="num">4,448</td></tr>
+          <tr><td>Pressers, textile/garment</td><td class="num">3.2%</td><td class="num">22.3%</td><td class="num">&minus;19.1</td><td class="num">2,198</td></tr>
+          <tr><td>Credit authorizers/checkers</td><td class="num">5.0%</td><td class="num">23.2%</td><td class="num">&minus;18.2</td><td class="num">2,828</td></tr>
+          <tr><td>Title examiners/abstractors</td><td class="num">5.2%</td><td class="num">23.1%</td><td class="num">&minus;17.9</td><td class="num">3,402</td></tr>
+          <tr><td>Production helpers (2010)</td><td class="num">2.3%</td><td class="num">19.4%</td><td class="num">&minus;17.1</td><td class="num">1,271</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Female advantage — Annual -->
+    <div class="tab-panel" id="tail-f-annual">
+      <div class="chart-container">
+        <h3>Largest Female Top-Decile Advantage (Annual)</h3>
+        <p class="chart-subtitle">Occupations where women account for the largest share of top-decile earnings</p>
+        <div class="chart-canvas-wrap"><canvas id="tailFemaleAnnualChart"></canvas></div>
+        <p class="chart-note">Gap = female top-10% share &minus; male top-10% share (pp). More positive = larger female advantage.</p>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Occupation</th><th class="num">F Top-10%</th><th class="num">M Top-10%</th><th class="num">Gap (pp)</th><th class="num">N</th></tr></thead>
+        <tbody>
+          <tr><td>Agents/biz mgrs of artists</td><td class="num">70.1%</td><td class="num">5.7%</td><td class="num">+64.4</td><td class="num">2,603</td></tr>
+        </tbody>
+      </table>
+      <div class="warning-box">
+        <p>Only one occupation in the top-25 absolute-gap leaderboard shows a female top-decile
+        advantage. This asymmetry is itself a descriptive finding: across most occupations with
+        large absolute top-decile gaps, men account for a larger share of top earners than women.</p>
+      </div>
+    </div>
+
+    <!-- Male advantage — Hourly -->
+    <div class="tab-panel" id="tail-m-hourly">
+      <div class="chart-container">
+        <h3>Largest Male Top-Decile Advantage (Hourly)</h3>
+        <p class="chart-subtitle">Occupations where men account for the largest share of top-decile hourly wages</p>
+        <div class="chart-canvas-wrap"><canvas id="tailMaleHourlyChart"></canvas></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Occupation</th><th class="num">F Top-10%</th><th class="num">M Top-10%</th><th class="num">Gap (pp)</th><th class="num">N</th></tr></thead>
+        <tbody>
+          <tr><td>Probation officers / correctional</td><td class="num">1.0%</td><td class="num">76.1%</td><td class="num">&minus;75.1</td><td class="num">7,560</td></tr>
+          <tr><td>Parts salespersons</td><td class="num">5.1%</td><td class="num">77.2%</td><td class="num">&minus;72.1</td><td class="num">7,017</td></tr>
+          <tr><td>Photographers</td><td class="num">4.4%</td><td class="num">33.3%</td><td class="num">&minus;28.8</td><td class="num">5,419</td></tr>
+          <tr><td>Title examiners/abstractors</td><td class="num">5.5%</td><td class="num">22.4%</td><td class="num">&minus;16.9</td><td class="num">3,402</td></tr>
+          <tr><td>Dental hygienists</td><td class="num">9.5%</td><td class="num">25.3%</td><td class="num">&minus;15.8</td><td class="num">15,322</td></tr>
+          <tr><td>Diagnostic medical sonographers</td><td class="num">7.1%</td><td class="num">22.5%</td><td class="num">&minus;15.4</td><td class="num">4,448</td></tr>
+          <tr><td>Pressers, textile/garment</td><td class="num">4.7%</td><td class="num">19.9%</td><td class="num">&minus;15.2</td><td class="num">2,198</td></tr>
+          <tr><td>Credit authorizers/checkers</td><td class="num">5.9%</td><td class="num">20.7%</td><td class="num">&minus;14.7</td><td class="num">2,828</td></tr>
+          <tr><td>Production helpers (2010)</td><td class="num">3.4%</td><td class="num">18.0%</td><td class="num">&minus;14.6</td><td class="num">1,271</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Female advantage — Hourly -->
+    <div class="tab-panel" id="tail-f-hourly">
+      <div class="chart-container">
+        <h3>Largest Female Top-Decile Advantage (Hourly)</h3>
+        <p class="chart-subtitle">Occupations where women account for the largest share of top-decile hourly wages</p>
+        <div class="chart-canvas-wrap"><canvas id="tailFemaleHourlyChart"></canvas></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Occupation</th><th class="num">F Top-10%</th><th class="num">M Top-10%</th><th class="num">Gap (pp)</th><th class="num">N</th></tr></thead>
+        <tbody>
+          <tr><td>Agents/biz mgrs of artists</td><td class="num">72.0%</td><td class="num">5.5%</td><td class="num">+66.5</td><td class="num">2,603</td></tr>
+        </tbody>
+      </table>
+      <div class="warning-box">
+        <p>As with annual earnings, only one occupation in the top-25 by absolute gap shows a
+        female advantage in top-decile concentration. In the vast majority of occupations with
+        large absolute gaps, men hold a larger share of the top decile.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 3. SOC Group Concentration ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>SOC Group Concentration</h2>
+      <span class="section-tag">Annual Earnings Top-10 Seats</span>
+    </div>
+
+    <div class="chart-container">
+      <h3>Top-10 Leaderboard Seats by SOC Major Group</h3>
+      <p class="chart-subtitle">Count of occupations in each top-10 leaderboard, by industry group</p>
+      <div class="chart-canvas-wrap"><canvas id="socChart"></canvas></div>
+      <p class="chart-note">Each bar = number of occupations from that SOC group appearing in the given top-10 leaderboard. Annual earnings outcome.</p>
+    </div>
+
+    <table class="data-table">
+      <thead><tr><th>SOC Group</th><th class="num">Female Higher</th><th class="num">Male Higher</th></tr></thead>
+      <tbody>
+        <tr><td>Production</td><td class="num">4</td><td class="num">1</td></tr>
+        <tr><td>Construction &amp; Extraction</td><td class="num">2</td><td class="num">0</td></tr>
+        <tr><td>Installation / Repair</td><td class="num">2</td><td class="num">1</td></tr>
+        <tr><td>Community &amp; Social Service</td><td class="num">0</td><td class="num">3</td></tr>
+        <tr><td>Legal</td><td class="num">0</td><td class="num">2</td></tr>
+        <tr><td>Business / Financial</td><td class="num">1</td><td class="num">1</td></tr>
+        <tr><td>Sales</td><td class="num">1</td><td class="num">0</td></tr>
+        <tr><td>Arts / Design / Media</td><td class="num">0</td><td class="num">1</td></tr>
+        <tr><td>Transportation</td><td class="num">0</td><td class="num">1</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <p>Female-higher-variance occupations are concentrated in production, construction, and
+      installation/repair. Male-higher-variance occupations are concentrated in community/social
+      service and legal fields. One possible interpretation is that the gender in the minority
+      within an occupation tends to show wider earnings spread, but other factors &mdash; including
+      occupational structure and measurement &mdash; may also play a role.</p>
+    </div>
+  </section>
+
+  <!-- ── 4. Pre/Post-2020 ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Pre/Post-2020 Variance Regime</h2>
+      <span class="section-tag">Structural Shift Check</span>
+    </div>
+
+    <div class="chart-container">
+      <h3>Hourly Variance Metrics: Pre-2020 vs. Post-2020</h3>
+      <p class="chart-subtitle">Weighted means across ACS years in each regime</p>
+      <div class="chart-canvas-wrap"><canvas id="regimeChart"></canvas></div>
+      <p class="chart-note">Pre-2020: ACS 2013&ndash;2019 (N=6.1M). Post-2020: ACS 2021&ndash;2024 (N=3.6M). No 2020 ACS available.</p>
+    </div>
+
+    <table class="data-table">
+      <thead><tr><th>Metric (Hourly)</th><th class="num">Pre-2020</th><th class="num">Post-2020</th><th class="num">Direction</th></tr></thead>
+      <tbody>
+        <tr><td>Raw variance ratio (M/F)</td><td class="num">0.891</td><td class="num">0.922</td><td>toward parity</td></tr>
+        <tr><td>Residual variance ratio</td><td class="num">0.950</td><td class="num">0.949</td><td>stable</td></tr>
+        <tr><td>Female top-10% share</td><td class="num">7.47%</td><td class="num">7.82%</td><td>increased</td></tr>
+        <tr><td>Male top-10% share</td><td class="num">12.65%</td><td class="num">12.29%</td><td>decreased</td></tr>
+        <tr><td>Female top-5% share</td><td class="num">3.47%</td><td class="num">3.75%</td><td>increased</td></tr>
+        <tr><td>Male top-5% share</td><td class="num">6.67%</td><td class="num">6.19%</td><td>decreased</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <p>Post-2020, hourly dispersion moved modestly toward parity: the raw ratio rose from 0.89
+      to 0.92, and women gained slightly in top-earner shares. The residual ratio was essentially
+      unchanged. These shifts are consistent with a mild post-pandemic compression of hourly
+      extremes rather than a structural break.</p>
+    </div>
+  </section>
+
+  <!-- ── Methods & Caveats ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Methods &amp; Caveats</h2>
+    </div>
+    <div class="warning-box">
+      <p><strong>Occupation harmonization:</strong> Census occupation codes changed in 2018.
+      This analysis maps all years onto a unified frame using native 2018 codes, 1:1 crosswalks,
+      split buckets, and legacy-2010-only buckets. The full mapping is in
+      <code>results/diagnostics/variance_occupation_harmonization_map.csv</code>.</p>
+      <p style="margin-top:0.75rem"><strong>Small cell sizes:</strong> Some leaderboard occupations
+      have fewer than 1,000 pooled observations (marked <span class="tag tag-small">N&lt;1K</span>).
+      Variance ratios in these cells are noisier &mdash; treat individual rankings as indicative.</p>
+      <p style="margin-top:0.75rem"><strong>Fertility-risk bridge:</strong> A descriptive bridge
+      between fertility-risk quartiles and variance metrics is available in
+      <code>results/variance/acs_fertility_risk_variance_bridge.csv</code>. It has weaker male/female
+      ratio coverage and is not charted here.</p>
+      <p style="margin-top:0.75rem"><strong>Interpretation:</strong> All results are descriptive
+      summaries of observed earnings distributions. Higher or lower variance within an occupation
+      could reflect differences in tenure, specialization, hours composition, hiring patterns,
+      or measurement. These tables identify where dispersion differs, not why.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer"><div class="footer-inner"><span>paygap &middot; MIT License</span><span>Data: ACS PUMS, O*NET, Census occupation crosswalks (all public)</span></div></footer>
+
+<script>
+(function () {
+  pgDefaults();
+
+  /* ── Tab / toggle state ── */
+  var varDir = 0; // 0=female, 1=male
+  var varOut = 'annual';
+  var tailDir = 0; // 0=male adv, 1=female adv
+  var tailOut = 'annual';
+
+  function showPanel(prefix) {
+    var dirs = prefix === 'var' ? ['f','m'] : ['m','f'];
+    var outs = ['annual','hourly'];
+    var curDir = prefix === 'var' ? varDir : tailDir;
+    var curOut = prefix === 'var' ? varOut : tailOut;
+    dirs.forEach(function(d,di){ outs.forEach(function(o){
+      var el = document.getElementById(prefix+'-'+d+'-'+o);
+      if(el) el.classList.toggle('active', di===curDir && o===curOut);
+    });});
+  }
+
+  window.setVarOutcome = function(o) {
+    varOut = o;
+    var btns = document.querySelectorAll('#varOutcome button');
+    btns.forEach(function(b){ b.classList.toggle('active', b.textContent.toLowerCase().indexOf(o)!==-1); });
+    showPanel('var');
+    buildCharts();
+  };
+  window.setVarTab = function(i) {
+    varDir = i;
+    var btns = document.querySelectorAll('#varTabs .tab-btn');
+    btns.forEach(function(b,j){ b.classList.toggle('active', j===i); });
+    showPanel('var');
+    buildCharts();
+  };
+  window.setTailOutcome = function(o) {
+    tailOut = o;
+    var btns = document.querySelectorAll('#tailOutcome button');
+    btns.forEach(function(b){ b.classList.toggle('active', b.textContent.toLowerCase().indexOf(o)!==-1); });
+    showPanel('tail');
+    buildCharts();
+  };
+  window.setTailTab = function(i) {
+    tailDir = i;
+    var btns = document.querySelectorAll('#tailTabs .tab-btn');
+    btns.forEach(function(b,j){ b.classList.toggle('active', j===i); });
+    showPanel('tail');
+    buildCharts();
+  };
+
+  /* ── Chart data ── */
+  var D = {
+    fmvAnnual: { labels:['Agents/biz mgrs','Vehicle mechanics','Elevator inst.','Parts sales','Solar PV inst.','Metal wkrs (2010)','Food/tobacco ops','Power-line inst.','Furnace/kiln ops','Forming mach. ops'], values:[7.98,4.76,4.07,3.82,3.75,3.70,2.55,2.49,2.45,2.25] },
+    mmvAnnual: { labels:['Child/family social wkrs','Rehab counselors','Production helpers','Avionics techs','MH/SA social wkrs','Title examiners','Paralegals','Photographers','Passenger attend.','Fundraisers'], values:[0.48,0.49,0.49,0.52,0.55,0.55,0.55,0.56,0.59,0.60] },
+    fmvHourly: { labels:['Agents/biz mgrs','Cement masons','Elevator inst.','Millwrights','Metal wkrs (2010)','Food/tobacco ops','Tool & die makers','Helpers, inst/rep','Elec/electronics eng','Personal appear. wkrs'], values:[4.03,3.29,2.88,2.71,2.67,2.63,2.38,2.32,2.31,2.11] },
+    mmvHourly: { labels:['Photographers','Production helpers','Helpers inst/rep (2010)','Medical transcr.','Control/valve inst.','Explosives workers','Library assistants','Marine engineers','Fishing/hunting wkrs','Credit analysts'], values:[0.35,0.38,0.39,0.45,0.46,0.46,0.47,0.48,0.51,0.51] },
+    tailMaleAnnual: { labels:['Probation officers','Parts sales','Photographers','Dental hygienists','Diag. sonographers','Pressers, textile','Credit auth.','Title examiners','Prod. helpers (2010)'], values:[-75.3,-73.4,-33.7,-23.1,-20.0,-19.1,-18.2,-17.9,-17.1] },
+    tailFemaleAnnual: { labels:['Agents/biz mgrs of artists'], values:[64.4] },
+    tailMaleHourly: { labels:['Probation officers','Parts sales','Photographers','Title examiners','Dental hygienists','Diag. sonographers','Pressers, textile','Credit auth.','Prod. helpers (2010)'], values:[-75.1,-72.1,-28.8,-16.9,-15.8,-15.4,-15.2,-14.7,-14.6] },
+    tailFemaleHourly: { labels:['Agents/biz mgrs of artists'], values:[66.5] }
+  };
+
+  var charts = {};
+
+  function makeBar(id, d, opts) {
+    if(!document.getElementById(id)) return;
+    if(charts[id]) charts[id].destroy();
+    var c = C();
+    var colors = (opts||{}).colorBySign ? d.values.map(function(v){return v<0?c.red:c.green;}) : c.palette.slice(0,d.values.length);
+    charts[id] = new Chart(document.getElementById(id), {
+      type:'bar',
+      data:{ labels:d.labels, datasets:[{ label:(opts||{}).label||'Value', data:d.values, backgroundColor:colors, borderRadius:4 }] },
+      options:{
+        indexAxis:'y', responsive:true,
+        plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:function(ctx){
+          var v=ctx.parsed.x; var suf=(opts||{}).suffix||'';
+          return (v>0&&(opts||{}).sign?'+':'')+v.toFixed((opts||{}).dp||2)+suf;
+        }}}},
+        scales:{
+          x:{ beginAtZero:(opts||{}).zeroX!==false, ticks:{color:c.textSec, callback:function(v){
+            var suf=(opts||{}).suffix||''; return (v>0&&(opts||{}).sign?'+':'')+v+suf;
+          }}, grid:{color:c.grid}, title:{display:true,text:(opts||{}).xTitle||'',color:c.textSec} },
+          y:{ ticks:{color:c.textSec,font:{size:11}}, grid:{color:c.grid} }
+        }
+      }
+    });
+  }
+
+  function buildCharts() {
+    var c = C();
+
+    // Variance leaderboards (only build visible panel)
+    var vk = (varDir===0?'fmv':'mmv') + (varOut==='annual'?'Annual':'Hourly');
+    makeBar(vk.charAt(0).toLowerCase()+vk.slice(1)+'Chart', D[vk.charAt(0).toLowerCase()+vk.slice(1)], {
+      label:'Variance Ratio', suffix:'\u00d7', xTitle:'Raw Variance Ratio (F/M)', zeroX:true
+    });
+
+    // Tail charts
+    var tk = 'tail'+(tailDir===0?'Male':'Female')+(tailOut==='annual'?'Annual':'Hourly');
+    makeBar(tk+'Chart', D[tk], {
+      label:'Gap (pp)', suffix:' pp', xTitle:'Female \u2212 Male Top-10% Share (pp)',
+      colorBySign:true, sign:true, dp:1, zeroX:false
+    });
+
+    // SOC chart
+    if(charts.socChart) charts.socChart.destroy();
+    var socLabels = ['Production','Construction','Install/Repair','Community/Social','Legal','Business/Fin','Sales','Arts/Media','Transport.'];
+    charts.socChart = new Chart(document.getElementById('socChart'), {
+      type:'bar',
+      data:{ labels:socLabels, datasets:[
+        { label:'Female higher', data:[4,2,2,0,0,1,1,0,0], backgroundColor:c.accent, borderRadius:4 },
+        { label:'Male higher', data:[1,0,1,3,2,1,0,1,1], backgroundColor:c.orange, borderRadius:4 }
+      ]},
+      options:{
+        responsive:true,
+        plugins:{ legend:{position:'top',labels:{color:c.text}} },
+        scales:{
+          y:{ beginAtZero:true, ticks:{color:c.textSec,stepSize:1}, grid:{color:c.grid}, title:{display:true,text:'Top-10 seats',color:c.textSec} },
+          x:{ ticks:{color:c.textSec,font:{size:11}}, grid:{color:c.grid} }
+        }
+      }
+    });
+
+    // Regime chart
+    if(charts.regimeChart) charts.regimeChart.destroy();
+    charts.regimeChart = new Chart(document.getElementById('regimeChart'), {
+      type:'bar',
+      data:{ labels:['Raw Var. Ratio','Residual Var. Ratio','Female Top-10%','Male Top-10%'],
+        datasets:[
+          { label:'Pre-2020', data:[0.891,0.950,7.47,12.65], backgroundColor:c.accent, borderRadius:4 },
+          { label:'Post-2020', data:[0.922,0.949,7.82,12.29], backgroundColor:c.orange, borderRadius:4 }
+        ]},
+      options:{
+        responsive:true,
+        plugins:{ legend:{position:'top',labels:{color:c.text}},
+          tooltip:{ callbacks:{ label:function(ctx){
+            var v=ctx.parsed.y;
+            if(ctx.dataIndex>=2) return ctx.dataset.label+': '+v.toFixed(2)+'%';
+            return ctx.dataset.label+': '+v.toFixed(3);
+          }}}
+        },
+        scales:{
+          y:{ beginAtZero:true, ticks:{color:c.textSec}, grid:{color:c.grid} },
+          x:{ ticks:{color:c.textSec}, grid:{color:c.grid} }
+        }
+      }
+    });
+  }
+
+  buildCharts();
+  window.pgRebuild = buildCharts;
+})();
+</script>
+
+</body>
+</html>

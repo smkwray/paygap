@@ -4,9 +4,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
+from gender_gap.standardize import nlsy_standardize
 from gender_gap.standardize.nlsy_standardize import (
     _recode_nlsy_education,
     _recode_nlsy_race,
+    _resolve_nlsy_dir,
     compute_g_proxy,
     standardize_nlsy79_for_gap,
 )
@@ -129,3 +131,19 @@ class TestStandardizeNLSY79:
     def test_data_source_label(self):
         result = standardize_nlsy79_for_gap(_make_nlsy79_row())
         assert result["data_source"].iloc[0] == "NLSY79"
+
+
+def test_resolve_nlsy_dir_prefers_local_then_shared(tmp_path, monkeypatch):
+    local_dir = tmp_path / "paygap" / "data" / "external" / "nlsy"
+    shared_dir = tmp_path / "shared" / "sources" / "misc" / "large_payloads" / "wave4" / "paygap" / "processed" / "nlsy"
+    local_dir.mkdir(parents=True)
+    shared_dir.mkdir(parents=True)
+
+    monkeypatch.setattr(nlsy_standardize, "DEFAULT_LOCAL_NLSY_DIR", local_dir)
+    monkeypatch.setattr(nlsy_standardize, "DEFAULT_SHARED_NLSY_DIR", shared_dir)
+    monkeypatch.delenv("NLSY_DATA_DIR", raising=False)
+
+    assert _resolve_nlsy_dir() == local_dir
+
+    local_dir.rmdir()
+    assert _resolve_nlsy_dir() == shared_dir

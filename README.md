@@ -245,8 +245,9 @@ is redistributed to interaction terms, principally female × job rigidity (−0.
 female × recent marriage (−0.100).
 
 Additional outputs:
-- **Fertility-risk gradient:** Among childless women 25–44, Q4 (highest predicted
-  fertility risk) earn $12.62/hr less than Q1 — before any children are born.
+- **Fertility-risk gradient:** Among childless women 25–44, those with the highest
+  predicted fertility risk earn $12.62/hr less than those with the lowest risk —
+  before any children are born.
 - **Same-sex placebo:** Lesbian married women earn 12% more than comparable
   heterosexual married women after full controls.
 - **ATUS by stage:** Mothers of children under 6 work 149 fewer paid minutes/day
@@ -260,16 +261,16 @@ Run: `python scripts/run_repro_extension.py`
 </details>
 
 <details>
-<summary><strong>Variance extension (V1–V4)</strong></summary>
+<summary><strong>Variance extension</strong></summary>
 
 The variance suite examines the full earnings distribution, not just the mean:
 
-| Suite | What it measures | Headline |
-|-------|-----------------|----------|
-| V1 | Raw and residual variance ratios | Male variance 10% higher raw, 4% higher residual |
-| V2 | Selection-corrected variance (IPW) | Barely changes (1.039 → 1.047) |
-| V3 | Variance by reproductive stage | Mothers' residual variance *compresses* (ratio 0.82–0.86) |
-| V4 | Variance by O\*NET job rigidity | Ratio flips in rigid jobs: women more dispersed (0.87) |
+| Analysis | What it measures | Headline |
+|----------|-----------------|----------|
+| Raw and residual dispersion | Variance ratios by gender | Male variance 10% higher raw, 4% higher residual |
+| Selection-corrected | IPW adjustment for employment | Barely changes (1.039 → 1.047) |
+| Reproductive stage | Dispersion within family stages | Mothers' residual variance *compresses* (ratio 0.82–0.86) |
+| Job rigidity | Dispersion by O\*NET context | Ratio flips in rigid jobs: women more dispersed (0.87) |
 
 Key tail-concentration finding: men hold 6.3% of total hourly earnings in the
 top 5% vs. women's 3.6% — a 1.7× overrepresentation.
@@ -280,7 +281,7 @@ Run: `python scripts/run_repro_extension.py` (produces both repro and variance o
 </details>
 
 <details>
-<summary><strong>Harmonized occupation variance (V5)</strong></summary>
+<summary><strong>Harmonized occupation variance</strong></summary>
 
 Occupation codes changed between the 2010 and 2018 Census vintages. This extension
 harmonizes both into a single frame and computes within-occupation dispersion by gender.

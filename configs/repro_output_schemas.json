@@ -84,6 +84,17 @@
       "value",
       "n_obs"
     ],
+    "results/repro/acs_household_sensitivity.csv": [
+      "panel",
+      "sample",
+      "model",
+      "female_coef",
+      "female_se",
+      "female_pvalue",
+      "r_squared",
+      "n_obs",
+      "controls"
+    ],
     "results/repro/acs_tail_metrics.csv": [
       "stratifier",
       "stratum",

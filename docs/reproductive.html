@@ -165,12 +165,66 @@
     </table>
 
     <div class="insight-box">
-      <p><strong>Reproductive burden is the second-largest channel (30%)</strong>, stable to within
-      &plusmn;1 pp across 2015&ndash;2023. Job sorting remains dominant (~70%), but the reproductive
-      channel is the most important single block beyond sorting. The schedule block works in the
-      <em>opposite</em> direction: controlling for hours reveals a <em>larger</em> female penalty,
-      consistent with women working fewer hours in higher-paying arrangements. Generic family
-      status contributes nothing beyond the reproductive-stage controls.</p>
+      <p><strong>Reproductive burden is the second-largest channel</strong>. Its log-point
+      contribution is stable across 2015&ndash;2023 (mean &minus;0.036, SD 0.003), while its share
+      of explained variation ranges from 27.0% to 36.4% because the total explained amount moves
+      by year. Job sorting remains dominant (~70%), but the reproductive channel is the most
+      important single block beyond sorting. The schedule block works in the <em>opposite</em>
+      direction: controlling for hours reveals a <em>larger</em> female penalty, consistent with
+      women working fewer hours in higher-paying arrangements. Generic family status contributes
+      nothing beyond the reproductive-stage controls.</p>
+    </div>
+  </section>
+
+  <!-- ── 2c. Household Sensitivity ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Household Sensitivity</h2>
+      <span class="section-tag">Linked ACS Household Fields</span>
+    </div>
+
+    <p>The household-linkage update adds partner wages/employment and extra-adult household
+    structure, but these variables do <em>not</em> explain away more of the residual gap in the
+    public ACS release.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Panel</th>
+          <th>Controls Added</th>
+          <th class="num">Baseline Gap</th>
+          <th class="num">Augmented Gap</th>
+          <th class="num">Change</th>
+          <th class="num">N</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="highlight">Household composition</td>
+          <td>+ other adults present</td>
+          <td class="num">10.8%</td>
+          <td class="num">11.0%</td>
+          <td class="num">+0.1 pp</td>
+          <td class="num">9.66M</td>
+        </tr>
+        <tr>
+          <td class="highlight">Partner resources</td>
+          <td>+ partner employed, partner wage</td>
+          <td class="num">15.1%</td>
+          <td class="num">17.9%</td>
+          <td class="num">+2.8 pp</td>
+          <td class="num">6.16M</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <p>These household variables work as <strong>sensitivity checks, not new explanatory wins</strong>.
+      Extra-adult household structure barely moves the M7 residual, and partner-resource controls
+      increase the partnered-sample residual because they are partly post-market. The current ACS
+      extract in this repo does not expose <code>MULTG</code>, so the fitted composition row uses
+      <code>other_adults_present</code> only. <code>relative_earnings</code> is excluded because it is constructed from
+      the respondent&rsquo;s own wage.</p>
     </div>
   </section>
 

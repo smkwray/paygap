@@ -50,7 +50,7 @@ blocks: demographics, geography, job sorting, schedule/commute, and family.
 
 - Pooled raw gap: 17.35%
 - Pooled P5 adjusted gap: ~19.0% (−0.2110 log points)
-- Pooled Oaxaca unexplained share: 81.54%
+- Pooled panel is used for pooled robustness surfaces; the year-by-year sequential OLS trend remains the headline series.
 
 The pooled result is larger than the year-by-year adjusted estimate because the pooled
 specification uses broad occupation/industry controls for tractability over 7.0M rows.
@@ -252,6 +252,25 @@ rigid-schedule jobs face a 12.1 pp additional penalty, and recently married wome
 face a 10.0 pp penalty. The gap becomes more localized in these reproductive and
 schedule-rigidity channels — it does not disappear.
 
+Gelbach shows that the reproductive block is the second-largest order-invariant
+channel after job sorting. Its log-point contribution is stable across 2015–2023
+(mean −0.036, SD 0.003), while its share of explained variation ranges from 27.0%
+to 36.4% because the total explained amount shifts by year.
+
+**Household sensitivity (linked ACS household fields):**
+
+| Panel | Added controls | Baseline gap | Augmented gap | Change |
+|------|----------------|-------------:|--------------:|-------:|
+| Household composition | + other adults present | 10.8% | 11.0% | +0.1 pp |
+| Partner resources | + partner employed, partner wage | 15.1% | 17.9% | +2.8 pp |
+
+These household variables do not explain away more of the residual gap in the
+public ACS release. The composition row is essentially flat, while partner-resource
+controls widen the partnered-sample residual because they are partly post-market.
+The current extract does not expose `MULTG`, so the fitted composition row uses
+`other_adults_present` only. `relative_earnings` is excluded because it is built
+from the respondent's own wage.
+
 **Supporting analyses:**
 
 - **Fertility-risk gradient:** Among childless women 25–44, those with the highest
@@ -272,7 +291,7 @@ All results are descriptive. They show how much of the gap is statistically
 associated with reproductive-burden channels, not whether employers or workers
 drive the pattern.
 
-Outputs: `results/repro/`, `reports/atus_repro_mechanisms.md`
+Outputs: `results/repro/`, `results/repro/acs_household_sensitivity.csv`, `reports/atus_repro_mechanisms.md`
 Run: `python scripts/run_repro_extension.py`
 
 </details>
@@ -286,6 +305,11 @@ but the residual is concentrated in the upper tail: men hold 12.2% of total hour
 earnings in the top decile vs. women's 7.6%, and 6.3% in the top 5% vs. 3.6%
 (1.7× overrepresentation). IPW selection correction barely moves this (1.039 → 1.047).
 
+The public site now also surfaces the existing ACS 2023 quantile-regression check.
+The adjusted gap is 13.69% at the median, 15.64% at the 10th percentile, and 17.00%
+at the 90th percentile, so the residual widens toward the top of the wage distribution
+rather than staying flat across quantiles.
+
 The distributional shape changes sharply by context:
 
 | Context | Residual ratio (M/F) | Pattern |
@@ -294,9 +318,16 @@ The distributional shape changes sharply by context:
 | Mothers | 0.82–0.86 | *Female compresses* |
 | Rigid-schedule jobs (Q4) | 0.87 | *Ratio flips: female more dispersed* |
 
+| Quantile | Female coefficient | Implied gap % |
+|---------:|-------------------:|--------------:|
+| P10      | −0.1701            | 15.64         |
+| P50      | −0.1473            | 13.69         |
+| P90      | −0.1863            | 17.00         |
+
 These breakdowns map *where* the residual sits across the distribution — they do
-not identify what explains it. Pooled ACS 2013–2024 (9.7M observations); the
-sample window is broader than the headline 2015–2023 year-by-year series.
+not identify what explains it, and the quantile profile is still descriptive rather
+than a formal structural decomposition. Pooled ACS 2013–2024 (9.7M observations);
+the sample window is broader than the headline 2015–2023 year-by-year series.
 
 Outputs: `results/variance/`, `reports/variance_addon_summary.md`
 Run: `python scripts/run_repro_extension.py` (produces both repro and variance outputs)

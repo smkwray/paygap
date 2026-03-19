@@ -117,6 +117,40 @@
     </div>
   </section>
 
+  <!-- ── V1b: Quantile Profile ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Quantile Profile</h2>
+      <span class="section-tag">ACS 2023 Quantile Regression</span>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Quantile</th>
+          <th class="num">Female coefficient</th>
+          <th class="num">Implied gap %</th>
+          <th class="num">N</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>P10</td><td class="num">−0.1701</td><td class="num">15.64</td><td class="num">915,284</td></tr>
+        <tr><td>P25</td><td class="num">−0.1453</td><td class="num">13.53</td><td class="num">915,284</td></tr>
+        <tr><td>P50</td><td class="num">−0.1473</td><td class="num">13.69</td><td class="num">915,284</td></tr>
+        <tr><td>P75</td><td class="num">−0.1526</td><td class="num">14.16</td><td class="num">915,284</td></tr>
+        <tr><td>P90</td><td class="num">−0.1863</td><td class="num">17.00</td><td class="num">915,284</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <p>The mean gap understates how unevenly the residual sits across the distribution. In ACS 2023,
+      the adjusted gap is 13.7% at the median but widens to 17.0% at the 90th percentile, with a
+      smaller rise at the bottom tail (15.6% at the 10th percentile). This is consistent with the
+      tail-share result: residual inequality is concentrated toward the top, not spread evenly across
+      the wage distribution.</p>
+    </div>
+  </section>
+
   <!-- ── V2: Selection-Corrected ── -->
   <section class="section">
     <div class="section-header">
@@ -228,11 +262,13 @@
     </div>
     <div class="warning-box">
       <p>Variance ratios and tail shares are <strong>descriptive summaries</strong> of the earnings
-      distribution, not causal estimates. A higher male variance could reflect greater returns
-      to risk-taking, occupational sorting into high-variance fields, or measurement differences.
-      The reproductive-stage and job-rigidity breakdowns show where dispersion patterns shift,
-      but cannot identify whether the shift reflects employer behavior, worker preferences, or
-      structural constraints.</p>
+      distribution, not causal estimates. Quantile regression shows where the conditional gap is
+      larger or smaller across the wage distribution, but it is still descriptive of conditional
+      location shifts rather than a formal structural decomposition. A higher male variance could
+      reflect greater returns to risk-taking, occupational sorting into high-variance fields, or
+      measurement differences. The reproductive-stage and job-rigidity breakdowns show where
+      dispersion patterns shift, but cannot identify whether the shift reflects employer behavior,
+      worker preferences, or structural constraints.</p>
     </div>
   </section>
 

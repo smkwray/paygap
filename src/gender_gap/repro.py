@@ -8,6 +8,7 @@ from pathlib import Path
 import pandas as pd
 import pyarrow.parquet as pq
 
+from gender_gap.features.household import enrich_household_features
 from gender_gap.features.occupation_context import build_onet_indices, merge_onet_context
 from gender_gap.features.reproductive import (
     add_fertility_risk_features,
@@ -15,12 +16,12 @@ from gender_gap.features.reproductive import (
     add_reproductive_features,
 )
 from gender_gap.features.sample_filters import filter_all_employed, filter_prime_age_wage_salary
-from gender_gap.models.fertility_risk import build_same_sex_placebos, run_fertility_risk_penalty
 from gender_gap.models.atus_mechanisms import build_atus_mechanism_table
 from gender_gap.models.descriptive import (
     build_lesbian_married_adjusted_table,
     build_lesbian_married_summary,
 )
+from gender_gap.models.fertility_risk import build_same_sex_placebos, run_fertility_risk_penalty
 from gender_gap.models.ols import (
     BLOCK_DEFINITIONS,
     coefficient_table,
@@ -32,9 +33,9 @@ from gender_gap.models.sipp_robustness import build_sipp_robustness_table
 from gender_gap.models.variance_suite import run_variance_suite
 from gender_gap.reporting.repro import (
     build_local_inventory_report,
-    build_repro_release_manifest,
     build_optional_validation_status,
     build_repro_inventory_usage,
+    build_repro_release_manifest,
     validate_repro_output_schemas,
     write_atus_mechanisms_report,
     write_local_inventory_report,
@@ -103,6 +104,13 @@ PANEL_FINAL_EXTRA_COLUMNS = {
     "female_x_own_child_under6_x_job_rigidity",
 }
 
+PANEL_HOUSEHOLD_COLUMNS = {
+    "partner_wage_real",
+    "partner_employed",
+    "multigenerational",
+    "other_adults_present",
+}
+
 CATEGORICAL_PANEL_COLUMNS = [
     "race_ethnicity",
     "education_level",
@@ -132,6 +140,9 @@ INTEGER_PANEL_COLUMNS = [
     "work_from_home",
     "employment_indicator",
     "ftfy_indicator",
+    "partner_employed",
+    "multigenerational",
+    "other_adults_present",
 ]
 
 
@@ -207,7 +218,7 @@ def run_repro_extension() -> dict[str, Path]:
         if frame.empty:
             continue
         available_years.append(year)
-        pooled_frames.append(_compress_panel(frame, PANEL_BASE_COLUMNS))
+        pooled_frames.append(_compress_panel(frame, PANEL_BASE_COLUMNS | PANEL_HOUSEHOLD_COLUMNS))
 
     if not pooled_frames:
         raise FileNotFoundError("No ACS annual files available for the reproductive extension")
@@ -291,6 +302,11 @@ def run_repro_extension() -> dict[str, Path]:
     variance_df.to_csv(variance_path, index=False)
     outputs["variance_suite"] = variance_path
 
+    household_sensitivity = _build_household_sensitivity(panel)
+    household_sensitivity_path = results_dir / "acs_household_sensitivity.csv"
+    household_sensitivity.to_csv(household_sensitivity_path, index=False)
+    outputs["household_sensitivity"] = household_sensitivity_path
+
     tail_path = results_dir / "acs_tail_metrics.csv"
     if "metric" in variance_df.columns:
         variance_df.loc[
@@ -358,10 +374,11 @@ def _load_acs_year(year: int) -> pd.DataFrame | None:
         if processed.exists():
             df = read_parquet(processed)
             df = _drop_replicate_weights(df)
-            return add_reproductive_features(df)
+            return add_reproductive_features(enrich_household_features(df))
         return None
     raw_df = read_parquet(raw, columns=_available_columns(raw, _acs_raw_columns(year)))
     standardized = standardize_acs(raw_df, survey_year=year, keep_replicate_weights=False)
+    standardized = enrich_household_features(standardized)
     return add_reproductive_features(standardized)
 
 
@@ -423,6 +440,7 @@ def _acs_raw_columns(year: int) -> list[str]:
         "PARTNER",
         "POWSP",
         "POWPUMA",
+        "MULTG",
     ]
     if year >= 2019:
         columns.extend(["CPLT", "RELSHIPP"])
@@ -445,7 +463,102 @@ def _final_panel_columns() -> set[str]:
     required = set(required_columns_for_model("M8_reproductive_x_job_context"))
     required.update(PANEL_BASE_COLUMNS)
     required.update(PANEL_FINAL_EXTRA_COLUMNS)
+    required.update(PANEL_HOUSEHOLD_COLUMNS)
     return required
+
+
+def _build_household_sensitivity(panel: pd.DataFrame) -> pd.DataFrame:
+    base_controls = list(BLOCK_DEFINITIONS["M7_onet_context"])
+    composition_terms = _available_household_terms(
+        panel,
+        ["multigenerational", "other_adults_present"],
+    )
+    partner_resource_terms = _available_household_terms(
+        panel,
+        ["partner_employed", "partner_wage_real"],
+    )
+    specifications = [
+        (
+            "household_composition",
+            "full_sample",
+            base_controls,
+            base_controls + composition_terms,
+            "M7_onet_context",
+            "M7_onet_context_plus_household_composition",
+        ),
+        (
+            "partner_resources",
+            "partnered_households",
+            base_controls,
+            base_controls + partner_resource_terms,
+            "M7_onet_context_partnered_baseline",
+            "M7_onet_context_plus_partner_resources",
+        ),
+    ]
+
+    frames: list[pd.DataFrame] = []
+    for panel_name, sample_name, base_terms, augmented_terms, baseline_name, augmented_name in specifications:
+        blocks = {
+            baseline_name: base_terms,
+            augmented_name: augmented_terms,
+        }
+        subset = _matched_sample_for_blocks(
+            panel,
+            blocks=blocks,
+            outcome="log_hourly_wage_real",
+            weight_col="person_weight",
+        )
+        results = results_to_dataframe(
+            run_sequential_ols(
+                subset,
+                weight_col="person_weight",
+                blocks=blocks,
+            )
+        )
+        results.insert(0, "sample", sample_name)
+        results.insert(0, "panel", panel_name)
+        frames.append(results)
+
+    return pd.concat(frames, ignore_index=True)
+
+
+def _matched_sample_for_blocks(
+    df: pd.DataFrame,
+    blocks: dict[str, list[str]],
+    outcome: str,
+    weight_col: str,
+) -> pd.DataFrame:
+    required_columns: list[str] = []
+    substitute_hourly_outcome = outcome == "log_hourly_wage_real" and outcome not in df.columns
+    for model_name in blocks:
+        for column in required_columns_for_model(
+            model_name,
+            outcome=outcome,
+            weight_col=weight_col,
+            blocks=blocks,
+        ):
+            if substitute_hourly_outcome and column == outcome:
+                column = "hourly_wage_real"
+            if column not in required_columns:
+                required_columns.append(column)
+
+    missing_columns = [column for column in required_columns if column not in df.columns]
+    if missing_columns:
+        raise ValueError(
+            "Missing required columns for household sensitivity: "
+            + ", ".join(sorted(missing_columns))
+        )
+
+    subset = df.loc[:, required_columns].copy()
+    return subset.dropna(subset=required_columns)
+
+
+def _available_household_terms(df: pd.DataFrame, terms: list[str]) -> list[str]:
+    return [
+        term
+        for term in terms
+        if term in df.columns and pd.to_numeric(df[term], errors="coerce").notna().any()
+    ]
 
 
 def _compress_panel(df: pd.DataFrame, keep_columns: set[str]) -> pd.DataFrame:

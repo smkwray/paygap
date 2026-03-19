@@ -69,14 +69,14 @@
     <div class="faq-item">
       <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">What is the Oaxaca decomposition?</button>
       <div class="faq-answer"><div class="faq-answer-inner">
-        <p>A statistical technique that decomposes the total gap into an "explained" portion (attributable to differences in characteristics like education or occupation) and an "unexplained" portion (residual). In 2023 ACS data, 88% of the gap is unexplained.</p>
+        <p>A supplemental decomposition that splits the total gap into an "explained" portion (observable characteristics) and an "unexplained" portion (residual). In 2023 ACS data, 87.8% of the Oaxaca gap is unexplained, but this repo treats sequential OLS as the headline series because it is more stable over time.</p>
       </div></div>
     </div>
 
     <div class="faq-item">
       <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">Why did the unexplained share jump after 2019?</button>
       <div class="faq-answer"><div class="faq-answer-inner">
-        <p>The total gap stayed stable, but the explained component collapsed. This appears to be driven by changes in the observable characteristic distributions (convergence in education, occupation) rather than a structural shift in discrimination.</p>
+        <p>The total gap stayed stable, but the explained component collapsed. That looks more like a decomposition-composition issue than a sudden structural break in the adjusted gap, which is why Oaxaca is kept as a supplemental diagnostic rather than the public headline metric.</p>
       </div></div>
     </div>
 

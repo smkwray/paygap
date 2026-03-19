@@ -128,7 +128,7 @@
         </tr>
         <tr>
           <td class="highlight">Oaxaca-Blinder</td>
-          <td>Decomposes gap into explained and unexplained components</td>
+          <td>Supplemental decomposition of the gap into explained and unexplained components; not the headline reporting series</td>
         </tr>
         <tr>
           <td class="highlight">Double/debiased ML</td>
@@ -208,7 +208,7 @@
   <!-- 5b. Reproductive Extension -->
   <section class="section">
     <h2>5b. Reproductive Extension</h2>
-    <p>Extends the baseline ladder with reproductive-stage, job-context, and interaction controls.</p>
+    <p>Extends the baseline ladder with reproductive-stage, job-context, interaction, and household-sensitivity controls.</p>
     <table class="data-table">
       <thead>
         <tr>
@@ -233,8 +233,47 @@
           <td>Where specifically does the gap concentrate?</td>
           <td>+ female &times; recent birth, female &times; child under 6, female &times; recent marriage, female &times; same-sex, female &times; autonomy, female &times; job rigidity, female &times; child under 6 &times; job rigidity</td>
         </tr>
+        <tr>
+          <td class="highlight">Household sensitivity</td>
+          <td>How much more do linked household-composition and partner-resource variables absorb?</td>
+          <td>+ multigenerational household, other adults present, then partnered-sample checks with partner employment and partner wage</td>
+        </tr>
       </tbody>
     </table>
+    <p style="margin-top:0.75rem;font-size:0.85rem;color:var(--color-text-secondary)">
+    Household composition is descriptive, and partner-resource variables are partly post-market. They are reported as sensitivity checks rather than folded into the headline sequential ladder.</p>
+
+    <table class="data-table" style="margin-top:1rem">
+      <thead>
+        <tr>
+          <th>Sensitivity panel</th>
+          <th>Added controls</th>
+          <th class="num">Baseline Gap</th>
+          <th class="num">Augmented Gap</th>
+          <th class="num">Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="highlight">Household composition</td>
+          <td>+ other adults present</td>
+          <td class="num">10.8%</td>
+          <td class="num">11.0%</td>
+          <td class="num">+0.1 pp</td>
+        </tr>
+        <tr>
+          <td class="highlight">Partner resources</td>
+          <td>+ partner employed, partner wage</td>
+          <td class="num">15.1%</td>
+          <td class="num">17.9%</td>
+          <td class="num">+2.8 pp</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:0.75rem;font-size:0.85rem;color:var(--color-text-secondary)">
+    In the current public ACS extract, <code>MULTG</code> is unavailable, so the fitted household-composition
+    row uses <code>other_adults_present</code> only. <code>relative_earnings</code> is excluded because it is built
+    from the respondent&rsquo;s own wage.</p>
   </section>
 
   <!-- 5c. Gelbach Decomposition -->

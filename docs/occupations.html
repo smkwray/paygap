@@ -50,6 +50,12 @@
       both into a single frame and examines within-occupation earnings dispersion by gender
       across ~500 occupations and 11 ACS years (2013&ndash;2024, pooled 9.7M observations).
     </p>
+    <div class="warning-box" style="margin-top:1rem">
+      <p><strong>Sample window note:</strong> This page pools ACS 2013&ndash;2024 to maximize
+      occupation cell sizes. The <a href="index.html">headline trend series</a> covers
+      2015&ndash;2023. Results here are a separate pooled extension, not directly comparable
+      to the year-by-year adjusted gap estimates.</p>
+    </div>
   </section>
 
   <!-- ── How to Read This ── -->
@@ -58,10 +64,12 @@
       <h2>How to Read This</h2>
     </div>
     <div class="insight-box">
-      <p><strong>Variance ratio &gt; 1:</strong> female earnings are more dispersed than male in that occupation.<br>
-      <strong>Variance ratio &lt; 1:</strong> male earnings are more dispersed than female.<br>
+      <p><strong>Variance ratio &gt; 1:</strong> male earnings are more dispersed than female in that occupation.<br>
+      <strong>Variance ratio &lt; 1:</strong> female earnings are more dispersed than male.<br>
       <strong>Top-decile gap &lt; 0:</strong> men account for a larger share of the top earnings decile.<br>
       <strong>Top-decile gap &gt; 0:</strong> women account for a larger share of the top earnings decile.<br>
+      All variance ratios are <strong>male / female (M/F)</strong>, matching the
+      <a href="variance.html">Variance</a> page and standard literature convention.<br>
       All results are <strong>descriptive summaries</strong> of the earnings distribution, not causal estimates.
       Small cell sizes (marked <span class="tag tag-small">N&lt;1K</span>) increase noise in individual occupation estimates.</p>
     </div>
@@ -95,23 +103,23 @@
     <div class="tab-panel active" id="var-f-annual">
       <div class="chart-container">
         <h3>Female-Higher-Variance Occupations (Annual)</h3>
-        <p class="chart-subtitle">Raw variance ratio (female/male) &mdash; top 10</p>
+        <p class="chart-subtitle">Variance ratio (M/F) &mdash; lowest 10 (female more dispersed)</p>
         <div class="chart-canvas-wrap"><canvas id="fmvAnnualChart"></canvas></div>
         <p class="chart-note">Female earnings are more dispersed than male earnings in these occupations. Source: <code>results/variance/acs_occupation_variability_leaders.csv</code></p>
       </div>
       <table class="data-table">
-        <thead><tr><th>Occupation</th><th class="num">Ratio</th><th class="num">Residual</th><th>SOC</th><th class="num">N</th><th>Type</th></tr></thead>
+        <thead><tr><th>Occupation</th><th class="num">Ratio (M/F)</th><th class="num">Residual</th><th>SOC</th><th class="num">N</th><th>Type</th></tr></thead>
         <tbody>
-          <tr><td>Agents/biz mgrs of artists</td><td class="num">7.98</td><td class="num">15.97</td><td>Business/Fin.</td><td class="num">2,603</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Misc. vehicle/mobile equip mechanics</td><td class="num">4.76</td><td class="num">4.41</td><td>Install./Repair</td><td class="num">5,011</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Elevator &amp; escalator installers</td><td class="num">4.07</td><td class="num">4.07</td><td>Construction</td><td class="num">2,085</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Parts salespersons</td><td class="num">3.82</td><td class="num">5.15</td><td>Sales</td><td class="num">7,017</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Solar photovoltaic installers</td><td class="num">3.75</td><td class="num">3.07</td><td>Construction</td><td class="num">645</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
-          <tr><td>Metal workers, all other (2010)</td><td class="num">3.70</td><td class="num">4.04</td><td>Production</td><td class="num">13,392</td><td><span class="tag tag-2010">2010</span></td></tr>
-          <tr><td>Food/tobacco machine operators</td><td class="num">2.55</td><td class="num">2.36</td><td>Production</td><td class="num">719</td><td><span class="tag tag-mixed">mixed</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
-          <tr><td>Electrical power-line installers</td><td class="num">2.49</td><td class="num">2.30</td><td>Install./Repair</td><td class="num">9,850</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Furnace/kiln/oven operators</td><td class="num">2.45</td><td class="num">3.10</td><td>Production</td><td class="num">842</td><td><span class="tag tag-mixed">mixed</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
-          <tr><td>Forming machine operators</td><td class="num">2.25</td><td class="num">1.96</td><td>Production</td><td class="num">1,182</td><td><span class="tag tag-2018">2018</span></td></tr>
+          <tr><td>Agents/biz mgrs of artists</td><td class="num">0.13</td><td class="num">0.06</td><td>Business/Fin.</td><td class="num">2,603</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Misc. vehicle/mobile equip mechanics</td><td class="num">0.21</td><td class="num">0.23</td><td>Install./Repair</td><td class="num">5,011</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Elevator &amp; escalator installers</td><td class="num">0.25</td><td class="num">0.25</td><td>Construction</td><td class="num">2,085</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Parts salespersons</td><td class="num">0.26</td><td class="num">0.19</td><td>Sales</td><td class="num">7,017</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Solar photovoltaic installers</td><td class="num">0.27</td><td class="num">0.33</td><td>Construction</td><td class="num">645</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Metal workers, all other (2010)</td><td class="num">0.27</td><td class="num">0.25</td><td>Production</td><td class="num">13,392</td><td><span class="tag tag-2010">2010</span></td></tr>
+          <tr><td>Food/tobacco machine operators</td><td class="num">0.39</td><td class="num">0.42</td><td>Production</td><td class="num">719</td><td><span class="tag tag-mixed">mixed</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Electrical power-line installers</td><td class="num">0.40</td><td class="num">0.43</td><td>Install./Repair</td><td class="num">9,850</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Furnace/kiln/oven operators</td><td class="num">0.41</td><td class="num">0.32</td><td>Production</td><td class="num">842</td><td><span class="tag tag-mixed">mixed</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Forming machine operators</td><td class="num">0.44</td><td class="num">0.51</td><td>Production</td><td class="num">1,182</td><td><span class="tag tag-2018">2018</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -120,23 +128,23 @@
     <div class="tab-panel" id="var-m-annual">
       <div class="chart-container">
         <h3>Male-Higher-Variance Occupations (Annual)</h3>
-        <p class="chart-subtitle">Raw variance ratio (female/male) &mdash; bottom 10 (male more dispersed)</p>
+        <p class="chart-subtitle">Variance ratio (M/F) &mdash; top 10 (male more dispersed)</p>
         <div class="chart-canvas-wrap"><canvas id="mmvAnnualChart"></canvas></div>
         <p class="chart-note">Male earnings are more dispersed than female earnings in these occupations. Source: <code>results/variance/acs_occupation_variability_leaders.csv</code></p>
       </div>
       <table class="data-table">
-        <thead><tr><th>Occupation</th><th class="num">Ratio</th><th class="num">Residual</th><th>SOC</th><th class="num">N</th><th>Type</th></tr></thead>
+        <thead><tr><th>Occupation</th><th class="num">Ratio (M/F)</th><th class="num">Residual</th><th>SOC</th><th class="num">N</th><th>Type</th></tr></thead>
         <tbody>
-          <tr><td>Child/family/school social workers</td><td class="num">0.48</td><td class="num">0.43</td><td>Community/Social</td><td class="num">3,216</td><td><span class="tag tag-2018">2018</span></td></tr>
-          <tr><td>Rehabilitation counselors</td><td class="num">0.49</td><td class="num">0.53</td><td>Community/Social</td><td class="num">952</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
-          <tr><td>Production helpers (2010)</td><td class="num">0.49</td><td class="num">0.52</td><td>Production</td><td class="num">1,271</td><td><span class="tag tag-split">split</span></td></tr>
-          <tr><td>Avionics technicians</td><td class="num">0.52</td><td class="num">0.65</td><td>Install./Repair</td><td class="num">1,518</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Mental health/substance abuse social workers</td><td class="num">0.55</td><td class="num">0.66</td><td>Community/Social</td><td class="num">1,116</td><td><span class="tag tag-2018">2018</span></td></tr>
-          <tr><td>Title examiners/abstractors</td><td class="num">0.55</td><td class="num">0.71</td><td>Legal</td><td class="num">3,402</td><td><span class="tag tag-2018">2018</span></td></tr>
-          <tr><td>Paralegals and legal assistants</td><td class="num">0.55</td><td class="num">0.59</td><td>Legal</td><td class="num">30,142</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Photographers</td><td class="num">0.56</td><td class="num">0.37</td><td>Arts/Design</td><td class="num">5,416</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Passenger attendants</td><td class="num">0.59</td><td class="num">0.62</td><td>Transportation</td><td class="num">780</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
-          <tr><td>Fundraisers</td><td class="num">0.60</td><td class="num">0.63</td><td>Business/Fin.</td><td class="num">7,095</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Child/family/school social workers</td><td class="num">2.08</td><td class="num">2.33</td><td>Community/Social</td><td class="num">3,216</td><td><span class="tag tag-2018">2018</span></td></tr>
+          <tr><td>Rehabilitation counselors</td><td class="num">2.04</td><td class="num">1.89</td><td>Community/Social</td><td class="num">952</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Production helpers (2010)</td><td class="num">2.04</td><td class="num">1.92</td><td>Production</td><td class="num">1,271</td><td><span class="tag tag-split">split</span></td></tr>
+          <tr><td>Avionics technicians</td><td class="num">1.92</td><td class="num">1.54</td><td>Install./Repair</td><td class="num">1,518</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Mental health/substance abuse social workers</td><td class="num">1.82</td><td class="num">1.52</td><td>Community/Social</td><td class="num">1,116</td><td><span class="tag tag-2018">2018</span></td></tr>
+          <tr><td>Title examiners/abstractors</td><td class="num">1.82</td><td class="num">1.41</td><td>Legal</td><td class="num">3,402</td><td><span class="tag tag-2018">2018</span></td></tr>
+          <tr><td>Paralegals and legal assistants</td><td class="num">1.82</td><td class="num">1.69</td><td>Legal</td><td class="num">30,142</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Photographers</td><td class="num">1.79</td><td class="num">2.70</td><td>Arts/Design</td><td class="num">5,416</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Passenger attendants</td><td class="num">1.69</td><td class="num">1.61</td><td>Transportation</td><td class="num">780</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Fundraisers</td><td class="num">1.67</td><td class="num">1.59</td><td>Business/Fin.</td><td class="num">7,095</td><td><span class="tag tag-mixed">mixed</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -145,23 +153,23 @@
     <div class="tab-panel" id="var-f-hourly">
       <div class="chart-container">
         <h3>Female-Higher-Variance Occupations (Hourly)</h3>
-        <p class="chart-subtitle">Raw variance ratio (female/male) &mdash; top 10</p>
+        <p class="chart-subtitle">Variance ratio (M/F) &mdash; lowest 10 (female more dispersed)</p>
         <div class="chart-canvas-wrap"><canvas id="fmvHourlyChart"></canvas></div>
         <p class="chart-note">Female hourly wages are more dispersed than male in these occupations.</p>
       </div>
       <table class="data-table">
-        <thead><tr><th>Occupation</th><th class="num">Ratio</th><th class="num">Residual</th><th>SOC</th><th class="num">N</th><th>Type</th></tr></thead>
+        <thead><tr><th>Occupation</th><th class="num">Ratio (M/F)</th><th class="num">Residual</th><th>SOC</th><th class="num">N</th><th>Type</th></tr></thead>
         <tbody>
-          <tr><td>Agents/biz mgrs of artists</td><td class="num">4.03</td><td class="num">8.97</td><td>Business/Fin.</td><td class="num">2,603</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Cement masons/concrete finishers</td><td class="num">3.29</td><td class="num">3.69</td><td>Construction</td><td class="num">3,882</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Elevator &amp; escalator installers</td><td class="num">2.88</td><td class="num">2.83</td><td>Construction</td><td class="num">2,085</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Millwrights</td><td class="num">2.71</td><td class="num">2.36</td><td>Install./Repair</td><td class="num">3,715</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Metal workers, all other (2010)</td><td class="num">2.67</td><td class="num">3.46</td><td>Production</td><td class="num">13,392</td><td><span class="tag tag-2010">2010</span></td></tr>
-          <tr><td>Food/tobacco machine operators</td><td class="num">2.63</td><td class="num">2.25</td><td>Production</td><td class="num">719</td><td><span class="tag tag-mixed">mixed</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
-          <tr><td>Tool and die makers</td><td class="num">2.38</td><td class="num">2.34</td><td>Production</td><td class="num">3,052</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Helpers, install./repair</td><td class="num">2.32</td><td class="num">2.31</td><td>Install./Repair</td><td class="num">628</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
-          <tr><td>Electrical/electronics engineers</td><td class="num">2.31</td><td class="num">2.13</td><td>Architecture/Eng.</td><td class="num">17,223</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Other personal appearance workers</td><td class="num">2.11</td><td class="num">2.23</td><td>Personal Care</td><td class="num">591</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Agents/biz mgrs of artists</td><td class="num">0.25</td><td class="num">0.11</td><td>Business/Fin.</td><td class="num">2,603</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Cement masons/concrete finishers</td><td class="num">0.30</td><td class="num">0.27</td><td>Construction</td><td class="num">3,882</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Elevator &amp; escalator installers</td><td class="num">0.35</td><td class="num">0.35</td><td>Construction</td><td class="num">2,085</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Millwrights</td><td class="num">0.37</td><td class="num">0.42</td><td>Install./Repair</td><td class="num">3,715</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Metal workers, all other (2010)</td><td class="num">0.37</td><td class="num">0.29</td><td>Production</td><td class="num">13,392</td><td><span class="tag tag-2010">2010</span></td></tr>
+          <tr><td>Food/tobacco machine operators</td><td class="num">0.38</td><td class="num">0.44</td><td>Production</td><td class="num">719</td><td><span class="tag tag-mixed">mixed</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Tool and die makers</td><td class="num">0.42</td><td class="num">0.43</td><td>Production</td><td class="num">3,052</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Helpers, install./repair</td><td class="num">0.43</td><td class="num">0.43</td><td>Install./Repair</td><td class="num">628</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Electrical/electronics engineers</td><td class="num">0.43</td><td class="num">0.47</td><td>Architecture/Eng.</td><td class="num">17,223</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Other personal appearance workers</td><td class="num">0.47</td><td class="num">0.45</td><td>Personal Care</td><td class="num">591</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -170,23 +178,23 @@
     <div class="tab-panel" id="var-m-hourly">
       <div class="chart-container">
         <h3>Male-Higher-Variance Occupations (Hourly)</h3>
-        <p class="chart-subtitle">Raw variance ratio (female/male) &mdash; bottom 10 (male more dispersed)</p>
+        <p class="chart-subtitle">Variance ratio (M/F) &mdash; top 10 (male more dispersed)</p>
         <div class="chart-canvas-wrap"><canvas id="mmvHourlyChart"></canvas></div>
         <p class="chart-note">Male hourly wages are more dispersed than female in these occupations.</p>
       </div>
       <table class="data-table">
-        <thead><tr><th>Occupation</th><th class="num">Ratio</th><th class="num">Residual</th><th>SOC</th><th class="num">N</th><th>Type</th></tr></thead>
+        <thead><tr><th>Occupation</th><th class="num">Ratio (M/F)</th><th class="num">Residual</th><th>SOC</th><th class="num">N</th><th>Type</th></tr></thead>
         <tbody>
-          <tr><td>Photographers</td><td class="num">0.35</td><td class="num">0.24</td><td>Arts/Design</td><td class="num">5,419</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Production helpers (2010)</td><td class="num">0.38</td><td class="num">0.44</td><td>Production</td><td class="num">1,271</td><td><span class="tag tag-split">split</span></td></tr>
-          <tr><td>Helpers, install./repair (2010)</td><td class="num">0.39</td><td class="num">0.46</td><td>Install./Repair</td><td class="num">577</td><td><span class="tag tag-split">split</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
-          <tr><td>Medical transcriptionists</td><td class="num">0.45</td><td class="num">0.52</td><td>Healthcare Supp.</td><td class="num">2,127</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Control/valve installers</td><td class="num">0.46</td><td class="num">0.44</td><td>Install./Repair</td><td class="num">1,614</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Explosives workers/blasters</td><td class="num">0.46</td><td class="num">0.36</td><td>Construction</td><td class="num">635</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
-          <tr><td>Library assistants, clerical</td><td class="num">0.47</td><td class="num">0.52</td><td>Office/Admin.</td><td class="num">5,638</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Marine engineers/naval architects</td><td class="num">0.48</td><td class="num">0.47</td><td>Architecture/Eng.</td><td class="num">1,084</td><td><span class="tag tag-mixed">mixed</span></td></tr>
-          <tr><td>Fishing and hunting workers</td><td class="num">0.51</td><td class="num">0.37</td><td>Farming/Fishing</td><td class="num">660</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
-          <tr><td>Credit analysts</td><td class="num">0.51</td><td class="num">0.51</td><td>Business/Fin.</td><td class="num">2,485</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Photographers</td><td class="num">2.86</td><td class="num">4.17</td><td>Arts/Design</td><td class="num">5,419</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Production helpers (2010)</td><td class="num">2.63</td><td class="num">2.27</td><td>Production</td><td class="num">1,271</td><td><span class="tag tag-split">split</span></td></tr>
+          <tr><td>Helpers, install./repair (2010)</td><td class="num">2.56</td><td class="num">2.17</td><td>Install./Repair</td><td class="num">577</td><td><span class="tag tag-split">split</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Medical transcriptionists</td><td class="num">2.22</td><td class="num">1.92</td><td>Healthcare Supp.</td><td class="num">2,127</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Control/valve installers</td><td class="num">2.17</td><td class="num">2.27</td><td>Install./Repair</td><td class="num">1,614</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Explosives workers/blasters</td><td class="num">2.17</td><td class="num">2.78</td><td>Construction</td><td class="num">635</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Library assistants, clerical</td><td class="num">2.13</td><td class="num">1.92</td><td>Office/Admin.</td><td class="num">5,638</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Marine engineers/naval architects</td><td class="num">2.08</td><td class="num">2.13</td><td>Architecture/Eng.</td><td class="num">1,084</td><td><span class="tag tag-mixed">mixed</span></td></tr>
+          <tr><td>Fishing and hunting workers</td><td class="num">1.96</td><td class="num">2.70</td><td>Farming/Fishing</td><td class="num">660</td><td><span class="tag tag-2018">2018</span> <span class="tag tag-small">N&lt;1K</span></td></tr>
+          <tr><td>Credit analysts</td><td class="num">1.96</td><td class="num">1.96</td><td>Business/Fin.</td><td class="num">2,485</td><td><span class="tag tag-mixed">mixed</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -361,8 +369,8 @@
     <table class="data-table">
       <thead><tr><th>Metric (Hourly)</th><th class="num">Pre-2020</th><th class="num">Post-2020</th><th class="num">Direction</th></tr></thead>
       <tbody>
-        <tr><td>Raw variance ratio (M/F)</td><td class="num">0.891</td><td class="num">0.922</td><td>toward parity</td></tr>
-        <tr><td>Residual variance ratio</td><td class="num">0.950</td><td class="num">0.949</td><td>stable</td></tr>
+        <tr><td>Raw variance ratio (M/F)</td><td class="num">1.122</td><td class="num">1.085</td><td>toward parity</td></tr>
+        <tr><td>Residual variance ratio (M/F)</td><td class="num">1.053</td><td class="num">1.054</td><td>stable</td></tr>
         <tr><td>Female top-10% share</td><td class="num">7.47%</td><td class="num">7.82%</td><td>increased</td></tr>
         <tr><td>Male top-10% share</td><td class="num">12.65%</td><td class="num">12.29%</td><td>decreased</td></tr>
         <tr><td>Female top-5% share</td><td class="num">3.47%</td><td class="num">3.75%</td><td>increased</td></tr>
@@ -371,10 +379,10 @@
     </table>
 
     <div class="insight-box">
-      <p>Post-2020, hourly dispersion moved modestly toward parity: the raw ratio rose from 0.89
-      to 0.92, and women gained slightly in top-earner shares. The residual ratio was essentially
-      unchanged. These shifts are consistent with a mild post-pandemic compression of hourly
-      extremes rather than a structural break.</p>
+      <p>Post-2020, hourly dispersion moved modestly toward parity: the within-occupation M/F
+      variance ratio decreased from 1.12 to 1.08, and women gained slightly in top-earner
+      shares. The residual ratio was essentially unchanged. These shifts are consistent with
+      a mild post-pandemic compression of hourly extremes rather than a structural break.</p>
     </div>
   </section>
 
@@ -456,12 +464,12 @@
     buildCharts();
   };
 
-  /* ── Chart data ── */
+  /* ── Chart data (all ratios are M/F) ── */
   var D = {
-    fmvAnnual: { labels:['Agents/biz mgrs','Vehicle mechanics','Elevator inst.','Parts sales','Solar PV inst.','Metal wkrs (2010)','Food/tobacco ops','Power-line inst.','Furnace/kiln ops','Forming mach. ops'], values:[7.98,4.76,4.07,3.82,3.75,3.70,2.55,2.49,2.45,2.25] },
-    mmvAnnual: { labels:['Child/family social wkrs','Rehab counselors','Production helpers','Avionics techs','MH/SA social wkrs','Title examiners','Paralegals','Photographers','Passenger attend.','Fundraisers'], values:[0.48,0.49,0.49,0.52,0.55,0.55,0.55,0.56,0.59,0.60] },
-    fmvHourly: { labels:['Agents/biz mgrs','Cement masons','Elevator inst.','Millwrights','Metal wkrs (2010)','Food/tobacco ops','Tool & die makers','Helpers, inst/rep','Elec/electronics eng','Personal appear. wkrs'], values:[4.03,3.29,2.88,2.71,2.67,2.63,2.38,2.32,2.31,2.11] },
-    mmvHourly: { labels:['Photographers','Production helpers','Helpers inst/rep (2010)','Medical transcr.','Control/valve inst.','Explosives workers','Library assistants','Marine engineers','Fishing/hunting wkrs','Credit analysts'], values:[0.35,0.38,0.39,0.45,0.46,0.46,0.47,0.48,0.51,0.51] },
+    fmvAnnual: { labels:['Agents/biz mgrs','Vehicle mechanics','Elevator inst.','Parts sales','Solar PV inst.','Metal wkrs (2010)','Food/tobacco ops','Power-line inst.','Furnace/kiln ops','Forming mach. ops'], values:[0.13,0.21,0.25,0.26,0.27,0.27,0.39,0.40,0.41,0.44] },
+    mmvAnnual: { labels:['Child/family social wkrs','Rehab counselors','Production helpers','Avionics techs','MH/SA social wkrs','Title examiners','Paralegals','Photographers','Passenger attend.','Fundraisers'], values:[2.08,2.04,2.04,1.92,1.82,1.82,1.82,1.79,1.69,1.67] },
+    fmvHourly: { labels:['Agents/biz mgrs','Cement masons','Elevator inst.','Millwrights','Metal wkrs (2010)','Food/tobacco ops','Tool & die makers','Helpers, inst/rep','Elec/electronics eng','Personal appear. wkrs'], values:[0.25,0.30,0.35,0.37,0.37,0.38,0.42,0.43,0.43,0.47] },
+    mmvHourly: { labels:['Photographers','Production helpers','Helpers inst/rep (2010)','Medical transcr.','Control/valve inst.','Explosives workers','Library assistants','Marine engineers','Fishing/hunting wkrs','Credit analysts'], values:[2.86,2.63,2.56,2.22,2.17,2.17,2.13,2.08,1.96,1.96] },
     tailMaleAnnual: { labels:['Probation officers','Parts sales','Photographers','Dental hygienists','Diag. sonographers','Pressers, textile','Credit auth.','Title examiners','Prod. helpers (2010)'], values:[-75.3,-73.4,-33.7,-23.1,-20.0,-19.1,-18.2,-17.9,-17.1] },
     tailFemaleAnnual: { labels:['Agents/biz mgrs of artists'], values:[64.4] },
     tailMaleHourly: { labels:['Probation officers','Parts sales','Photographers','Title examiners','Dental hygienists','Diag. sonographers','Pressers, textile','Credit auth.','Prod. helpers (2010)'], values:[-75.1,-72.1,-28.8,-16.9,-15.8,-15.4,-15.2,-14.7,-14.6] },
@@ -500,7 +508,7 @@
     // Variance leaderboards (only build visible panel)
     var vk = (varDir===0?'fmv':'mmv') + (varOut==='annual'?'Annual':'Hourly');
     makeBar(vk.charAt(0).toLowerCase()+vk.slice(1)+'Chart', D[vk.charAt(0).toLowerCase()+vk.slice(1)], {
-      label:'Variance Ratio', suffix:'\u00d7', xTitle:'Raw Variance Ratio (F/M)', zeroX:true
+      label:'Variance Ratio', suffix:'\u00d7', xTitle:'Variance Ratio (M/F)', zeroX:true
     });
 
     // Tail charts
@@ -533,10 +541,10 @@
     if(charts.regimeChart) charts.regimeChart.destroy();
     charts.regimeChart = new Chart(document.getElementById('regimeChart'), {
       type:'bar',
-      data:{ labels:['Raw Var. Ratio','Residual Var. Ratio','Female Top-10%','Male Top-10%'],
+      data:{ labels:['Raw Var. Ratio (M/F)','Residual Var. Ratio (M/F)','Female Top-10%','Male Top-10%'],
         datasets:[
-          { label:'Pre-2020', data:[0.891,0.950,7.47,12.65], backgroundColor:c.accent, borderRadius:4 },
-          { label:'Post-2020', data:[0.922,0.949,7.82,12.29], backgroundColor:c.orange, borderRadius:4 }
+          { label:'Pre-2020', data:[1.122,1.053,7.47,12.65], backgroundColor:c.accent, borderRadius:4 },
+          { label:'Post-2020', data:[1.085,1.054,7.82,12.29], backgroundColor:c.orange, borderRadius:4 }
         ]},
       options:{
         responsive:true,

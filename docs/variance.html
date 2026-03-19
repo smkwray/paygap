@@ -39,31 +39,38 @@
       earnings by gender &mdash; variance ratios, tail concentration, and how dispersion varies
       across reproductive stages and job contexts.
     </p>
+    <div class="warning-box" style="margin-top:1rem">
+      <p><strong>Sample window note:</strong> This page pools ACS 2013&ndash;2024 (9.7M observations)
+      to support distributional breakdowns by reproductive stage and job context. The
+      <a href="index.html">headline trend series</a> covers 2015&ndash;2023. Results here
+      are a separate pooled extension, not directly comparable to the year-by-year adjusted
+      gap estimates.</p>
+    </div>
   </section>
 
   <!-- ── Headline Findings ── -->
   <section class="section">
     <div class="section-header">
       <h2>Headline Findings</h2>
-      <span class="section-tag">ACS Pooled &middot; 9.7M obs</span>
+      <span class="section-tag">ACS Pooled 2013&ndash;2024 &middot; 9.7M obs</span>
     </div>
 
     <div class="card-grid">
       <div class="card">
-        <h3>1.10&times; raw dispersion</h3>
-        <p>Male hourly-wage variance is 10% higher than female. The male P90/P10 ratio is 1.82 vs. female 1.75.</p>
+        <h3>1.7&times; top-5% overrepresentation</h3>
+        <p>Men hold 6.3% of total hourly earnings in the top 5% vs. women&rsquo;s 3.6%. The residual gap is concentrated in the upper tail.</p>
+      </div>
+      <div class="card">
+        <h3>12.2% vs. 7.6% top-decile share</h3>
+        <p>Men capture 12.2% of total hourly earnings in the top decile vs. 7.6% for women &mdash; a 4.7 pp gap that persists after controls.</p>
       </div>
       <div class="card">
         <h3>1.04&times; residual dispersion</h3>
-        <p>After full controls, the male variance advantage shrinks to 4%. Most raw dispersion differences are driven by observables.</p>
+        <p>After full controls, the overall male/female variance ratio is only 1.04. Most of the raw 10% dispersion gap is absorbed by observables.</p>
       </div>
       <div class="card">
-        <h3>1.7&times; top-5% overrepresentation</h3>
-        <p>Men hold 6.3% of total hourly earnings in the top 5% vs. women&rsquo;s 3.6%. Tail concentration is strongly male.</p>
-      </div>
-      <div class="card">
-        <h3>~0 pp from selection</h3>
-        <p>IPW selection correction moves the residual variance ratio from 1.039 to 1.047. Employment selection does not explain the dispersion gap.</p>
+        <h3>Motherhood compresses, rigidity flips</h3>
+        <p>Mothers&rsquo; residual variance <em>compresses</em> (ratio 0.82&ndash;0.86). In the most rigid jobs, women are <em>more</em> dispersed (0.87).</p>
       </div>
     </div>
   </section>
@@ -71,7 +78,7 @@
   <!-- ── V1: Raw / Residual Dispersion ── -->
   <section class="section">
     <div class="section-header">
-      <h2>V1: Raw &amp; Residual Dispersion</h2>
+      <h2>Raw &amp; Residual Dispersion</h2>
       <span class="section-tag">Log Hourly Wage</span>
     </div>
 
@@ -113,7 +120,7 @@
   <!-- ── V2: Selection-Corrected ── -->
   <section class="section">
     <div class="section-header">
-      <h2>V2: Selection-Corrected Variance</h2>
+      <h2>Selection-Corrected Variance</h2>
       <span class="section-tag">IPW Adjustment</span>
     </div>
 
@@ -136,7 +143,7 @@
   <!-- ── V3: Reproductive Stage ── -->
   <section class="section">
     <div class="section-header">
-      <h2>V3: Dispersion by Reproductive Stage</h2>
+      <h2>Dispersion by Reproductive Stage</h2>
       <span class="section-tag">Within-Stage Comparisons</span>
     </div>
 
@@ -177,7 +184,7 @@
   <!-- ── V4: O*NET Job Context ── -->
   <section class="section">
     <div class="section-header">
-      <h2>V4: Dispersion by Job Rigidity</h2>
+      <h2>Dispersion by Job Rigidity</h2>
       <span class="section-tag">O*NET Context Quartiles</span>
     </div>
 
@@ -301,7 +308,7 @@
         labels: v2Years,
         datasets: [
           {
-            label: 'V1 Residual Ratio (raw)',
+            label: 'Residual Ratio (baseline)',
             data: v1Resid,
             borderColor: c.accent,
             backgroundColor: c.accent + '22',
@@ -310,7 +317,7 @@
             pointHoverRadius: 6
           },
           {
-            label: 'V2 Residual Ratio (selection-corrected)',
+            label: 'Residual Ratio (selection-corrected)',
             data: v2Resid,
             borderColor: c.orange,
             backgroundColor: c.orange + '22',

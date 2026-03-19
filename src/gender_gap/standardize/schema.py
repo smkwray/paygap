@@ -62,6 +62,7 @@ PERSON_YEAR_CORE_COLUMNS = [
     "annual_earnings_real",
     "wage_salary_income_real",
     "person_weight",
+    "multg",
 ]
 
 # ---------------------------------------------------------------------------

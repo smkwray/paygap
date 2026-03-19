@@ -37,8 +37,9 @@
     <p class="page-intro">
       The baseline ladder controls for demographics, geography, job sorting, schedule,
       and family status. This extension adds reproductive stage, couple type, O*NET job context,
-      and their interactions to ask: how much of the remaining gap runs through
-      reproductive-burden channels?
+      and their interactions to ask: how much of the remaining gap is <em>statistically localized</em>
+      in reproductive-burden channels? All results are descriptive &mdash; they show where the
+      residual concentrates, not whether employers or workers drive the pattern.
     </p>
   </section>
 
@@ -129,6 +130,47 @@
       another 4.6 pp. The positive coefficients for recent birth and young children reflect
       survivor selection &mdash; women who remain employed through these events tend to be
       in higher-paying positions.</p>
+    </div>
+  </section>
+
+  <!-- ── 2b. Gelbach Decomposition ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Order-Invariant Decomposition</h2>
+      <span class="section-tag">Gelbach 2016 &middot; 8 ACS Years</span>
+    </div>
+
+    <p>The ladder above is order-sensitive &mdash; the amount each block &ldquo;explains&rdquo; depends
+    on when it enters. The Gelbach decomposition resolves this by computing each block&rsquo;s
+    contribution in an order-invariant way. The identity is exact.</p>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Block</th>
+          <th>What it measures</th>
+          <th class="num">Mean &Delta;</th>
+          <th class="num">SD</th>
+          <th class="num">Share</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="highlight">Job sorting</td><td>Occupation/industry choices</td><td class="num">&minus;0.084</td><td class="num">0.003</td><td class="num">~70%</td></tr>
+        <tr><td class="highlight">Reproductive burden</td><td>Parenthood timing, couple type, reproductive stage</td><td class="num">&minus;0.036</td><td class="num">0.003</td><td class="num">~30%</td></tr>
+        <tr><td class="highlight">Job context</td><td>Schedule rigidity, autonomy (O*NET)</td><td class="num">&minus;0.016</td><td class="num">0.004</td><td class="num">~13%</td></tr>
+        <tr><td class="highlight">Schedule</td><td>Hours, work from home, commute</td><td class="num">+0.017</td><td class="num">0.010</td><td class="num">&minus;14%</td></tr>
+        <tr><td class="highlight">Geography</td><td>State of residence</td><td class="num">&minus;0.002</td><td class="num">0.000</td><td class="num">~2%</td></tr>
+        <tr><td class="highlight">Family</td><td>Marital status, children (generic)</td><td class="num">+0.002</td><td class="num">0.003</td><td class="num">~0%</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <p><strong>Reproductive burden is the second-largest channel (30%)</strong>, stable to within
+      &plusmn;1 pp across 2015&ndash;2023. Job sorting remains dominant (~70%), but the reproductive
+      channel is the most important single block beyond sorting. The schedule block works in the
+      <em>opposite</em> direction: controlling for hours reveals a <em>larger</em> female penalty,
+      consistent with women working fewer hours in higher-paying arrangements. Generic family
+      status contributes nothing beyond the reproductive-stage controls.</p>
     </div>
   </section>
 

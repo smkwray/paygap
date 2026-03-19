@@ -97,6 +97,7 @@ def standardize_acs(
     out["cplt"] = cplt
     out["partner"] = partner
     out["relshipp"] = relshipp
+    out["multg"] = _numeric_series(df.get("MULTG"), index=df.index)
     out["paoc"] = paoc
     out["noc"] = noc
     out["number_children"] = _recode_number_children(df)

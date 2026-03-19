@@ -232,9 +232,10 @@ read as mechanism-sensitive accounting, not a pre-market explanation.
 <summary><strong>Reproductive-burden extension</strong></summary>
 
 The baseline analysis controls for family status (married, number of children) but
-treats all parents the same. This extension asks a sharper question: does the gap
-vary by *reproductive stage* — whether someone recently gave birth, has a toddler
-vs. a school-age child, or lives with a same-sex vs. opposite-sex partner?
+treats all parents the same. This extension asks a sharper question: how much of the
+remaining gap is *statistically localized* in reproductive-burden channels? All results
+are descriptive — they show where the residual concentrates, not whether employers or
+workers drive the pattern.
 
 **What it adds to the specification ladder:**
 
@@ -248,7 +249,8 @@ vs. a school-age child, or lives with a same-sex vs. opposite-sex partner?
 \*At the interaction step, the baseline female penalty becomes statistically
 insignificant (p=0.63) because it is absorbed by specific channels: women in
 rigid-schedule jobs face a 12.1 pp additional penalty, and recently married women
-face a 10.0 pp penalty. The gap doesn't disappear — it moves into these pathways.
+face a 10.0 pp penalty. The gap becomes more localized in these reproductive and
+schedule-rigidity channels — it does not disappear.
 
 **Supporting analyses:**
 
@@ -278,17 +280,23 @@ Run: `python scripts/run_repro_extension.py`
 <details>
 <summary><strong>Variance extension</strong></summary>
 
-The variance suite examines the full earnings distribution, not just the mean:
+The variance suite examines the full earnings distribution, not just the mean.
+After standard controls, the overall male/female variance ratio is modest (1.04×),
+but the residual is concentrated in the upper tail: men hold 12.2% of total hourly
+earnings in the top decile vs. women's 7.6%, and 6.3% in the top 5% vs. 3.6%
+(1.7× overrepresentation). IPW selection correction barely moves this (1.039 → 1.047).
 
-| Analysis | What it measures | Headline |
-|----------|-----------------|----------|
-| Raw and residual dispersion | Variance ratios by gender | Male variance 10% higher raw, 4% higher residual |
-| Selection-corrected | IPW adjustment for employment | Barely changes (1.039 → 1.047) |
-| Reproductive stage | Dispersion within family stages | Mothers' residual variance *compresses* (ratio 0.82–0.86) |
-| Job rigidity | Dispersion by O\*NET context | Ratio flips in rigid jobs: women more dispersed (0.87) |
+The distributional shape changes sharply by context:
 
-Key tail-concentration finding: men hold 6.3% of total hourly earnings in the
-top 5% vs. women's 3.6% — a 1.7× overrepresentation.
+| Context | Residual ratio (M/F) | Pattern |
+|---------|---------------------:|---------|
+| Childless workers | 1.09–1.17 | Male more dispersed |
+| Mothers | 0.82–0.86 | *Female compresses* |
+| Rigid-schedule jobs (Q4) | 0.87 | *Ratio flips: female more dispersed* |
+
+These breakdowns map *where* the residual sits across the distribution — they do
+not identify what explains it. Pooled ACS 2013–2024 (9.7M observations); the
+sample window is broader than the headline 2015–2023 year-by-year series.
 
 Outputs: `results/variance/`, `reports/variance_addon_summary.md`
 Run: `python scripts/run_repro_extension.py` (produces both repro and variance outputs)
@@ -312,8 +320,8 @@ Key findings:
 - **Largest male top-decile advantage:** Probation officers (−75.3 pp) and Parts
   salespersons (−73.4 pp). Only one occupation (Agents/business managers of artists)
   shows a female top-decile advantage in the top 25.
-- **Post-2020:** Hourly raw variance ratio moved from 0.89 to 0.92 (modestly toward
-  parity). Residual ratio was unchanged.
+- **Post-2020:** Within-occupation hourly M/F variance ratio decreased from 1.12 to
+  1.08 (modestly toward parity). Residual ratio was unchanged.
 
 Outputs:
 - `results/variance/acs_occupation_variability_leaders.csv` — top-25 per leaderboard
@@ -363,15 +371,18 @@ All data are free, public, and U.S. federal:
 <details>
 <summary><strong>Estimation approaches</strong></summary>
 
-- **Sequential OLS** — progressively adds control blocks (demographics, education,
+- **Sequential OLS** — progressively adds control blocks (demographics,
   geography, job sorting, hours/schedule, family) to measure how much of the raw
   gap each block absorbs. This is the primary headline method.
+- **Gelbach decomposition** — order-invariant attribution of how much each
+  covariate block moves the female coefficient (Gelbach 2016). Resolves the
+  sequential ladder's order-sensitivity. Run per year across 2015–2023.
 - **Oaxaca-Blinder decomposition** — decomposes the gap into explained
   (observable-characteristic) and unexplained (coefficient-difference) components.
   Treated as supplemental due to post-2019 instability.
 - **Double/debiased machine learning** — flexible nuisance-model adjustment using
   elastic net. Used as a sensitivity check; currently unweighted.
-- **Employment-selection robustness** — inverse-probability weighting to separate
+- **Employment-selection correction** — inverse-probability weighting to separate
   worker wage gaps from total earnings gaps including non-workers.
 - **Survey uncertainty** — successive-difference replication using 80 ACS replicate
   weights for all ACS analysis years.
@@ -391,19 +402,48 @@ Default sample: `prime_age_wage_salary`
 </details>
 
 <details>
-<summary><strong>ACS control blocks (M0–M5)</strong></summary>
+<summary><strong>Sequential OLS control blocks</strong></summary>
 
-| Block | Controls added |
-|-------|----------------|
-| M0 | female only (raw gap) |
-| M1 | + age, age², race/ethnicity, education |
-| M2 | + state |
-| M3 | + occupation, industry, class of worker |
-| M4 | + usual hours, work from home, commute time |
-| M5 | + marital status, children, children under 5 |
+| Step | Question | Controls added |
+|------|----------|----------------|
+| Raw gap | How large is the unadjusted gap? | female only |
+| Demographics | Does the gap survive basic demographic controls? | + age, age², race/ethnicity, education |
+| Geography | Are women concentrated in lower-paying states? | + state |
+| Job sorting | How much does occupation/industry choice explain? | + occupation, industry, class of worker |
+| Schedule | Do hours and work arrangement differences matter? | + usual hours, work from home, commute time |
+| Family | Does marriage and parenthood status absorb more? | + marital status, children, children under 5 |
 
-The biggest observed gap reduction comes from job sorting (M3): ~8 percentage
+The biggest observed gap reduction comes from job sorting: ~8 percentage
 points in ACS 2023.
+
+</details>
+
+<details>
+<summary><strong>Gelbach decomposition (order-invariant)</strong></summary>
+
+The sequential ladder is order-sensitive — the amount each block "explains" depends
+on when it enters. The Gelbach (2016) decomposition resolves this by computing each
+block's contribution in an order-invariant way. Results across 8 ACS years:
+
+| Block | Mean contribution | Share of explained | Stability (SD) |
+|-------|------------------:|-------------------:|---------------:|
+| Job sorting | −0.084 | ~70% | 0.003 |
+| Reproductive burden | −0.036 | ~30% | 0.003 |
+| Job context (O\*NET) | −0.016 | ~13% | 0.004 |
+| Schedule | +0.017 | −14% | 0.010 |
+| Geography | −0.002 | ~2% | 0.000 |
+| Family (generic) | +0.002 | ~0% | 0.003 |
+
+Job sorting is the dominant channel. Reproductive burden is the second-largest —
+stable at ~30% across all years. The schedule block works in the *opposite*
+direction: controlling for hours reveals a *larger* female penalty, consistent
+with women working fewer hours in higher-paying arrangements. Generic family
+status adds nothing beyond reproductive-stage controls.
+
+Shares sum to >100% because schedule works against gap closure. Identity residuals
+are <10⁻¹³ in every year.
+
+Run: `python scripts/run_gelbach_decomposition.py`
 
 </details>
 
@@ -417,6 +457,7 @@ results/          CSV outputs, trend files, diagnostics
   trends/         Cross-year trend series
   repro/          Reproductive-burden extension outputs
   variance/       Variance extension outputs
+  gelbach/        Gelbach decomposition outputs
   diagnostics/    Robustness checks and validation artifacts
 reports/          Narrative reports and technical notes
 configs/          Dataset configuration and registry

@@ -86,6 +86,7 @@ HARMONIZED_OCCUPATION_COLUMNS = [
     "occupation_harmonized_code",
     "occupation_harmonized_title",
     "occupation_harmonization_type",
+    "soc_code_detailed",
     "soc_major_group",
     "soc_major_label",
 ]
@@ -580,6 +581,20 @@ def _extract_exact_occupation_code(series: pd.Series) -> pd.Series:
     return text.where(text.str.fullmatch(r"\d{4}", na=False))
 
 
+def _normalize_soc_code(soc_code: str) -> str:
+    """Normalize a SOC code to 'XX-XXXX' format for O*NET matching.
+
+    Handles inputs like '11-1011', '11-1011.00', '11-1011, 11-1012',
+    and bare codes.  Returns the first valid 'XX-XXXX' match, or empty
+    string if none found.
+    """
+    if not soc_code or pd.isna(soc_code):
+        return ""
+    import re
+    match = re.search(r"(\d{2}-\d{4})", str(soc_code))
+    return match.group(1) if match else ""
+
+
 def _soc_major_group(soc_code: str) -> str:
     if not soc_code:
         return "unknown"
@@ -601,6 +616,8 @@ def _mapping_row(
     harmonized_soc: str,
 ) -> dict[str, str]:
     soc_major_group = _soc_major_group(harmonized_soc)
+    # Normalize SOC code to "XX-XXXX" format for O*NET matching
+    soc_detailed = _normalize_soc_code(harmonized_soc)
     return {
         "occupation_code_vintage": vintage,
         "survey_year_regime": regime,
@@ -610,6 +627,7 @@ def _mapping_row(
         "occupation_harmonized_code": harmonized_code,
         "occupation_harmonized_title": harmonized_title,
         "occupation_harmonization_type": harmonization_type,
+        "soc_code_detailed": soc_detailed,
         "soc_major_group": soc_major_group,
         "soc_major_label": SOC_MAJOR_GROUPS.get(soc_major_group, "Unknown"),
     }

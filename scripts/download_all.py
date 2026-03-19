@@ -75,28 +75,28 @@ def get_session() -> requests.Session:
 # 2023+ variable names (ST -> STATE)
 ACS_VARS_2023PLUS = [
     "SERIALNO", "SPORDER", "SEX", "AGEP", "SCHL", "HISP", "RAC1P",
-    "WAGP", "PERNP", "WKHP", "WKWN", "COW", "OCCP", "INDP",
-    "JWTRNS", "JWMNP", "STATE", "PUMA", "PWGTP", "MAR", "ADJINC",
+    "WAGP", "PERNP", "PINCP", "WKHP", "WKWN", "COW", "OCCP", "INDP",
+    "JWTRNS", "JWMNP", "STATE", "PUMA", "PWGTP", "MAR", "ADJINC", "MULTG",
 ]
 
 # 2019-2022 variable names
 ACS_VARS_2019PLUS = [
     "SERIALNO", "SPORDER", "SEX", "AGEP", "SCHL", "HISP", "RAC1P",
-    "WAGP", "PERNP", "WKHP", "WKWN", "COW", "OCCP", "INDP",
-    "JWTRNS", "JWMNP", "ST", "PUMA", "PWGTP", "MAR", "ADJINC",
+    "WAGP", "PERNP", "PINCP", "WKHP", "WKWN", "COW", "OCCP", "INDP",
+    "JWTRNS", "JWMNP", "ST", "PUMA", "PWGTP", "MAR", "ADJINC", "MULTG",
 ]
 
 # Pre-2019: WKW instead of WKWN, JWTR instead of JWTRNS
 ACS_VARS_PRE2019 = [
     "SERIALNO", "SPORDER", "SEX", "AGEP", "SCHL", "HISP", "RAC1P",
-    "WAGP", "PERNP", "WKHP", "WKW", "COW", "OCCP", "INDP",
-    "JWTR", "JWMNP", "ST", "PUMA", "PWGTP", "MAR", "ADJINC",
+    "WAGP", "PERNP", "PINCP", "WKHP", "WKW", "COW", "OCCP", "INDP",
+    "JWTR", "JWMNP", "ST", "PUMA", "PWGTP", "MAR", "ADJINC", "MULTG",
 ]
 
 ACS_NUMERIC_COLS = [
-    "SEX", "AGEP", "WAGP", "PERNP", "WKHP", "WKWN", "WKW", "COW",
+    "SEX", "AGEP", "WAGP", "PERNP", "PINCP", "WKHP", "WKWN", "WKW", "COW",
     "JWTRNS", "JWTR", "JWMNP", "ST", "STATE", "PWGTP", "MAR", "ADJINC", "HISP",
-    "SCHL", "RAC1P", "SPORDER", "OCCP", "INDP",
+    "SCHL", "RAC1P", "SPORDER", "OCCP", "INDP", "MULTG",
 ]
 
 

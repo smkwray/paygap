@@ -111,6 +111,29 @@
         <p>Men expect $17 more per hour in job offers and set reservation wages $21 higher.
         This expectations gap persists across all available survey waves.</p>
       </div>
+
+      <h4>Subgroup context (latest public SCE wave)</h4>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Subgroup spread</th>
+            <th class="num">Expected-offer gap ($)</th>
+            <th class="num">Reservation-wage gap ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Gender (M &minus; F)</td><td class="num">17.46</td><td class="num">21.34</td></tr>
+          <tr><td>Education (college+ &minus; less than college)</td><td class="num">40.23</td><td class="num">36.94</td></tr>
+          <tr><td>Income (&gt;$60K &minus; &le;$60K)</td><td class="num">42.38</td><td class="num">52.57</td></tr>
+        </tbody>
+      </table>
+
+      <div class="insight-box">
+        <p>Men are above women in every public wave for both SCE measures, but the education
+        and income gradients are larger than the gender gradient. This makes SCE useful for
+        bargaining / outside-option interpretation without implying gender is the only
+        gradient in the data.</p>
+      </div>
     </section>
 
     <!-- ── 3. Employment Selection ── -->
@@ -151,7 +174,7 @@
 
       <div class="chart-container">
         <h3>Raw vs. Adjusted Gap by NLSY Cohort</h3>
-        <p class="chart-subtitle">Controls: occupation sorting, skills/traits, family background</p>
+        <p class="chart-subtitle">Controls differ by cohort &mdash; see block-level table below</p>
         <div class="chart-canvas-wrap">
           <canvas id="nlsyChart"></canvas>
         </div>
@@ -174,8 +197,37 @@
 
       <div class="insight-box">
         <p>The raw gap narrowed from 44% (NLSY79, year 2000) to 34% (NLSY97, year 2019).
-        Adding occupation, skills, and family-background controls reduces the gap by 10 pp
-        in NLSY79 but only 2 pp in NLSY97.</p>
+        Measured controls reduce the gap by 10 pp in NLSY79 but only 2 pp in NLSY97,
+        and the blocks that matter most differ across cohorts.</p>
+      </div>
+
+      <h4>What reduces the gap most?</h4>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Cohort</th>
+            <th>Biggest measured reductions</th>
+            <th class="num">Final gap</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>NLSY79</td>
+            <td>Occupation sorting 7.02 pp; skills/noncognitive traits 5.62 pp; family background 0.04 pp</td>
+            <td class="num">34.10%</td>
+          </tr>
+          <tr>
+            <td>NLSY97</td>
+            <td>Adult resources 6.60 pp; skills/school achievement 1.65 pp; occupation sorting 0.00 pp; family background &minus;0.06 pp</td>
+            <td class="num">31.89%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="insight-box">
+        <p>The cohort story changes. In NLSY79, occupation and skills matter most. In NLSY97,
+        the biggest measured block is adult resources, which is post-market and should be
+        treated as mechanism-sensitive accounting, not a clean pre-market explanation.</p>
       </div>
     </section>
 

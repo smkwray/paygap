@@ -132,11 +132,19 @@ def _quartile_means(df: pd.DataFrame, weight_col: str) -> pd.DataFrame:
             mask = values.notna() & weights.notna() & (weights > 0)
             if not mask.any():
                 continue
+            age_vals = pd.to_numeric(qdf.get("age"), errors="coerce")
+            age_mask = mask & age_vals.notna()
+            mean_age = (
+                weighted_mean(age_vals[age_mask], weights[age_mask])
+                if age_mask.any()
+                else float("nan")
+            )
             rows.append(
                 {
                     "outcome": outcome,
                     "risk_quartile": quartile,
                     "mean_outcome": weighted_mean(values[mask], weights[mask]),
+                    "mean_age": mean_age,
                     "n_obs": int(mask.sum()),
                     "weighted_n": float(weights[mask].sum()),
                 }

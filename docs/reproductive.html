@@ -102,7 +102,7 @@
       <div class="chart-canvas-wrap">
         <canvas id="interactionChart"></canvas>
       </div>
-      <p class="chart-note">Coefficients from the final interaction step on log hourly wages. Negative values indicate a wage penalty for women in that context; positive values indicate a premium. All interactions are conditional on the full job-context control set.</p>
+      <p class="chart-note">Coefficients from the final interaction step on log hourly wages. Negative values indicate a wage penalty for women in that context; positive values indicate a premium. All interactions are conditional on the full job-context control set. Note: job rigidity is a composite of schedule unpredictability + time pressure &minus; autonomy, so the standalone female &times; autonomy coefficient captures only the residual gender slope on autonomy after the composite is already controlled.</p>
     </div>
 
     <table class="data-table">
@@ -267,6 +267,12 @@
       fertility risk earn $12.62 less per hour than those with the lowest risk.
       This gradient exists before any children are born and likely reflects both sorting
       and anticipatory labor-market behavior.</p>
+      <p style="margin-top:0.5rem;font-size:0.85rem;color:var(--color-text-secondary)">
+      <strong>Interpretation note:</strong> Age is one of the predictors in the
+      fertility-risk score, so lower-risk quartiles skew older within the 25&ndash;44
+      window. Part of the raw wage gradient therefore reflects age&ndash;experience
+      returns rather than fertility risk alone. The older-placebo groups below help
+      bound this confound.</p>
     </div>
   </section>
 

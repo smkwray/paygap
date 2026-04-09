@@ -75,7 +75,7 @@ def add_fertility_risk_features(
     df: pd.DataFrame,
     weight_col: str = "person_weight",
 ) -> pd.DataFrame:
-    """Estimate a predicted recent-birth risk for childless women."""
+    """Estimate a women-trained recent-birth proxy and apply it to childless adults."""
     out = add_reproductive_features(df)
     out["fertility_risk_score"] = np.nan
     out["fertility_risk_quartile"] = pd.Series(pd.NA, index=out.index, dtype="string")
@@ -110,7 +110,7 @@ def add_fertility_risk_features(
     model = LogisticRegression(max_iter=1000)
     model.fit(features, target, sample_weight=weights)
 
-    childless = out["female"].eq(1) & out["has_own_child"].eq(0)
+    childless = out["has_own_child"].eq(0)
     score_frame = out.loc[childless, predictor_names].copy()
     score_frame["age_sq"] = score_frame.get("age_sq", score_frame["age"] ** 2)
     score_X = pd.get_dummies(score_frame, dummy_na=True, dtype=float).reindex(
@@ -129,7 +129,15 @@ def add_fertility_risk_features(
         ranked = eligible_scores.rank(method="first")
         quartiles = pd.qcut(ranked, 4, labels=["Q1", "Q2", "Q3", "Q4"])
         out.loc[quartiles.index, "fertility_risk_quartile"] = quartiles.astype("string")
-        older = childless & age.between(45, 54, inclusive="both")
+
+        thresholds = _reference_quartile_thresholds(eligible_scores, quartiles)
+        men = out["female"].eq(0) & childless & age.between(25, 44, inclusive="both")
+        if men.any():
+            men_scores = scores.loc[men.loc[scores.index]]
+            men_quartiles = _assign_reference_quartiles(men_scores, thresholds)
+            out.loc[men_quartiles.index, "fertility_risk_quartile"] = men_quartiles.astype("string")
+
+        older = out["female"].eq(1) & childless & age.between(45, 54, inclusive="both")
         if older.any():
             older_scores = scores.loc[older.loc[scores.index]]
             older_ranked = older_scores.rank(method="first")
@@ -142,6 +150,36 @@ def add_fertility_risk_features(
                 "string"
             )
     return out
+
+
+def _reference_quartile_thresholds(
+    scores: pd.Series,
+    quartiles: pd.Series,
+) -> tuple[float, float, float]:
+    labeled = pd.DataFrame({"score": scores, "quartile": quartiles}).dropna()
+    return tuple(
+        float(labeled.loc[labeled["quartile"] == label, "score"].max())
+        for label in ["Q1", "Q2", "Q3"]
+    )
+
+
+def _assign_reference_quartiles(
+    scores: pd.Series,
+    thresholds: tuple[float, float, float],
+) -> pd.Series:
+    quartiles = pd.Series(pd.NA, index=scores.index, dtype="string")
+    numeric_scores = pd.to_numeric(scores, errors="coerce")
+    valid = numeric_scores.notna()
+    if not valid.any():
+        return quartiles
+
+    values = numeric_scores.loc[valid]
+    q1, q2, q3 = thresholds
+    quartiles.loc[values.index[values <= q1]] = "Q1"
+    quartiles.loc[values.index[(values > q1) & (values <= q2)]] = "Q2"
+    quartiles.loc[values.index[(values > q2) & (values <= q3)]] = "Q3"
+    quartiles.loc[values.index[values > q3]] = "Q4"
+    return quartiles
 
 
 def add_repro_interactions(df: pd.DataFrame) -> pd.DataFrame:

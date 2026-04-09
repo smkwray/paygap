@@ -16,6 +16,8 @@ def test_build_report_mentions_estimand_caution():
             "ols_pct_gap": [13.2, 17.0, 10.9],
             "dml_pct_gap": [12.9, 16.1, 11.2],
             "oaxaca_unexplained_pct": [87.8, 75.0, 70.0],
+            "oaxaca_unexplained_ci95_low": [86.9, 72.0, 67.5],
+            "oaxaca_unexplained_ci95_high": [88.7, 78.0, 72.4],
         }
     )
     report = build_report(summary)

@@ -14,6 +14,8 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 
+from gender_gap.utils.weights import confidence_interval, replicate_weight_columns, sdr_summary
+
 logger = logging.getLogger(__name__)
 
 
@@ -89,8 +91,8 @@ def oaxaca_blinder(
     w_f = female[weight_col]
 
     # Drop rows with NaN
-    valid_m = y_m.notna() & X_m.notna().all(axis=1) & w_m.notna()
-    valid_f = y_f.notna() & X_f.notna().all(axis=1) & w_f.notna()
+    valid_m = y_m.notna() & X_m.notna().all(axis=1) & w_m.notna() & w_m.gt(0)
+    valid_f = y_f.notna() & X_f.notna().all(axis=1) & w_f.notna() & w_f.gt(0)
     X_m, y_m, w_m = X_m[valid_m], y_m[valid_m], w_m[valid_m]
     X_f, y_f, w_f = X_f[valid_f], y_f[valid_f], w_f[valid_f]
 
@@ -155,3 +157,79 @@ def oaxaca_summary_table(result: OaxacaResult) -> pd.DataFrame:
         {"component": "Unexplained (coefficients)", "value": result.unexplained,
          "pct": result.unexplained_pct},
     ])
+
+
+def oaxaca_unexplained_pct_sdr(
+    df: pd.DataFrame,
+    outcome: str = "log_hourly_wage_real",
+    controls: list[str] | None = None,
+    weight_col: str = "person_weight",
+    repweight_prefix: str = "PWGTP",
+) -> dict[str, float]:
+    """Estimate ACS SDR uncertainty for the Oaxaca unexplained share."""
+    result = oaxaca_blinder(df, outcome=outcome, controls=controls, weight_col=weight_col)
+    rep_cols = replicate_weight_columns(df.columns, prefix=repweight_prefix, main_weight=weight_col)
+    if not rep_cols:
+        raise ValueError("No ACS replicate-weight columns found")
+
+    rep_estimates = []
+    for rep_col in rep_cols:
+        try:
+            rep_result = oaxaca_blinder(df, outcome=outcome, controls=controls, weight_col=rep_col)
+        except Exception as exc:  # pragma: no cover - defensive for occasional degenerate replicates
+            logger.warning("Skipping Oaxaca replicate %s: %s", rep_col, exc)
+            continue
+        rep_estimates.append(rep_result.unexplained_pct)
+
+    summary = sdr_summary(result.unexplained_pct, rep_estimates)
+    return {
+        "estimate": float(result.unexplained_pct),
+        "se": float(summary["se"]),
+        "ci95_low": float(summary["ci95_low"]),
+        "ci95_high": float(summary["ci95_high"]),
+        "n_replicates": len(rep_estimates),
+    }
+
+
+def oaxaca_unexplained_pct_bootstrap(
+    df: pd.DataFrame,
+    outcome: str = "log_hourly_wage_real",
+    controls: list[str] | None = None,
+    weight_col: str = "person_weight",
+    n_boot: int = 200,
+    random_state: int = 0,
+) -> dict[str, float]:
+    """Estimate bootstrap uncertainty for the Oaxaca unexplained share."""
+    if n_boot < 2:
+        raise ValueError("n_boot must be at least 2")
+
+    result = oaxaca_blinder(df, outcome=outcome, controls=controls, weight_col=weight_col)
+    base = df.reset_index(drop=True)
+    rng = np.random.default_rng(random_state)
+    n_obs = len(base)
+    rep_estimates = []
+    for _ in range(n_boot):
+        sample_idx = rng.integers(0, n_obs, size=n_obs)
+        sample = base.iloc[sample_idx].copy()
+        rep_result = oaxaca_blinder(sample, outcome=outcome, controls=controls, weight_col=weight_col)
+        rep_estimates.append(rep_result.unexplained_pct)
+
+    rep_estimates = np.asarray(rep_estimates, dtype=float)
+    se = float(np.nanstd(rep_estimates, ddof=1))
+    ci95_low, ci95_high = np.nanpercentile(rep_estimates, [2.5, 97.5])
+    return {
+        "estimate": float(result.unexplained_pct),
+        "se": se,
+        "ci95_low": float(ci95_low),
+        "ci95_high": float(ci95_high),
+        "n_replicates": int(n_boot),
+    }
+
+
+def recentered_confidence_interval(
+    estimate: float,
+    standard_error: float,
+    level: float = 0.95,
+) -> tuple[float, float]:
+    """Center a symmetric interval on a supplied point estimate."""
+    return confidence_interval(estimate, standard_error, level=level)

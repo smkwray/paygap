@@ -231,18 +231,19 @@
   <!-- ── 3. Fertility Risk Gradient ── -->
   <section class="section">
     <div class="section-header">
-      <h2>Fertility-Risk Gradient</h2>
+      <h2>Predicted Childbearing-Likelihood Gradient</h2>
       <span class="section-tag">Childless 25&ndash;44 &middot; ACS Pooled</span>
     </div>
 
     <div class="chart-container">
-      <h3>Earnings by Fertility-Risk Quartile (Childless Women 25&ndash;44)</h3>
-      <p class="chart-subtitle">Q1 = lowest predicted fertility risk, Q4 = highest</p>
+      <h3>Earnings by Predicted Childbearing-Likelihood Quartile (Childless Women 25&ndash;44)</h3>
+      <p class="chart-subtitle">Q1 = lowest predicted childbearing likelihood, Q4 = highest</p>
       <div class="chart-canvas-wrap">
         <canvas id="fertilityChart"></canvas>
       </div>
-      <p class="chart-note">Fertility risk predicted from demographic and geographic covariates
-      among childless women aged 25&ndash;44. ~343K observations per quartile.</p>
+      <p class="chart-note">Women-trained recent-birth proxy predicted from demographic and
+      geographic covariates, then summarized for childless women aged 25&ndash;44.
+      ~343K observations per quartile.</p>
     </div>
 
     <table class="data-table">
@@ -255,24 +256,105 @@
         </tr>
       </thead>
       <tbody>
-        <tr><td>Q1 (lowest risk)</td><td class="num">$33.49</td><td class="num">$64,015</td><td class="num">41.1</td></tr>
+        <tr><td>Q1 (lowest likelihood)</td><td class="num">$33.49</td><td class="num">$64,015</td><td class="num">41.1</td></tr>
         <tr><td>Q2</td><td class="num">$28.68</td><td class="num">$51,708</td><td class="num">39.7</td></tr>
         <tr><td>Q3</td><td class="num">$25.61</td><td class="num">$44,786</td><td class="num">38.4</td></tr>
-        <tr><td>Q4 (highest risk)</td><td class="num">$20.87</td><td class="num">$32,312</td><td class="num">37.0</td></tr>
+        <tr><td>Q4 (highest likelihood)</td><td class="num">$20.87</td><td class="num">$32,312</td><td class="num">37.0</td></tr>
       </tbody>
     </table>
 
     <div class="insight-box">
       <p>Among childless women who have not yet had children, those with the highest predicted
-      fertility risk earn $12.62 less per hour than those with the lowest risk.
+      childbearing likelihood earn $12.62 less per hour than those with the lowest likelihood.
       This gradient exists before any children are born and likely reflects both sorting
       and anticipatory labor-market behavior.</p>
       <p style="margin-top:0.5rem;font-size:0.85rem;color:var(--color-text-secondary)">
       <strong>Interpretation note:</strong> Age is one of the predictors in the
-      fertility-risk score, so lower-risk quartiles skew older within the 25&ndash;44
+      childbearing-likelihood proxy, so lower-likelihood quartiles skew older within the 25&ndash;44
       window. Part of the raw wage gradient therefore reflects age&ndash;experience
-      returns rather than fertility risk alone. The older-placebo groups below help
-      bound this confound.</p>
+      returns rather than childbearing likelihood alone. The older-placebo groups below help
+      bound this confound. The same women-trained proxy is also applied to childless men
+      25&ndash;44 in the exported tables as a negative control: if a similar gradient appears
+      for men, the score is likely picking up broader wage determinants rather than only a
+      female-specific anticipatory channel.</p>
+    </div>
+  </section>
+
+  <!-- ── 3b. Male Negative Control ── -->
+  <section class="section">
+    <div class="section-header">
+      <h2>Male Negative-Control Comparison</h2>
+      <span class="section-tag">Same Proxy &middot; Childless Men 25&ndash;44</span>
+    </div>
+
+    <div class="insight-box">
+      <p><strong>Takeaway:</strong> The same women-trained proxy predicts lower wages for
+      childless men too, so it is clearly picking up some general wage determinants. But the
+      adjusted quartile gradient remains stronger for women, especially in the middle quartiles,
+      which is more consistent with a mixed construct than with a purely generic sorting index.</p>
+    </div>
+
+    <div class="comparison-grid">
+      <div class="chart-container">
+        <h3>Raw Hourly Wages by Proxy Quartile</h3>
+        <p class="chart-subtitle">Women and men sorted using the same women-trained proxy thresholds</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="negativeControlRawChart"></canvas>
+        </div>
+        <p class="chart-note">Both groups show a downward raw-wage gradient from Q1 to Q4, which is
+        the main evidence that the proxy loads on broader wage sorting rather than on a purely
+        female-specific channel.</p>
+      </div>
+
+      <div class="chart-container">
+        <h3>Adjusted Penalty Relative to Q1</h3>
+        <p class="chart-subtitle">Percent effect on log hourly wages after controls</p>
+        <div class="chart-canvas-wrap">
+          <canvas id="negativeControlAdjustedChart"></canvas>
+        </div>
+        <p class="chart-note">Women remain more negative in Q2 and Q3, while the male penalty only
+        becomes comparably large in Q4. That pattern suggests the proxy is not just a generic
+        sorting measure: it appears to capture broader wage determinants plus an additional
+        women-specific component.</p>
+      </div>
+    </div>
+
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Sample</th>
+          <th class="num">Q1 Hourly Wage</th>
+          <th class="num">Q4 Hourly Wage</th>
+          <th class="num">Adjusted Q4 vs Q1</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Childless women 25&ndash;44</td>
+          <td class="num">$33.49</td>
+          <td class="num">$20.87</td>
+          <td class="num">-3.6%</td>
+        </tr>
+        <tr>
+          <td>Childless men 25&ndash;44</td>
+          <td class="num">$38.45</td>
+          <td class="num">$23.77</td>
+          <td class="num">-2.9%</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box">
+      <p>Applying the same women-trained proxy to childless men produces a meaningful negative
+      wage gradient too, so the score is not isolating a purely female-specific anticipatory
+      channel. It is picking up some broader wage determinants tied to age, education, marriage,
+      geography, and related sorting patterns.</p>
+      <p style="margin-top:0.5rem;font-size:0.85rem;color:var(--color-text-secondary)">
+      At the same time, the gradient remains somewhat stronger for women in the adjusted
+      specifications, especially through the middle quartiles, so the negative control does not
+      erase the possibility of a female-specific anticipatory or statistical-discrimination
+      component. The safest interpretation is that this proxy mixes both general wage sorting and
+      reproductive-exposure channels.</p>
     </div>
   </section>
 
@@ -352,7 +434,7 @@
         </tbody>
       </table>
       <p>Because the same-sex wage premium persists even where recent births are rare,
-      this placebo is suggestive but not a clean fertility-only test.</p>
+      this placebo is suggestive but not a clean childbearing-only test.</p>
       <p style="color:var(--color-text-secondary);font-size:0.85rem;">Same-sex sample sizes are small (2,805 and 3,403); interpret with caution.</p>
     </details>
   </section>
@@ -438,7 +520,7 @@
       <p>This extension is <strong>descriptive and accounting-based</strong>, not causal. It shows
       how much of the observed gap can be statistically attributed to reproductive-burden channels,
       but cannot distinguish employer discrimination from self-selection, preference differences, or
-      constrained choices. The fertility-risk gradient and same-sex placebo are consistent with
+      constrained choices. The childbearing-likelihood gradient and same-sex placebo are consistent with
       reproductive-burden mechanisms but do not constitute direct proof of discrimination.</p>
     </div>
   </section>
@@ -551,11 +633,11 @@
       }
     }));
 
-    /* 3. Fertility risk gradient — grouped bar */
+    /* 3. Predicted childbearing-likelihood gradient — grouped bar */
     charts.push(new Chart(document.getElementById('fertilityChart'), {
       type: 'bar',
       data: {
-        labels: ['Q1 (lowest risk)', 'Q2', 'Q3', 'Q4 (highest risk)'],
+        labels: ['Q1 (lowest likelihood)', 'Q2', 'Q3', 'Q4 (highest likelihood)'],
         datasets: [
           {
             label: 'Hourly Wage ($)',
@@ -604,6 +686,103 @@
             title: { display: true, text: 'Hours/Week', color: c.textSec }
           },
           x: { ticks: { color: c.textSec }, grid: { color: c.grid } }
+        }
+      }
+    }));
+
+    /* 3b. Male negative control — raw quartile comparison */
+    charts.push(new Chart(document.getElementById('negativeControlRawChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+        datasets: [
+          {
+            label: 'Women',
+            data: [33.49, 28.68, 25.61, 20.87],
+            backgroundColor: c.accent,
+            borderRadius: 4
+          },
+          {
+            label: 'Men',
+            data: [38.45, 37.05, 27.53, 23.77],
+            backgroundColor: c.teal,
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top', labels: { color: c.text } },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                return ctx.dataset.label + ': $' + ctx.parsed.y.toFixed(2) + '/hr';
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { color: c.textSec, callback: function (v) { return '$' + v; } },
+            grid: { color: c.grid },
+            title: { display: true, text: 'Hourly Wage ($)', color: c.textSec }
+          },
+          x: {
+            ticks: { color: c.textSec },
+            grid: { color: c.grid }
+          }
+        }
+      }
+    }));
+
+    /* 3c. Male negative control — adjusted quartile penalties */
+    charts.push(new Chart(document.getElementById('negativeControlAdjustedChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Q2 vs Q1', 'Q3 vs Q1', 'Q4 vs Q1'],
+        datasets: [
+          {
+            label: 'Women',
+            data: [-4.37, -3.07, -3.53],
+            backgroundColor: c.red,
+            borderRadius: 4
+          },
+          {
+            label: 'Men',
+            data: [-0.70, -1.10, -2.89],
+            backgroundColor: c.orange,
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top', labels: { color: c.text } },
+          tooltip: {
+            callbacks: {
+              label: function (ctx) {
+                var sign = ctx.parsed.y > 0 ? '+' : '';
+                return ctx.dataset.label + ': ' + sign + ctx.parsed.y.toFixed(2) + '%';
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            ticks: {
+              color: c.textSec,
+              callback: function (v) { return v + '%'; }
+            },
+            grid: { color: c.grid },
+            title: { display: true, text: 'Adjusted Percent Effect', color: c.textSec }
+          },
+          x: {
+            ticks: { color: c.textSec },
+            grid: { color: c.grid }
+          }
         }
       }
     }));

@@ -52,6 +52,8 @@ def test_add_fertility_risk_features_scores_childless_women():
 
     assert scored["fertility_risk_score"].notna().sum() >= 4
     assert set(scored["fertility_risk_quartile"].dropna().unique()).issubset({"Q1", "Q2", "Q3", "Q4"})
+    assert scored.loc[scored["female"].eq(0), "fertility_risk_score"].notna().all()
+    assert scored.loc[scored["female"].eq(0), "fertility_risk_quartile"].notna().all()
 
 
 def test_add_repro_interactions_builds_selected_terms():

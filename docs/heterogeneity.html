@@ -201,9 +201,24 @@
         </thead>
         <tbody>
           <tr><td>Raw gap %</td><td class="num">16.81</td><td class="num">15.77</td><td class="num">15.09</td></tr>
-          <tr><td>OLS adjusted %</td><td class="num">13.23</td><td class="num">16.96</td><td class="num">10.91</td></tr>
-          <tr><td>DML adjusted %</td><td class="num">17.88</td><td class="num">19.61</td><td class="num">12.89</td></tr>
-          <tr><td>Oaxaca unexplained % (supplemental)</td><td class="num">87.81</td><td class="num">90.88</td><td class="num">85.60</td></tr>
+          <tr>
+            <td>OLS adjusted %</td>
+            <td class="num">13.23<span style="display:block;font-size:0.76rem;color:var(--color-text-secondary)">95% CI 12.98-13.49</span></td>
+            <td class="num">16.96<span style="display:block;font-size:0.76rem;color:var(--color-text-secondary)">95% CI 15.86-18.04</span></td>
+            <td class="num">10.91<span style="display:block;font-size:0.76rem;color:var(--color-text-secondary)">95% CI 10.10-11.73</span></td>
+          </tr>
+          <tr>
+            <td>DML adjusted %</td>
+            <td class="num">17.88<span style="display:block;font-size:0.76rem;color:var(--color-text-secondary)">95% CI 17.60-18.15</span></td>
+            <td class="num">19.61<span style="display:block;font-size:0.76rem;color:var(--color-text-secondary)">95% CI 18.34-20.87</span></td>
+            <td class="num">12.89<span style="display:block;font-size:0.76rem;color:var(--color-text-secondary)">95% CI 12.10-13.67</span></td>
+          </tr>
+          <tr>
+            <td>Oaxaca unexplained % (supplemental)</td>
+            <td class="num">87.81<span style="display:block;font-size:0.76rem;color:var(--color-text-secondary)">95% CI 87.22-88.40</span></td>
+            <td class="num">90.88<span style="display:block;font-size:0.76rem;color:var(--color-text-secondary)">95% CI 88.03-94.39</span></td>
+            <td class="num">85.60<span style="display:block;font-size:0.76rem;color:var(--color-text-secondary)">95% CI 83.76-87.25</span></td>
+          </tr>
         </tbody>
       </table>
 
@@ -211,6 +226,11 @@
         <p>DML (double/debiased machine learning with elastic net) produces larger adjusted
         gaps than OLS in all three datasets, suggesting OLS may understate the residual gap.
         The Oaxaca row is shown as a decomposition cross-check rather than a headline gap estimate.</p>
+        <p style="margin-top:0.5rem;font-size:0.85rem;color:var(--color-text-secondary)">
+        OLS intervals come from the reported model standard errors; DML intervals come from the
+        stored treatment-effect confidence intervals. Oaxaca intervals are now tracked too:
+        ACS uses replicate-weight SDR uncertainty centered on the canonical 2023 unexplained share,
+        while CPS and SIPP use bootstrap percentile intervals from the comparison script.</p>
       </div>
     </section>
 

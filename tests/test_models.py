@@ -7,7 +7,12 @@ import pytest
 from gender_gap.models import ols as ols_module
 from gender_gap.models.dml import run_dml
 from gender_gap.models.elastic_net import run_elastic_net
-from gender_gap.models.oaxaca import oaxaca_blinder, oaxaca_summary_table
+from gender_gap.models.oaxaca import (
+    oaxaca_blinder,
+    oaxaca_summary_table,
+    oaxaca_unexplained_pct_bootstrap,
+    oaxaca_unexplained_pct_sdr,
+)
 from gender_gap.models.ols import run_sequential_ols
 
 
@@ -81,6 +86,33 @@ class TestOaxaca:
     def test_percentages_sum_to_100(self, synth_df):
         result = oaxaca_blinder(synth_df, controls=["age", "usual_hours_week"])
         assert abs(result.explained_pct + result.unexplained_pct - 100.0) < 0.5
+
+    def test_bootstrap_uncertainty_returns_interval(self, synth_df):
+        summary = oaxaca_unexplained_pct_bootstrap(
+            synth_df,
+            controls=["age", "usual_hours_week"],
+            n_boot=20,
+            random_state=42,
+        )
+        assert np.isfinite(summary["se"])
+        assert summary["ci95_low"] <= summary["estimate"] <= summary["ci95_high"]
+        assert summary["n_replicates"] == 20
+
+    def test_sdr_uncertainty_returns_interval(self, synth_df):
+        df = synth_df.copy()
+        df["PWGTP1"] = df["person_weight"] * 0.95
+        df["PWGTP2"] = df["person_weight"] * 1.05
+
+        summary = oaxaca_unexplained_pct_sdr(
+            df,
+            controls=["age", "usual_hours_week"],
+            weight_col="person_weight",
+            repweight_prefix="PWGTP",
+        )
+
+        assert np.isfinite(summary["se"])
+        assert summary["ci95_low"] <= summary["estimate"] <= summary["ci95_high"]
+        assert summary["n_replicates"] == 2
 
 
 class TestElasticNet:

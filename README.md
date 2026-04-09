@@ -273,10 +273,13 @@ from the respondent's own wage.
 
 **Supporting analyses:**
 
-- **Fertility-risk gradient:** Among childless women 25–44, those with the highest
-  predicted fertility risk already earn $12.62/hr less than those with the lowest —
-  before any children are born. This is consistent with anticipatory sorting or
-  employer statistical discrimination, though neither can be isolated here.
+- **Predicted childbearing-likelihood gradient:** Among childless women 25–44,
+  those with the highest predicted childbearing likelihood already earn $12.62/hr
+  less than those with the lowest — before any children are born. This women-trained
+  demographic/geographic proxy is consistent with anticipatory sorting or employer
+  statistical discrimination, though neither can be isolated here. The same proxy is
+  also applied to childless men 25–44 as a negative control to test whether the
+  gradient is instead absorbing general wage determinants.
 - **Same-sex placebo:** Lesbian married women earn 12% more than comparable
   heterosexual married women after full controls — consistent with different
   household specialization patterns in same-sex couples.

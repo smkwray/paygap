@@ -10,7 +10,13 @@ import numpy as np
 import pandas as pd
 
 from gender_gap.models.dml import run_dml
-from gender_gap.models.oaxaca import oaxaca_blinder, oaxaca_summary_table
+from gender_gap.models.oaxaca import (
+    oaxaca_blinder,
+    oaxaca_summary_table,
+    oaxaca_unexplained_pct_bootstrap,
+    oaxaca_unexplained_pct_sdr,
+    recentered_confidence_interval,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -21,6 +27,7 @@ DIAG_DIR = RESULTS_DIR / "diagnostics"
 DATASETS = {
     "acs": {
         "data_path": PROJECT_ROOT / "data" / "processed" / "acs_2023_analysis_ready.parquet",
+        "oaxaca_uncertainty_data_path": PROJECT_ROOT / "data" / "processed" / "acs_2023_analysis_ready_repweights.parquet",
         "ols_path": RESULTS_DIR / "acs" / "2023" / "ols_sequential.csv",
         "oaxaca_path": RESULTS_DIR / "acs" / "2023" / "oaxaca.csv",
         "ols_model": "M5",
@@ -42,6 +49,7 @@ DATASETS = {
             "commute_minutes_one_way", "number_children", "children_under_5",
         ],
         "oaxaca_source": "canonical",
+        "oaxaca_uncertainty_method": "sdr",
         "year": 2023,
         "label": "ACS",
     },
@@ -66,6 +74,7 @@ DATASETS = {
             "age", "age_sq", "usual_hours_week", "number_children", "children_under_5",
         ],
         "oaxaca_source": "ad_hoc",
+        "oaxaca_uncertainty_method": "bootstrap",
         "year": 2023,
         "label": "CPS ASEC",
     },
@@ -86,6 +95,7 @@ DATASETS = {
             "usual_hours_week", "actual_hours_last_week", "paid_hourly", "multiple_jobholder",
         ],
         "oaxaca_source": "ad_hoc",
+        "oaxaca_uncertainty_method": "bootstrap",
         "year": 2023,
         "label": "SIPP",
     },
@@ -96,11 +106,17 @@ def _pct_from_log_coef(value: float) -> float:
     return abs((np.exp(value) - 1.0) * 100.0)
 
 
-def _load_worker_frame(dataset: str) -> pd.DataFrame:
+def _load_worker_frame(dataset: str, data_path: Path | None = None) -> pd.DataFrame:
     cfg = DATASETS[dataset]
+    source_path = data_path or cfg["data_path"]
     cols = ["female", "person_weight", "hourly_wage_real"] + cfg["required_columns"] + cfg["dml_controls"] + cfg["oaxaca_controls"]
     cols = list(dict.fromkeys(cols))
-    df = pd.read_parquet(cfg["data_path"], columns=[c for c in cols if c is not None])
+    if source_path.name.endswith("_repweights.parquet"):
+        cols.extend(["PWGTP1"])
+        cols = list(dict.fromkeys(cols))
+        df = pd.read_parquet(source_path)
+    else:
+        df = pd.read_parquet(source_path, columns=[c for c in cols if c is not None])
     if "log_hourly_wage_real" not in df.columns:
         df["log_hourly_wage_real"] = np.log(df["hourly_wage_real"].replace(0, np.nan))
     mask = cfg["worker_filter"](df)
@@ -129,7 +145,7 @@ def _read_raw_gap(dataset: str) -> float:
     return float(row["gap_pct"])
 
 
-def _read_or_run_oaxaca(dataset: str, df: pd.DataFrame) -> dict[str, float | str]:
+def _read_or_run_oaxaca(dataset: str, df: pd.DataFrame, oaxaca_bootstraps: int = 200) -> dict[str, float | str]:
     cfg = DATASETS[dataset]
     if cfg["oaxaca_path"] is not None:
         table = pd.read_csv(cfg["oaxaca_path"])
@@ -145,12 +161,52 @@ def _read_or_run_oaxaca(dataset: str, df: pd.DataFrame) -> dict[str, float | str
     unexplained = table.loc[table["component"].str.startswith("Unexplained")].iloc[0]
     explained = table.loc[table["component"].str.startswith("Explained")].iloc[0]
     return {
+        "oaxaca_uncertainty_method": cfg["oaxaca_uncertainty_method"],
         "oaxaca_source": cfg["oaxaca_source"],
         "oaxaca_total_gap_log": float(total["value"]),
         "oaxaca_explained_log": float(explained["value"]),
         "oaxaca_explained_pct": float(explained["pct"]),
         "oaxaca_unexplained_log": float(unexplained["value"]),
         "oaxaca_unexplained_pct": float(unexplained["pct"]),
+        **_oaxaca_uncertainty(dataset, df, float(unexplained["pct"]), oaxaca_bootstraps),
+    }
+
+
+def _oaxaca_uncertainty(
+    dataset: str,
+    df: pd.DataFrame,
+    point_estimate: float,
+    oaxaca_bootstraps: int,
+) -> dict[str, float | int]:
+    cfg = DATASETS[dataset]
+    if cfg["oaxaca_uncertainty_method"] == "sdr":
+        uncertainty_df = _load_worker_frame(dataset, data_path=cfg["oaxaca_uncertainty_data_path"])
+        summary = oaxaca_unexplained_pct_sdr(
+            uncertainty_df,
+            outcome="log_hourly_wage_real",
+            controls=cfg["oaxaca_controls"],
+            weight_col="person_weight",
+        )
+        ci95_low, ci95_high = recentered_confidence_interval(point_estimate, summary["se"], level=0.95)
+        return {
+            "oaxaca_unexplained_se": float(summary["se"]),
+            "oaxaca_unexplained_ci95_low": float(ci95_low),
+            "oaxaca_unexplained_ci95_high": float(ci95_high),
+            "oaxaca_uncertainty_n": int(summary["n_replicates"]),
+        }
+
+    summary = oaxaca_unexplained_pct_bootstrap(
+        df,
+        outcome="log_hourly_wage_real",
+        controls=cfg["oaxaca_controls"],
+        weight_col="person_weight",
+        n_boot=oaxaca_bootstraps,
+    )
+    return {
+        "oaxaca_unexplained_se": float(summary["se"]),
+        "oaxaca_unexplained_ci95_low": float(summary["ci95_low"]),
+        "oaxaca_unexplained_ci95_high": float(summary["ci95_high"]),
+        "oaxaca_uncertainty_n": int(summary["n_replicates"]),
     }
 
 
@@ -177,7 +233,12 @@ def _run_dml_for_dataset(dataset: str, df: pd.DataFrame, nuisance_learner: str, 
     }
 
 
-def compute_dataset_summary(dataset: str, nuisance_learner: str = "elasticnet", n_folds: int = 3) -> pd.DataFrame:
+def compute_dataset_summary(
+    dataset: str,
+    nuisance_learner: str = "elasticnet",
+    n_folds: int = 3,
+    oaxaca_bootstraps: int = 200,
+) -> pd.DataFrame:
     cfg = DATASETS[dataset]
     df = _load_worker_frame(dataset)
     summary = {
@@ -186,7 +247,7 @@ def compute_dataset_summary(dataset: str, nuisance_learner: str = "elasticnet", 
         "year": cfg["year"],
         "raw_gap_pct": _read_raw_gap(dataset),
         **_read_ols(dataset),
-        **_read_or_run_oaxaca(dataset, df),
+        **_read_or_run_oaxaca(dataset, df, oaxaca_bootstraps=oaxaca_bootstraps),
         **_run_dml_for_dataset(dataset, df, nuisance_learner=nuisance_learner, n_folds=n_folds),
     }
     return pd.DataFrame([summary])
@@ -205,13 +266,14 @@ def build_report(summary: pd.DataFrame) -> str:
         "",
         "## 2023 comparison",
         "",
-        "| Dataset | Raw gap % | OLS model | OLS adjusted gap % | DML adjusted gap % | Oaxaca unexplained % |",
-        "|---|---:|---|---:|---:|---:|",
+        "| Dataset | Raw gap % | OLS model | OLS adjusted gap % | DML adjusted gap % | Oaxaca unexplained % | Oaxaca 95% CI |",
+        "|---|---:|---|---:|---:|---:|---:|",
     ]
     for row in summary.itertuples(index=False):
         lines.append(
             f"| {row.dataset_label} | {row.raw_gap_pct:.2f} | {row.ols_model} | {row.ols_pct_gap:.2f} | "
-            f"{row.dml_pct_gap:.2f} | {row.oaxaca_unexplained_pct:.2f} |"
+            f"{row.dml_pct_gap:.2f} | {row.oaxaca_unexplained_pct:.2f} | "
+            f"{row.oaxaca_unexplained_ci95_low:.2f} to {row.oaxaca_unexplained_ci95_high:.2f} |"
         )
     lines.extend([
         "",
@@ -220,6 +282,7 @@ def build_report(summary: pd.DataFrame) -> str:
         "- OLS and DML are the more comparable pair for an adjusted residual gap; Oaxaca answers a different question.",
         "- In this 2023 comparison, DML runs larger than OLS in ACS, CPS, and SIPP, so the flexible residualization here does not drive the female effect toward zero.",
         "- If Oaxaca behaves differently, especially through unstable explained shares, that should be treated as a decomposition caution rather than a contradiction of the residual-gap estimates.",
+        "- The Oaxaca uncertainty column reflects ACS SDR replicate-weight uncertainty and bootstrap intervals for CPS/SIPP.",
         "",
         "## Notes",
         "",
@@ -237,6 +300,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--combine", action="store_true", help="Combine per-dataset CSVs into final outputs")
     parser.add_argument("--nuisance-learner", default="elasticnet", choices=["elasticnet", "rf", "lgbm"])
     parser.add_argument("--n-folds", type=int, default=3)
+    parser.add_argument("--oaxaca-bootstraps", type=int, default=200)
     parser.add_argument("--output", type=Path, help="Override per-dataset CSV output")
     return parser.parse_args()
 
@@ -268,6 +332,7 @@ def main() -> None:
         args.dataset,
         nuisance_learner=args.nuisance_learner,
         n_folds=args.n_folds,
+        oaxaca_bootstraps=args.oaxaca_bootstraps,
     )
     output = args.output or (DIAG_DIR / f"method_comparison_{args.dataset}_2023.csv")
     summary.to_csv(output, index=False)

@@ -35,3 +35,5 @@ results/diagnostics/
 data/raw/
 data/processed/*.parquet
 data/external/
+
+.private-denylist

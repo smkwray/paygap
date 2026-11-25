@@ -85,4 +85,4 @@ tests/            pytest suite
 
 ## License
 
-No open-source license is attached yet. The code and results are published for research and educational use.
+MIT. See [LICENSE](LICENSE).

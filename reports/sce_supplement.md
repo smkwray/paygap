@@ -109,5 +109,3 @@ Those results already show that realized earnings, hours, and labor-force attach
 ## Practical interpretation
 
 If SCE shows lower female reservation wages or lower expected offer wages, that would support a bargaining/expectations channel. It still would not imply that the realized ACS/CPS worker gap is explained away; it would imply that part of the mechanism may run through expectations and outside options rather than only realized job sorting or hours.
-
-That is the defensible way to use SCE in this project.

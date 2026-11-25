@@ -88,7 +88,6 @@ Use these paths as the canonical outputs from the completed pipeline.
 
 - `reports/findings_summary.md`
 - `reports/defensibility_report.md`
-- `reports/acs_family_rebuild_review.md`
 - `reports/acs_selection_robustness.md`
 - `reports/oaxaca_sensitivity.md`
 - `reports/oaxaca_review.md`

@@ -1,6 +1,6 @@
 # SIPP Validation
 
-This report documents the first real-data validation pass for the public-use Census SIPP standardization lane.
+The table summarizes field coverage and weighted earnings in the standardized SIPP file.
 
 ## Snapshot
 - Rows: 437,168
@@ -23,8 +23,3 @@ This report documents the first real-data validation pass for the public-use Cen
 ## Weighted means among employed
 - Weekly earnings: 1357.52
 - Hourly wage: 37.82
-
-## Interpretation
-- The SIPP lane is now validated on a real public-use file rather than only synthetic tests.
-- This is still a standardization and validation surface, not yet a full SIPP wage-model integration.
-- If future SIPP releases change field names again, the main risk is alias coverage rather than file access.

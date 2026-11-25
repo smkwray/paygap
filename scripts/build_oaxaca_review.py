@@ -52,15 +52,6 @@ def main() -> None:
             f"{row['unexplained_pct']:.2f} | {row['pct_gap']:.2f} |"
         )
 
-    lines.extend([
-        "",
-        "## Recommended Follow-up",
-        "",
-        "1. Recompute or benchmark Oaxaca with broader control aggregation to test sensitivity.",
-        "2. Compare the post-2019 decomposition movement against the finished ACS SDR uncertainty layer once the all-year M5 backfill completes.",
-        "3. Keep sequential OLS and raw-gap trends as the primary headline series until Oaxaca sensitivity work is complete.",
-    ])
-
     path.write_text("\n".join(lines) + "\n")
     print(f"Wrote {path}")
 

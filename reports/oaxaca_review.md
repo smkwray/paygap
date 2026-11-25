@@ -10,7 +10,7 @@
 ## Interpretation
 
 - The unexplained share still jumps materially after 2019 even after the ACS family-field rebuild, but the ACS M5 adjusted gap remains in a comparatively tight band near 13% to 14%.
-- The new sensitivity note in `reports/oaxaca_sensitivity.md` shows that this jump is driven more by the explained component collapsing than by the total wage gap blowing out.
+- The new sensitivity note in `reports/oaxaca_sensitivity.md` shows that this jump is driven more by a smaller explained component than by a change in the total wage gap.
 - That combination suggests decomposition fragility is a live concern. The post-2019 movement should not be treated as the cleanest headline result even though it no longer looks like a mysterious end-to-end break.
 - This does not look like an obvious end-to-end pipeline break because the raw gap and the sequential OLS trend remain broadly stable.
 - The corrected ACS family fields modestly lowered the post-2019 unexplained shares, but not nearly enough to remove the jump.
@@ -33,11 +33,4 @@ Comparison artifact:
 - `results/diagnostics/acs_family_rebuild_comparison.csv`
 - `results/diagnostics/acs_oaxaca_sensitivity_summary.csv`
 - `results/diagnostics/acs_oaxaca_sensitivity_yearly.csv`
-- `reports/acs_family_rebuild_review.md`
 - `reports/oaxaca_sensitivity.md`
-
-## Recommended Follow-up
-
-1. If you want to push Oaxaca further, recompute or benchmark it with broader control aggregation to test whether the explained component stabilizes.
-2. Compare the post-2019 explained-component collapse against any future alternative sample restrictions or control sets.
-3. Keep sequential OLS and raw-gap trends as the primary headline series; use Oaxaca as a supplemental decomposition result.

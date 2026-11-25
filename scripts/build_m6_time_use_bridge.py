@@ -126,8 +126,8 @@ def write_report(summary: pd.DataFrame, path: Path) -> Path:
     lines = [
         "# M6 Time-Use Bridge",
         "",
-        "This artifact is the defensible `M6` layer for the project.",
-        "It is not a merged ACS+ATUS regression and should not be described that way.",
+        "This mechanism-aware bridge compares ATUS time diaries with the ACS and CPS wage estimates.",
+        "It is not a merged ACS+ATUS regression.",
         "Instead, it uses ATUS as a separate mechanism module to interpret the residual ACS/CPS wage gaps after `M5` and the selection-robustness checks.",
         "",
         "## Why This Is Separate",
@@ -160,16 +160,6 @@ def write_report(summary: pd.DataFrame, path: Path) -> Path:
         "- The ATUS evidence is directionally consistent with a family/schedule mechanism: women spend materially less time in paid work and materially more time in unpaid household and childcare work.",
         "- That mechanism helps explain why annual-earnings gaps are larger than worker-only hourly wage gaps in the ACS/CPS selection surfaces.",
         "- But the ATUS burden differences do not make the residual ACS worker-gap disappear; they coexist with a still-material post-`M5` residual gap.",
-        "",
-        "## Use In The Final Project",
-        "",
-        "Present this as a mechanism-aware bridge after `M5` and the selection results:",
-        "1. ACS/CPS establish the realized gap and residual worker-gap.",
-        "2. Selection robustness distinguishes worker gaps from broader employment and annual-earnings gaps.",
-        "3. ATUS explains one plausible channel: women carry more unpaid work and childcare time, which is consistent with schedule constraints and reduced paid-work time.",
-        "4. SCE adds a separate expectations/reservation-wage channel.",
-        "",
-        "This is a stronger and more defensible story than pretending ATUS creates a literal merged `M6` wage regression.",
     ]
     path.write_text("\n".join(lines) + "\n")
     return path

@@ -114,7 +114,7 @@ ATUS results support a work/family time-allocation channel:
 
 This is mechanism evidence, not a person-level control merged into ACS/CPS.
 
-The repo now also has a formal mechanism-bridge note in `reports/m6_time_use_bridge.md` with compact metrics in `results/diagnostics/m6_time_use_bridge_summary.csv`. That is the defensible `M6` surface here: an ATUS-based interpretation layer that follows the ACS/CPS residual-gap and selection results, not a literal merged regression.
+The ATUS comparisons are in `reports/m6_time_use_bridge.md` and `results/diagnostics/m6_time_use_bridge_summary.csv`.
 
 Source file:
 
@@ -157,37 +157,7 @@ The newer Oaxaca sensitivity note now narrows that concern: the post-2019 unexpl
 
 - Top-level `results/*.csv` files appear to be legacy single-run artifacts from earlier work. The canonical finished outputs are the year directories plus `results/acs_pooled`, `results/cps`, `results/atus`, and `results/trends`.
 
-## Defensibility assessment
-
-### What is already strong
-
-- Public-data-only design
-- Multiple datasets, not a single-file claim
-- Multiple model families
-- Year-by-year and pooled ACS views
-- External cross-check with CPS
-- CPS employment-selection robustness layer
-- ACS employment-selection robustness layer
-- Separate mechanism evidence via ATUS
-- Implemented SCE supplement on reservation wages and job-offer expectations
-- Real public-use SIPP file now stages and standardizes successfully, with a validation artifact documenting coverage
-- SIPP now also has a first descriptive analysis artifact for the 2023 public-use file
-- SIPP now also has a modest adjusted-gap surface for the 2023 public-use file
-- ACS replicate-weight acquisition completed for 2015-2019 and 2021-2023
-- ACS SDR uncertainty is now complete for the full ACS analysis series, not just a single-year snapshot
-- Consolidated robustness appendix in `reports/robustness_appendix.md`
-- Reproducible pipeline and tests
-
-### What still limits publication-quality defensibility
-
-- The current robustness appendix is consolidated and useful, but it is still a summary layer rather than a full paper-style appendix with additional alternative samples and control sets
-- No full within-SCE microdata model yet; the current SCE layer now includes a public-series empirical note plus staged public files, but not a richer microdata regression workflow
-- No SIPP deep-control file yet
-- The current SIPP layer is validated and useful for extension work, but it is not yet integrated into the main wage-model stack
-- The current SIPP modeling layer is still modest; it is not yet a covariate-rich or longitudinal SIPP module
-- The ACS family-field rebuild is complete, but its implications now need to be reflected throughout the final narrative and robustness discussion
-
-### ACS uncertainty snapshot
+## ACS uncertainty snapshot
 
 - ACS raw-gap and M5 SDR uncertainty are now complete across 2015-2019 and 2021-2023.
 - ACS raw-gap 90% margins of error are narrow in every year, about 0.26 to 0.31 percentage points, with a mean of 0.29.
@@ -198,23 +168,3 @@ The newer Oaxaca sensitivity note now narrows that concern: the post-2019 unexpl
 - ACS 2023 M5 female coefficient: -0.1408
   SDR SE: 0.0017
   90% CI: -0.1436 to -0.1379
-
-## Recommended next work
-
-1. Thread the completed all-year ACS SDR intervals into the public-facing tables and defensibility artifacts.
-2. If you want to keep pushing decomposition work, benchmark Oaxaca against broader aggregation or alternative sample restrictions before making it prominent.
-3. If desired, extend SCE beyond the public-series note into a richer within-SCE microdata workflow.
-4. Add any remaining appendix extensions you want beyond the current consolidated robustness appendix:
-   - full-time/full-year sample
-   - alternative winsorization
-   - alternative occupation/industry aggregation
-   - ACS vs CPS comparison table
-5. Add a short note or appendix table documenting that the corrected ACS family fields modestly increase the year-by-year M5 gap rather than reducing it.
-
-## Bottom line
-
-The core project is working and already supports a defensible main conclusion:
-
-> Using large public U.S. datasets, the observed hourly earnings gap between men and women is substantial, and a meaningful residual gap remains after standard observable controls. Time-use evidence is consistent with family and schedule-related mechanisms, but those mechanisms do not eliminate the residual gap.
-
-The remaining work is less about basic buildout and more about hardening the project for scrutiny.

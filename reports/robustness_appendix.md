@@ -1,7 +1,6 @@
 # Robustness Appendix
 
-This appendix consolidates the completed robustness surfaces already built in the repo.
-It is not a new model family; it is a summary layer over the uncertainty, sensitivity, selection, decomposition, and context artifacts.
+These checks measure how sampling uncertainty, family controls and employment selection affect the estimated gaps.
 
 ## ACS Survey Uncertainty
 
@@ -14,7 +13,6 @@ It is not a new model family; it is a summary layer over the uncertainty, sensit
 - Correcting the ACS family variables shifts the year-level M5 coefficient by -0.0032 on average.
 - The largest absolute year-level M5 change is 0.0046.
 - The pooled ACS P5 coefficient shifts by -0.0042.
-- Interpretation: the family-field bug was real and worth fixing, but it does not overturn the main residual-gap result.
 
 ## Selection Robustness
 
@@ -28,13 +26,13 @@ It is not a new model family; it is a summary layer over the uncertainty, sensit
 
 - Mean unexplained share in 2015-2018: 74.08%
 - Mean unexplained share in 2019-2023: 87.92%
-- Interpretation: decomposition shares become much less stable after 2019 than the sequential OLS estimates, so Oaxaca should stay secondary to the year-by-year M5 trend in external reporting.
+- Interpretation: decomposition shares become much less stable after 2019 than the sequential OLS estimates, which limits comparisons of decomposition shares across years.
 
 ## Context Controls Status
 
 - Cached context sources currently present: 2
 - Sources currently requiring manual staging: 1
-- Interpretation: BEA RPP and QCEW are available, while OEWS is documented as manual-staging-only from this environment. Context data remain supplemental rather than core blockers.
+- Interpretation: BEA RPP and QCEW are available, while OEWS is documented as manual-staging-only from this environment. These sources supply supplemental context variables.
 
 ## Source Artifacts
 
@@ -47,4 +45,4 @@ It is not a new model family; it is a summary layer over the uncertainty, sensit
 
 ## Bottom Line
 
-Across the completed robustness surfaces, the central result survives: the realized worker earnings gap is persistent, the residual ACS gap remains material after observables, family-field corrections do not eliminate it, and selection sensitivity changes the estimand more than it changes the existence of the worker-gap result.
+The ACS hourly earnings gap persists after correcting the family controls and reweighting for employment selection.

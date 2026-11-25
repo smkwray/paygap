@@ -124,8 +124,7 @@ def write_report(summary: pd.DataFrame, path: Path) -> Path:
     lines = [
         "# Robustness Appendix",
         "",
-        "This appendix consolidates the completed robustness surfaces already built in the repo.",
-        "It is not a new model family; it is a summary layer over the uncertainty, sensitivity, selection, decomposition, and context artifacts.",
+        "These checks measure how sampling uncertainty, family controls and employment selection affect the estimated gaps.",
         "",
         "## ACS Survey Uncertainty",
         "",
@@ -138,7 +137,6 @@ def write_report(summary: pd.DataFrame, path: Path) -> Path:
         f"- Correcting the ACS family variables shifts the year-level M5 coefficient by {metric('acs_family_rebuild', 'mean_m5_delta'):.4f} on average.",
         f"- The largest absolute year-level M5 change is {metric('acs_family_rebuild', 'max_abs_m5_delta'):.4f}.",
         f"- The pooled ACS P5 coefficient shifts by {metric('acs_family_rebuild', 'pooled_p5_delta'):.4f}.",
-        "- Interpretation: the family-field bug was real and worth fixing, but it does not overturn the main residual-gap result.",
         "",
         "## Selection Robustness",
         "",
@@ -152,13 +150,13 @@ def write_report(summary: pd.DataFrame, path: Path) -> Path:
         "",
         f"- Mean unexplained share in 2015-2018: {metric('oaxaca', 'pre_2019_unexplained_pct_mean'):.2f}%",
         f"- Mean unexplained share in 2019-2023: {metric('oaxaca', 'post_2019_unexplained_pct_mean'):.2f}%",
-        "- Interpretation: decomposition shares become much less stable after 2019 than the sequential OLS estimates, so Oaxaca should stay secondary to the year-by-year M5 trend in external reporting.",
+        "- Interpretation: decomposition shares become much less stable after 2019 than the sequential OLS estimates, which limits comparisons of decomposition shares across years.",
         "",
         "## Context Controls Status",
         "",
         f"- Cached context sources currently present: {int(metric('context', 'present_sources_count'))}",
         f"- Sources currently requiring manual staging: {int(metric('context', 'manual_staging_sources_count'))}",
-        "- Interpretation: BEA RPP and QCEW are available, while OEWS is documented as manual-staging-only from this environment. Context data remain supplemental rather than core blockers.",
+        "- Interpretation: BEA RPP and QCEW are available, while OEWS is documented as manual-staging-only from this environment. These sources supply supplemental context variables.",
         "",
         "## Source Artifacts",
         "",
@@ -171,7 +169,7 @@ def write_report(summary: pd.DataFrame, path: Path) -> Path:
         "",
         "## Bottom Line",
         "",
-        "Across the completed robustness surfaces, the central result survives: the realized worker earnings gap is persistent, the residual ACS gap remains material after observables, family-field corrections do not eliminate it, and selection sensitivity changes the estimand more than it changes the existence of the worker-gap result.",
+        "The ACS hourly earnings gap persists after correcting the family controls and reweighting for employment selection.",
     ]
     path.write_text("\n".join(lines) + "\n")
     return path

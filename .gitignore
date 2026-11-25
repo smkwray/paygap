@@ -37,3 +37,11 @@ data/processed/*.parquet
 data/external/
 
 .private-denylist
+
+# Locally generated reports
+/reports/psid_panel_validation.md
+/reports/psid_validation.md
+/reports/repro_inventory_usage.md
+/reports/variance_inventory_usage.md
+/results/gelbach/gelbach_default_summary.md
+/results/gelbach/gelbach_reproductive_summary.md

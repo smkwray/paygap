@@ -63,21 +63,12 @@ def write_report(df: pd.DataFrame, path: Path) -> Path:
         "# Context Data Status",
         "",
         "This project uses LAUS, CPI-U, BEA RPP, QCEW, and OEWS as supplemental local-context inputs.",
-        "The current acquisition state is:",
+        "The report records which inputs were available when the analysis ran.",
         "",
     ]
 
     for row in df.itertuples(index=False):
         lines.append(f"- `{row.source}`: {row.status} — {row.detail}")
-
-    lines.extend([
-        "",
-        "## Interpretation",
-        "",
-        "- QCEW is the most realistic context-data automation target from this environment.",
-        "- OEWS is currently blocked by BLS access controls for direct scripted download here, so it now has an explicit manual-staging path.",
-        "- Context data remain supplemental and are not blocking the core ACS/CPS/ATUS findings surface.",
-    ])
 
     path.write_text("\n".join(lines) + "\n")
     return path

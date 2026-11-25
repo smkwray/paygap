@@ -1,6 +1,6 @@
 # Final Synthesis
 
-This report condenses the repo's canonical cross-dataset findings into one closing surface.
+This report compares 2023 hourly wage gaps across ACS, CPS ASEC and SIPP.
 
 ## Headline cross-dataset results
 

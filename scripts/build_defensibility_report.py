@@ -180,12 +180,7 @@ def write_report(
             )
 
     lines = [
-        "# Defensibility Report",
-        "",
-        "## Status",
-        "",
-        "- Core pipeline status: complete",
-        "- Purpose of this report: summarize what is currently defensible, what is provisional, and what still needs hardening.",
+        "# Wage estimates and survey diagnostics",
         "",
         "## Headline Results",
         "",
@@ -201,18 +196,6 @@ def write_report(
         ),
         f"- CPS latest-year raw gap (2023): {latest_cps['raw_gap_pct']:.2f}%",
         f"- CPS latest-year M_full adjusted gap (2023): {latest_cps['m_full_pct_gap']:.2f}%",
-        "",
-        "## What Is Already Defensible",
-        "",
-        "- The project now runs end-to-end on multiple public datasets rather than relying on a single file.",
-        "- ACS year-by-year results are stable: the adjusted gap remains in a narrow band around 13% to 14%.",
-        "- CPS ASEC shows the same qualitative pattern: a substantial residual gap remains after controls.",
-        "- CPS now also has a dedicated employment-selection robustness layer, which separates worker wage-gap claims from total annual-earnings claims.",
-        "- ACS now also has a completed employment-selection robustness layer across all 8 analysis years.",
-        "- ACS year-level and pooled outputs have now been rebuilt from the corrected family fields rather than the old all-zero placeholders.",
-        "- ATUS provides independent mechanism evidence on paid work, housework, childcare, and commute-related travel.",
-        "- The repo now includes an SCE supplement on reservation wages, offer expectations, and job-offer dynamics as a separate mechanism-evidence module.",
-        "- The pooled ACS step now completes on 7.0M rows using broad job controls.",
         "",
         "## Main Cautions",
         "",
@@ -264,28 +247,6 @@ def write_report(
         f"- ACS `S2` mean observed total annual-earnings gap (2015-2023): {acs_s2['observed_total_earnings_gap_pct'].mean():.2f}%",
         f"- ACS `S2` mean observed worker hourly wage gap (2015-2023): {acs_s2['observed_worker_hourly_gap_pct'].mean():.2f}%",
         f"- ACS `S2` mean IPW worker hourly wage gap (2015-2023): {acs_s2['ipw_worker_hourly_gap_pct'].mean():.2f}%",
-    ])
-
-    sce_measure_map = RESULTS_DIR / "diagnostics" / "sce_measure_map.csv"
-    if sce_measure_map.exists():
-        lines.extend([
-            "",
-            "## SCE Supplemental Status",
-            "",
-            "- `reports/sce_supplement.md` documents the defensible role of the New York Fed SCE Labor Market Survey in this repo.",
-            "- `results/diagnostics/sce_measure_map.csv` maps reservation wage, offer expectations, offer receipt, and search-intensity constructs to their best use and limits.",
-            "- The current SCE layer is intentionally supplemental: it supports bargaining and expectations interpretation but is not merged into the ACS/CPS regression surface.",
-        ])
-
-    lines.extend([
-        "",
-        "## Recommended Next Work",
-        "",
-        "1. Reconcile the rebuilt ACS headline coefficients with the ACS SDR uncertainty layer so the narrative is using one fully current ACS surface.",
-        "2. Investigate the post-2019 Oaxaca jump before making decomposition claims prominent in any external memo.",
-        "3. If you want empirical bargaining estimates rather than a methodological supplement, acquire SCE microdata and estimate sex differences in reservation wages and offer expectations within SCE itself.",
-        "4. Build a short robustness appendix covering alternative sample restrictions and control aggregation choices.",
-        "5. Add a compact comparison table documenting how the corrected ACS family fields changed year-by-year M5 and pooled P5 estimates.",
     ])
 
     path = REPORTS_DIR / "defensibility_report.md"

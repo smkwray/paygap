@@ -66,7 +66,7 @@ def build_report(summary: pd.DataFrame) -> str:
         [
             "# SIPP Validation",
             "",
-            "This report documents the first real-data validation pass for the public-use Census SIPP standardization lane.",
+            "The table summarizes field coverage and weighted earnings in the standardized SIPP file.",
             "",
             "## Snapshot",
             f"- Rows: {_format_metric(summary, 'rows')}",
@@ -89,11 +89,6 @@ def build_report(summary: pd.DataFrame) -> str:
             "## Weighted means among employed",
             f"- Weekly earnings: {_format_metric(summary, 'weighted_mean_weekly_earnings_employed', digits=2)}",
             f"- Hourly wage: {_format_metric(summary, 'weighted_mean_hourly_wage_employed', digits=2)}",
-            "",
-            "## Interpretation",
-            "- The SIPP lane is now validated on a real public-use file rather than only synthetic tests.",
-            "- This is still a standardization and validation surface, not yet a full SIPP wage-model integration.",
-            "- If future SIPP releases change field names again, the main risk is alias coverage rather than file access.",
         ]
     )
 
